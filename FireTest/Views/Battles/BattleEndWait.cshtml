@@ -1,0 +1,6 @@
+﻿@if (ViewBag.Result == true)
+{
+    <script type="text/javascript">
+            window.location = '@Url.Action("Finish", "Battles", new { id = ViewBag.Id })';
+    </script>
+}

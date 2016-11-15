@@ -1,0 +1,13 @@
+﻿@if (Model != false)
+{
+    using (Ajax.BeginForm("BattleInvitePopup", "Battles", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        InsertionMode = InsertionMode.Replace,
+        UpdateTargetId = "popup_invite",
+        LoadingElementId = "loadingIndicator",
+    }))
+    {
+        <input type="submit" class="button_invite" value="Вызывают" />
+    }
+}

@@ -1,0 +1,94 @@
+﻿@model FireTest.Models.IndexViewModel
+@Styles.Render("~/Content/manage")
+@{
+    ViewBag.Title = "Управление учетной записью";
+}
+<p class="text-success">@ViewBag.StatusMessage</p>
+<div class="row">
+    <div class="col-4 manageAvatar">
+        <img src="@ViewBag.Avatar" alt="Аватар пользователя: @Model.Name" />
+        @using (Ajax.BeginForm("AvatarUpload", new AjaxOptions
+        {
+            HttpMethod = "GET",
+            InsertionMode = InsertionMode.Replace,
+            UpdateTargetId = "popup_avatar",
+            LoadingElementId = "loadingIndicator",
+        }))
+        {
+            <input type="submit" class="button-Cancel center" value="Изменить фотографию" />
+        }
+    </div>
+    <div class="col-8 manageDisabled">
+        @using (Html.BeginForm("Index", "Manage", FormMethod.Post, new { role = "form", id = "edit" }))
+            {
+            @Html.AntiForgeryToken()
+            <div class="row">
+                @Html.LabelFor(m => m.Name, new { @class = "col-4" })
+                <div class="col-8">
+                    @Html.TextBoxFor(m => m.Name)
+                    <span class="pen"></span>
+                    @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="row">
+                @Html.LabelFor(m => m.SubName, new { @class = "col-4" })
+                <div class="col-8">
+                    @Html.TextBoxFor(m => m.SubName)
+                    <span class="pen"></span>
+                    @Html.ValidationMessageFor(m => m.SubName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="row">
+                @Html.LabelFor(m => m.Family, new { @class = "col-4" })
+                <div class="col-8">
+                    @Html.TextBoxFor(m => m.Family)
+                    <span class="pen"></span>
+                    @Html.ValidationMessageFor(m => m.Family, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="row">
+                @Html.LabelFor(m => m.Year, new { @class = "col-4" })
+                <div class="col-8">
+                    @Html.TextBoxFor(m => m.Year)
+                    <span class="pen"></span>
+                    @Html.ValidationMessageFor(m => m.Year, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="row">
+                @Html.LabelFor(m => m.Group, new { @class = "col-4" })
+                <div class="col-8">
+                    @Html.TextBoxFor(m => m.Group)
+                    <span class="pen"></span>
+                    @Html.ValidationMessageFor(m => m.Group, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-4">Курс</label>
+                <div class="col-8">
+                    <input value="@ViewBag.Course" type="text" disabled="disabled" />
+                </div>
+            </div>
+            <div class="row center">
+                <input type="submit" class="button" value="Сохранить изменения" />
+            </div>
+            <div class="row center">
+                <a href="ChangePassword" class="button-Cancel">Изменить пароль</a>
+            </div>
+        }
+    </div>
+</div>
+<div id="popup_avatar"></div>
+@section scripts
+{
+    <script>
+        $("#Year").focusout(function (e) {
+            var year = $("#Year").val();
+            if (year <= 1966) {
+                $("#Year").val(1966);
+            }
+            if (year >= @DateTime.Now.Year)  {
+                $("#Year").val(@DateTime.Now.Year);
+            }
+        });
+    </script>
+}

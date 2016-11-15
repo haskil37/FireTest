@@ -1,0 +1,22 @@
+﻿<div id="avatar">
+    <div class="wrapper">
+        <div class="content">
+            <ul>
+                @if (ViewBag.New == false)
+                {
+                    <li>Статистика</li>
+                    <a href="#2"><li>Вызов</li></a>
+                    <a href="/Manage/Index"><li>Настройки</li></a>
+                }
+                @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+                { 
+                    @Html.AntiForgeryToken()
+                    <a href="javascript:document.getElementById('logoutForm').submit()"><li>Выйти</li></a>
+                }
+            </ul>
+        </div>
+        <div class="parent">
+            <img src="@ViewBag.Avatar" /><h3>@ViewBag.Name</h3>
+        </div>
+    </div>
+</div>

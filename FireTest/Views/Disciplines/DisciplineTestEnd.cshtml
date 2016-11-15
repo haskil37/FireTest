@@ -1,0 +1,92 @@
+﻿@model List<FireTest.Models.TestWrongAnswers>
+@{
+    ViewBag.Title = "Тест по дисциплине - \"" + ViewBag.DisciplineName + "\"";
+}
+<div class="row endHeader">
+    <div class="center"><h3>Тест по дисциплине - "@((string)ViewBag.DisciplineName)" пройден!</h3></div>
+</div>
+<div class="row">
+    <div class="col-3 center">
+        <img class="avatar" src="@ViewBag.Avatar" />
+    </div>
+    <div class="col-3 center">
+        <div class="chart" id="graph" data-percent="@ViewBag.RightP"></div>
+        <div class="row">
+            @if (@ViewBag.RightP >= 70 && @ViewBag.RightP < 90)
+            {
+                <h3>Хорошо</h3>
+            }
+            @if (@ViewBag.RightP >= 90)
+            {
+                <h3>Отлично</h3>
+            }
+            @if (@ViewBag.RightP >= 50 && @ViewBag.RightP < 70)
+            {
+                <h3>Удовлетворительно</h3>
+            }
+            @if (@ViewBag.RightP < 50)
+            {
+                <h3>Плохо</h3>
+            }
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="textback">
+            <div class="row"><h5><b>Всего вопросов: @ViewBag.Count</b></h5></div>
+            <div class="row"><h5><b>Правильных ответов: @ViewBag.Right</b></h5></div>
+            <div class="row"><h5><b>Неправильных ответов: @(ViewBag.Count - ViewBag.Right)</b></h5></div>
+        </div>
+    </div>
+</div>
+<br />
+<br />
+<div class="row">
+    @{ Html.RenderAction("Rating", "Home"); }
+</div>
+@section scripts
+{
+    <script>
+        var el = document.getElementById('graph'); // get canvas
+
+        var options = {
+            percent:  el.getAttribute('data-percent') || 25,
+            size: el.getAttribute('data-size') || 200,
+            lineWidth: el.getAttribute('data-line') || 15,
+            rotate: el.getAttribute('data-rotate') || 0
+        }
+
+        var canvas = document.createElement('canvas');
+        var span = document.createElement('span');
+        span.textContent = options.percent + '%';
+        span.className = 'span';
+
+        if (typeof(G_vmlCanvasManager) !== 'undefined') {
+            G_vmlCanvasManager.initElement(canvas);
+        }
+
+        var ctx = canvas.getContext('2d');
+        canvas.width = canvas.height = options.size;
+
+        el.appendChild(span);
+        el.appendChild(canvas);
+
+        ctx.translate(options.size / 2, options.size / 2); // change center
+        ctx.rotate((-1 / 2 + options.rotate / 180) * Math.PI); // rotate -90 deg
+
+        //imd = ctx.getImageData(0, 0, 240, 240);
+        var radius = (options.size - options.lineWidth) / 2;
+
+        var drawCircle = function(color, lineWidth, percent) {
+            percent = Math.min(Math.max(0, percent || 1), 1);
+            ctx.beginPath();
+            ctx.arc(0, 0, radius, 0, Math.PI * 2 * percent, false);
+            ctx.strokeStyle = color;
+            ctx.lineCap = 'round'; // butt, round or square
+            ctx.lineWidth = lineWidth
+            ctx.stroke();
+        };
+
+        drawCircle('#d2d3d7', options.lineWidth, 100 / 100);
+        drawCircle('#ff7300', options.lineWidth, options.percent / 100);
+    </script>
+}

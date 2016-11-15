@@ -1,0 +1,58 @@
+﻿@{
+    ViewBag.Title = "Поединок | Победитель";
+}
+@Styles.Render("~/Content/battle")
+@Styles.Render("~/Content/audio")
+@if (ViewBag.You == 1)
+{
+    <div class="music">
+        <span id="play-button" onclick="Audio_Stop()" class="pause"></span>
+        <span id="volume-button" class="volume" onclick="Volume_Off()"></span>
+        <input type="range" min="0" max="10" id="volume" oninput="Audio_Volume()" value="5" />
+        <audio id="audio" preload="auto" src="~/Content/battle.mp3" loop="loop" autoplay="autoplay" />
+    </div>
+}
+<div class="row center">
+    <h3>Поединок окончен!</h3>
+    <h3>В схватке победил @ViewBag.NameWinner, поздравляем!</h3>
+</div>
+<div class="row">
+    <div class="col-offset-1 col-4 center">
+        <img class="avatar" src="@ViewBag.AvatarFirst" />
+ @if (ViewBag.Winner == 1)
+            {        <span class="winner"></span>
+
+            }
+    </div>
+    <div class="col-offset-2 col-4 center">
+        <img class="avatar" src="@ViewBag.AvatarSecond" />
+ @if (ViewBag.Winner == 2)
+            {        <span class="winner"></span>
+
+            }
+    </div>
+</div>
+<div class="row">
+    <div class="col-offset-1 col-4 center">
+        <div class="row">@ViewBag.NameFirst</div>
+        <div class="row">
+            <h3>
+                Правильных ответов<br /><b>@ViewBag.RightFirst</b>
+                <br />Время<br /><b>@ViewBag.TimeMinFirst мин. @ViewBag.TimeSecFirst сек.</b>
+            </h3>
+        </div>
+    </div>
+    <div class="col-offset-2 col-4 center">
+        <div class="row">@ViewBag.NameSecond</div>
+        <div class="row">
+            <h3>
+                Правильных ответов<br /><b>@ViewBag.RightSecond</b>
+                <br />Время<br /><b>@ViewBag.TimeMinSecond мин. @ViewBag.TimeSecSecond сек.</b>
+            </h3>
+        </div>
+    </div>
+</div>
+@section scripts
+{
+    @Scripts.Render("~/bundles/audio")
+}

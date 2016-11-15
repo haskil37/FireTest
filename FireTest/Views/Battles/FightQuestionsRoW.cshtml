@@ -1,0 +1,65 @@
+﻿@model List<List<string>>
+@{
+    if (Model != null)
+    {
+        for (int i = 0; i <= 1; i++)
+        {
+            <div class="col-5">
+                <div class="row">
+                    @if (ViewBag.First != 0 && ViewBag.Second != 0)
+                    {
+                        foreach (var item in Model[i])
+                        {
+                            if (item == "0")
+                            {
+                                <div class="wrong" />
+                            }
+                            else
+                            {
+                                <div class="right" />
+                            }
+                        }
+                    }
+                    @if (ViewBag.First != 0 && ViewBag.Second == 0)
+                    {
+                        if (i == 0)
+                        {
+                            foreach (var item in Model[0])
+                            {
+                                if (item == "0")
+                                {
+                                    <div class="wrong" />
+                                }
+                                else
+                                {
+                                    <div class="right" />
+                                }
+                            }
+                        }
+                    }
+                    @if (ViewBag.First == 0 && ViewBag.Second != 0)
+                    {
+                        if (i == 1)
+                        {
+                            foreach (var item in Model[0])
+                            {
+                                if (item == "0")
+                                {
+                                    <div class="wrong"/>
+                                }
+                                else
+                                {
+                                    <div class="right"/>
+                                }
+                            }
+                        }
+                    }
+                </div>
+            </div>
+            if (i == 0)
+            {
+                <div class="col-2"></div>
+            }
+        }
+    }
+}

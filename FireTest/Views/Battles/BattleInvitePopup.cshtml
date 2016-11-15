@@ -1,0 +1,56 @@
+﻿@model List<FireTest.Models.UsersData>
+@if (Model != null)
+{
+    using (Html.BeginForm("inviteAnswer", "Battles", new { id = (int)ViewBag.Id }, FormMethod.Get, new { role = "form" }))
+    {
+        <div class="popup">
+            <div class="row center">
+                <div class="row"><h2>Поединок</h2><a class="close" href="#">&times;</a></div>
+                <div class="row"><h2>За @ViewBag.Course курс по квалификации @ViewBag.Qualification</h2></div>
+                <div class="row">
+                    <div class="col-6">
+                        <div><img class="avatar" src="@Model[0].Avatar" /></div>
+                        <div>@Model[0].Name @Model[0].Family</div>
+                        <br />
+                        <div>Учебная группа: @Model[0].Group</div>
+                        <div>Место в рейтинге: @Model[0].Rating</div>
+                        <div>Процент правильных ответов: @Model[0].CorrectAnswers</div>
+                        <div>Количество поединков: @Model[0].Battles</div>
+                    </div>
+                    <div class="col-6">
+                        <div><img class="avatar" src="@Model[1].Avatar" /></div>
+                        <div>@Model[1].Name @Model[1].Family</div>
+                        <br />
+                        <div>Учебная группа: @Model[1].Group</div>
+                        <div>Место в рейтинге: @Model[1].Rating</div>
+                        <div>Процент правильных ответов: @Model[1].CorrectAnswers</div>
+                        <div>Количество поединков: @Model[1].Battles</div>
+                    </div>
+                </div>
+                <div class="row center ready">Вы готовы начать поединок?</div>
+                <div class="row center"><button type="submit" value="Accept" name="submitButton" class="button">НАЧАТЬ ПОЕДИНОК</button></div>
+                <div class="row center"><button type="submit" value="Cancel" name="submitButton" class="button-Cancel">Отклонить вызов</button></div>
+
+            </div>
+        </div>
+        <script>
+        $(".close").click(function () {
+            BattleInviteInterval = setInterval(function () { $('#invite').load('/Battles/BattleInvite', { type: 'POST' }); }, 3000);
+            $('.popup').remove();
+        });
+        $(".battle-buttonCancel").click(function () {
+            BattleInviteInterval = setInterval(function () { $('#invite').load('/Battles/BattleInvite', { type: 'POST' }); }, 3000);
+            $('.popup').remove();
+        });
+        $(document).mouseup(function(e)
+        {
+            var container = $("#popup_invite");
+            if (!container.is(e.target) && container.has(e.target).length === 0)
+            {
+                BattleInviteInterval = setInterval(function () { $('#invite').load('/Battles/BattleInvite', { type: 'POST' }); }, 3000);
+                $('.popup').remove();
+            }
+        });
+        </script>
+    }
+}

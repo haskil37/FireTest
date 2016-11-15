@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, shrink-to-fit=no, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    @Styles.Render("~/Content/general")
+    <title>FireTest</title>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+        showMathMenu: false,
+        showMathMenuMSIE: false,
+        showMathPlayer: false,
+        showRenderer: false,
+        preRemoveClass: "MathJax_Preview",
+        showProcessingMessages: false,
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        "HTML-CSS": {
+        styles: {".MathJax:focus, body :focus .MathJax":{display:"inline"},".MathJax":{"font-size":"20px","margin":"0.5em","outline":"none"}}
+        }
+        });
+    </script>
+    <script src="~/Scripts/MathJax/MathJax.js"></script>
+</head>
+<body>
+    <div id="header">
+        <div class="logo">
+            <img src="~/Content/logo.png" />
+        </div>
+        <img class="ipsa" src="~/Content/ipsa.png" />
+        <div class="menu-toggle">
+            <a href="#menu-toggle" id="menu-toggle">
+                <span class="material-design-hamburger__icon">
+                    <span class="material-design-hamburger__layer" id="menu-toggle"></span>
+                </span>
+            </a>
+        </div>
+        <div class="title">
+            <h3>@ViewBag.Title</h3>
+            <div id="UserInfo">
+                @{ Html.RenderAction("UserInfo", "Home"); }
+            </div>
+        </div>
+    </div>
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <div id="sidebar">
+            @{ Html.RenderAction("Menu", "Home"); }
+        </div>
+        <!-- /#sidebar -->
+        <div id="page-content">
+            <div id="popup_invite"></div>
+            @RenderBody()
+        </div>
+    </div>
+    <!-- /#wrapper -->
+    @Scripts.Render("~/bundles/jquery")    
+
+    @RenderSection("scripts", required: false)
+    <script>
+        $("#menu-toggle").click(function (e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+        });
+        $(".spoiler").click(function () {
+            $(this).next().slideToggle();
+        });
+        (function () {
+            'use strict';
+            document.querySelector('.material-design-hamburger__icon').addEventListener(
+              'click',
+              function () {
+                  var child = this.childNodes[1].classList;
+                  if (child.contains('material-design-hamburger__icon--to-arrow')) {
+                      child.remove('material-design-hamburger__icon--to-arrow');
+                      child.add('material-design-hamburger__icon--from-arrow');
+                  } else {
+                      child.remove('material-design-hamburger__icon--from-arrow');
+                      child.add('material-design-hamburger__icon--to-arrow');
+                  }
+              });
+        })();
+        BattleInviteInterval = setInterval(function () { $('#invite').load('/Battles/BattleInvite', { type: 'POST' }); }, 3000);
+        $(".button_invite").click(function () {
+            clearInterval(BattleInviteInterval);
+        });
+    </script>
+</body>
+</html>

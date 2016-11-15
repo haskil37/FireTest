@@ -1,0 +1,31 @@
+﻿@model FireTest.Models.DepartmentsAndSubjects
+<div id="departments">
+    @foreach (var itemD in Model.Department)
+    {
+        <div class="wrapper col-4">
+            <div class="content">
+                <ol>
+                    @foreach (var itemS in Model.Subject)
+                    {
+                        if (itemS.IdDepartment == itemD.Id)
+                        {
+                            <li>
+                                <a href="@Url.Action("Index", "Disciplines", new { id = itemS.Id })">
+                                    @itemS.Name
+                                </a>
+                            </li>
+                        }
+                    }
+                </ol>
+            </div>
+            <div class="parent">
+                <div class="leftD">
+                    <div class='department d@(itemD.Id != 0 ? itemD.Id.ToString() : "")'></div>
+                </div>
+                <div class="rightD">
+                    @itemD.Name
+                </div>
+            </div>
+        </div>
+    }
+</div>

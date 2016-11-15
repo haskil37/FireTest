@@ -1,0 +1,36 @@
+﻿<div id="countCourse" class="center">
+    <div class="row"><h3>По данной дисциплине в базе @ViewBag.Count вопросов.</h3></div>
+    <div class="row"><h3>Выберите количество вопросов</h3></div>
+    <div class="row">
+        @if (ViewBag.CountMax == 0)
+        {
+            <input type="range" min="1" max="10" id="count" name="count" oninput="countD()" value="1">
+        }
+        else
+        {
+            <input type="range" min="1" max="@ViewBag.CountMax" id="count" name="count" oninput="countD()" value="1">
+        }
+    </div>
+    <div class="row center">
+        <h4 id="countText">10</h4>
+        <script>
+            function countD() {
+                    var count = 10 * document.getElementById("count").value;
+                    if (count > @ViewBag.Count && @ViewBag.CountMax != 0){
+                        document.getElementById('countText').innerHTML = @ViewBag.Count;
+                    }
+                    else{
+                        document.getElementById('countText').innerHTML = count;
+                    }
+                }
+        </script>
+    </div>
+    <div class="row"><h3>Вы хотите начать тестирование?</h3></div>
+    @Html.Hidden("course", (int)ViewBag.Course)
+    <div class="row">
+        <button type="submit" value="Accept" name="submitButton" class="button">Да</button>
+    </div>
+    <div class="row">
+        <button type="submit" value="Cancel" name="submitButton" class="button-Cancel">Нет</button>
+    </div>
+</div>

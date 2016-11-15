@@ -1,0 +1,35 @@
+﻿@{
+    ViewBag.Title = "Ожидание второго игрока";
+}
+<div class="row center">
+    <h3>Поединок окончен</h3>
+    <div class="spinner">
+        <div class="bounce1"></div>
+        <div class="bounce2"></div>
+        <div class="bounce3"></div>
+    </div>
+    <div class="row"><h3>Ожидание второго игрока</h3></div>
+</div>
+<div class="row">
+    <div class="col-offset-4 col-4 center">
+        <div class="row">
+            <img class="avatar" src="@ViewBag.Avatar" />
+        </div>
+        <div class="row">
+            <h3>
+                @ViewBag.You
+                <br />
+                Правильных ответов
+                <br />
+                <b>@ViewBag.Right</b>
+                <br />Время
+                <br />
+                <b>@ViewBag.TimeMin мин. @ViewBag.TimeSec сек.</b>
+            </h3>
+        </div>
+    </div>
+</div>
+<div id="BattleEndWait"></div>
+<script>
+    setInterval(function () { $('#BattleEndWait').load('/Battles/BattleEndWait/' + @ViewBag.Id, { type: 'POST' }); }, 3000);
+</script>

@@ -1,0 +1,20 @@
+﻿@if (ViewBag.Result == false)
+{
+    <div class="row center">
+        <h3>Поединок был отменен другим игроком или вышло время ожидания.</h3>
+    </div>
+    <script>
+        clearInterval(timer);
+        document.getElementById("wait").remove();
+    </script>
+}
+@if (ViewBag.Agree == true)
+{
+    <div class="row center">
+        <button type="submit" value="Accept" name="submitButton" class="button">НАЧАТЬ ПОЕДИНОК</button>
+    </div>
+    <script>
+        clearInterval(timer);
+        document.getElementById("wait").remove();
+    </script>
+}

@@ -1,0 +1,143 @@
+﻿.battleIndexPeople{
+    width: 40%;
+}
+.battleIndexFire{
+    width: 100%;
+    margin-top: -100%;
+}
+input.course:empty, input.qualification:empty{
+    display: none;
+    opacity: 0;
+}
+input.course:empty ~ label, input.qualification:empty ~ label {
+    cursor: pointer;
+}
+#BattleCourse .course-1:after, #BattleCourse .course-2:after, #BattleCourse .course-3:after, #BattleCourse .course-4:after, #BattleCourse .course-5:after{
+    background-size: 150px 150px;
+    width: 150px;
+    height: 150px;
+    content: "";
+    float: left;
+}
+#BattleCourse .course-1:hover:after,#BattleCourse  .course-2:hover:after,#BattleCourse  .course-3:hover:after,#BattleCourse  .course-4:hover:after,#BattleCourse  .course-5:hover:after,#BattleQualification .qualification-1:hover:after,#BattleQualification .qualification-2:hover:after,#BattleQualification .qualification-3:hover:after,#BattleQualification .qualification-4:hover:after,#BattleQualification .qualification-5:hover:after{
+      border:0;
+}
+#BattleCourse .course-1:after{
+    background-image: url(/Content/1.png);
+}
+#BattleCourse .course-2:after{
+    background-image: url(/Content/2.png);
+}
+#BattleCourse .course-3:after{
+    background-image: url(/Content/3.png);
+}
+#BattleCourse .course-4:after{
+    background-image: url(/Content/4.png);
+}
+#BattleCourse .course-5:after{
+    background-image: url(/Content/5.png);
+}
+#BattleCourse input.course:checked ~.course-1:after{
+    background-image: url('/Content/1Hover.png');
+}
+#BattleCourse input.course:checked ~.course-2:after{
+    background-image: url('/Content/2Hover.png');
+}
+#BattleCourse input.course:checked ~.course-3:after{
+    background-image: url('/Content/3Hover.png');
+}
+#BattleCourse input.course:checked ~.course-4:after{
+    background-image: url('/Content/4Hover.png');
+}
+#BattleCourse input.course:checked ~.course-5:after{
+    background-image: url('/Content/5Hover.png');
+}
+
+#BattleQualification .qualification-1:after, #BattleQualification .qualification-2:after, #BattleQualification .qualification-3:after, #BattleQualification .qualification-4:after, #BattleQualification .qualification-5:after{
+    background-size: 150px 150px;
+    width: 150px;
+    height: 150px;
+    content: "";
+    float: left;
+}
+#BattleQualification .qualification-1:after{
+    background-image: url('/Content/Firefighter.png');
+}
+#BattleQualification .qualification-2:after{
+    background-image: url('/Content/Commander.png');
+}
+#BattleQualification .qualification-3:after{
+    background-image: url('/Content/Guard.png');
+}
+#BattleQualification .qualification-4:after{
+    background-image: url('/Content/Inspector.png');
+}
+#BattleQualification .qualification-5:after{
+    background-image: url('/Content/Engineer.png');
+}
+#BattleQualification input.qualification:checked ~.qualification-1:after{
+      background-image:url('/Content/FirefighterHover.png');
+}
+#BattleQualification input.qualification:checked ~.qualification-2:after{
+      background-image:url('/Content/CommanderHover.png');
+}
+#BattleQualification input.qualification:checked ~.qualification-3:after{
+      background-image:url('/Content/GuardHover.png');
+}
+#BattleQualification input.qualification:checked ~.qualification-4:after{
+      background-image:url('/Content/InspectorHover.png');
+}
+#BattleQualification input.qualification:checked ~.qualification-5:after{
+      background-image:url('/Content/EngineerHover.png');
+}
+.vs, .prepare{
+    width:100%;
+}
+.prepare {
+    margin-bottom: -100%;
+}
+.vs {
+    margin-top: 50%;
+}
+.timer{
+    font-size: 20px;
+}
+.right, .wrong{
+    display: inline-block;
+    margin: 5px;
+}
+.right:before {
+    font-family: 'Glyphicons Halflings';
+    content: "\e089";
+    font-size: 20px;
+    color: rgb(114, 191, 230);
+}
+.wrong:before {
+    font-family: 'Glyphicons Halflings';
+    content: "\e088";
+    font-size: 20px;
+    color: rgb(255, 115, 0);
+}
+.winner:after{
+          background-image:url('/Content/winner.png');
+    background-size: 100% 100%;
+    width: 300px;
+    height: 300px;
+    content: "";
+    float: left;
+    margin-top:-100%;
+}
+@media(max-width:1310px) {
+.winner:after{
+    width: 150px;
+    height: 150px;
+
+}
+
+}
+@media(max-width:1024px) {
+.winner:after{
+    width: 100px;
+    height: 100px;
+
+}}

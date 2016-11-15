@@ -1,0 +1,204 @@
+.Q-select .row {
+    text-align: center;
+    border-bottom: 1px dashed;
+}
+.Commander,
+.U-Commander {
+    max-width: 500px;
+    max-height: 500px;
+    background-image: url('Commander.png');
+    background-size: 100%;
+    height: 0;
+    padding-top: 100%
+}
+.Commander:hover {
+    background-image: url('CommanderHover.png');
+}
+.Engineer,
+.U-Engineer {
+    max-width: 500px;
+    max-height: 500px;
+    background-image: url('Engineer.png');
+    background-size: 100%;
+    height: 0;
+    padding-top: 100%
+}
+.Engineer:hover {
+    background-image: url('EngineerHover.png');
+}
+.Firefighter,
+.U-Firefighter {
+    max-width: 500px;
+    max-height: 500px;
+    background-image: url('Firefighter.png');
+    background-size: 100%;
+    height: 0;
+    padding-top: 100%
+}
+.Firefighter:hover {
+    background-image: url('FirefighterHover.png');
+}
+.Guard,
+.U-Guard {
+    max-width: 500px;
+    max-height: 500px;
+    background-image: url('Guard.png');
+    background-size: 100%;
+    height: 0;
+    padding-top: 100%
+}
+.Guard:hover {
+    background-image: url('GuardHover.png');
+}
+.Inspector,
+.U-Inspector {
+    max-width: 500px;
+    max-height: 500px;
+    background-image: url('Inspector.png');
+    background-size: 100%;
+    height: 0;
+    padding-top: 100%
+}
+.Inspector:hover {
+    background-image: url('InspectorHover.png');
+}
+.CommanderQ {
+    max-width: 200px;
+    max-height: 180px;
+    background-image: url('CommanderQ.png');
+    background-size: 100%;
+    height: 0;
+    width: 50%;
+    padding-top: 50%;
+    margin: 0 auto;
+    cursor: pointer;
+}
+.CommanderQ:hover {
+    background-image: url('CommanderQHover.png');
+}
+.EngineerQ {
+    max-width: 200px;
+    max-height: 180px;
+    background-image: url('EngineerQ.png');
+    background-size: 100%;
+    height: 0;
+    width: 50%;
+    padding-top: 50%;
+    margin: 0 auto;
+    cursor: pointer;
+}
+.EngineerQ:hover {
+    background-image: url('EngineerQHover.png');
+}
+.FirefighterQ {
+    max-width: 200px;
+    max-height: 180px;
+    background-image: url('FirefighterQ.png');
+    background-size: 100%;
+    height: 0;
+    width: 50%;
+    padding-top: 50%;
+    margin: 0 auto;
+    cursor: pointer;
+}
+.FirefighterQ:hover {
+    background-image: url('FirefighterQHover.png');
+}
+.GuardQ {
+    max-width: 200px;
+    max-height: 180px;
+    background-image: url('GuardQ.png');
+    background-size: 100%;
+    height: 0;
+    width: 50%;
+    padding-top: 50%;
+    margin: 0 auto;
+    cursor: pointer;
+}
+.GuardQ:hover {
+    background-image: url('GuardQHover.png');
+}
+.InspectorQ {
+    max-width: 200px;
+    max-height: 180px;
+    background-image: url('InspectorQ.png');
+    background-size: 100%;
+    height: 0;
+    width: 50%;
+    padding-top: 50%;
+    margin: 0 auto;
+    cursor: pointer;
+}
+.InspectorQ:hover {
+    background-image: url('InspectorQHover.png');
+}
+.course-1,
+.U-course-1 {
+    max-width: 530px;
+    max-height: 530px;
+    background-image: url('1.png');
+    background-size: 100%;
+    height: 0;
+    width: 50%;
+    padding-top: 50%;
+    margin: 0 auto;
+}
+.course-1:hover {
+    background-image: url('1Hover.png');
+}
+.course-2,
+.U-course-2 {
+    max-width: 530px;
+    max-height: 530px;
+    background-image: url('2.png');
+    background-size: 100%;
+    height: 0;
+    width: 50%;
+    padding-top: 50%;
+    margin: 0 auto;
+}
+.course-2:hover {
+    background-image: url('2Hover.png');
+}
+.course-3,
+.U-course-3 {
+    max-width: 530px;
+    max-height: 530px;
+    background-image: url('3.png');
+    background-size: 100%;
+    height: 0;
+    width: 50%;
+    padding-top: 50%;
+    margin: 0 auto;
+}
+.course-3:hover {
+    background-image: url('3Hover.png');
+}
+.course-4,
+.U-course-4 {
+    max-width: 530px;
+    max-height: 530px;
+    background-image: url('4.png');
+    background-size: 100%;
+    height: 0;
+    width: 50%;
+    padding-top: 50%;
+    margin: 0 auto;
+}
+.course-4:hover {
+    background-image: url('4Hover.png');
+}
+.course-5,
+.U-course-5 {
+    max-width: 530px;
+    max-height: 530px;
+    background-image: url('5.png');
+    background-size: 100%;
+    height: 0;
+    width: 50%;
+    padding-top: 50%;
+    margin: 0 auto;
+}
+.course-5:hover {
+    background-image: url('5Hover.png');
+}

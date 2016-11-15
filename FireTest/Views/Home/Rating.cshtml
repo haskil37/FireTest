@@ -1,0 +1,30 @@
+﻿@model List<FireTest.Models.Rating>
+@{
+    Layout = null;
+}
+<div class="row">
+    <div class="col-6">
+        <div class="textback rating-left">
+            <div class="row"><h3>Место в рейтинге: @ViewBag.RatingPosition</h3></div>
+            <div class="row">
+                @{ Html.RenderAction("RatingPlace", "Home"); }
+            </div>
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="textback rating-right">
+            <div class="row"><h3>Топ-5 Лидеров:</h3></div>
+            <div class="row">
+                <ol>
+                    @for (int i = 0; i < Model.Count(); i++)
+                    {
+                        <li>
+                            <img class="avatar-mini" src="@Model[i].Avatar" />
+                            <span>@Model[i].Name @Model[i].Family</span>
+                        </li>
+                    }
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>

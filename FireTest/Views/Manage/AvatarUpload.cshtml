@@ -1,0 +1,50 @@
+﻿<div class="popup">
+    <a class="close" href="">&times;</a>
+    <div class="row center">
+        <div id="message"></div>
+        <section id="avatar-upload-box">
+            @using (Ajax.BeginForm("AvatarUpload", "Manage",
+            new AjaxOptions() { HttpMethod = "POST" },
+            new { enctype = "multipart/form-data", id = "avatar-upload-form" }))
+            {
+                @Html.AntiForgeryToken()
+                <div id="drop-zone">
+                    Перетащите фотографию сюда...
+                    <div id="clickHere">
+                        или нажмите здесь.
+                        <input type="file" name="files"/><br>
+                    </div>
+                </div>
+                <div class="upload-file-notice">Максимальный размер файла: <span id="avatar-max-size"></span> мегабайт</div>
+            }
+            <div class="upload-progress row center hidden">
+                <div class="upload-percent-value">0%</div>
+                <div class="upload-percent-bar"></div>
+            </div>
+            <div id="upload-status"></div>
+        </section>
+        <section id="avatar-crop-box" class="hidden">
+                <img src="" id="crop-avatar-target" alt="Uploaded image" />
+                <div id="preview-pane">
+                    <div class="preview-container">
+                        <img src="" class="jcrop-preview" alt="Preview" />
+                    </div>
+                </div>
+            <button class="button" onclick="saveAvatar()">Сохранить фотографию</button>
+        </section>
+    </div>
+</div>
+@Scripts.Render("~/bundles/avatarUpload")
+<script>
+        $(document).mouseup(function (e)
+        {
+            var container = $("#popup_avatar");
+            if (!container.is(e.target) && container.has(e.target).length === 0)
+            {
+                $('.popup').remove();
+            }
+        });
+        $(".close").click(function () {
+            $('.popup').remove();
+        });
+</script>

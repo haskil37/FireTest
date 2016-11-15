@@ -1,0 +1,59 @@
+﻿@model FireTest.Models.RegisterViewModel
+@{
+    Layout = "~/Views/Shared/_Login.cshtml";
+    ViewBag.Title = "Регистрация";
+}
+<div class="login">
+    @Html.ActionLink("Вход", "Login") / Регистрация
+    <hr />
+    @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { role = "form" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary("", new { @class = "text-danger" })
+        <div class="row">
+            <div class="col-5">
+                @Html.LabelFor(m => m.Snils, new { @class = "right" })
+            </div>
+            <div class="col-7">
+                @Html.TextBoxFor(m => m.Snils)
+                @Html.ValidationMessageFor(m => m.Snils, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-5">
+                @Html.LabelFor(m => m.Email, new { @class = "right" })
+            </div>
+            <div class="col-7">
+                @Html.TextBoxFor(m => m.Email)
+                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-5">
+                @Html.LabelFor(m => m.Password, new { @class = "right" })
+            </div>
+            <div class="col-7">
+                @Html.PasswordFor(m => m.Password)
+                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-5">
+                @Html.LabelFor(m => m.ConfirmPassword, new { @class = "right" })
+            </div>
+            <div class="col-7">
+                @Html.PasswordFor(m => m.ConfirmPassword)
+                @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="row center">
+            <input type="submit" value="Регистрация" class="button" />
+        </div>
+    }
+</div>
+@section Scripts {
+    <script type="text/javascript">
+    $("#Snils").inputmask("999-999-999 99");
+    $("#Snils").focus();
+    </script>
+}

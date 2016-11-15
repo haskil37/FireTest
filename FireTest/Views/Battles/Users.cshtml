@@ -1,0 +1,30 @@
+﻿@model IEnumerable<FireTest.Models.UsersData>
+@foreach (var user in Model)
+{
+    <div class="wrapper col-4">
+        <div class="parent">
+            <img class="avatar-medium" src="@user.Avatar" /><h3>@user.Name @user.Family</h3>
+        </div>
+        <div class="content center">
+            <ul>
+                <li><img class="avatar-mini" src="@user.Avatar" /></li>
+                <li>@user.Name @user.Family</li>
+                <li>Учебная группа: @user.Group</li>
+                <li>Место в рейтинге: @user.Rating</li>
+                <li>Процент правильных ответов: @user.CorrectAnswers</li>
+                <li>Количество поединков: @user.Battles</li>
+                <li><a href="@Url.Action("Prepare", "Battles", new { id = user.Id })">Вызвать на поединок!</a></li>
+            </ul>
+        </div>
+    </div>
+}
+<script>
+    $(".wrapper").hover(
+      function () {
+          clearInterval(UserRefreshInterval);
+      },
+      function () {
+          UserRefreshInterval = setInterval(function () { $('#users').load('/Battles/Users/'); }, 3000);
+      }
+    );
+</script>

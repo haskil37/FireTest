@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, shrink-to-fit=no, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    @Styles.Render("~/Content/login")
+    @Styles.Render("~/Content/audio")
+    <title>FireTest</title>
+</head>
+<body>
+    <div class="row">
+        <div class="col-offset-7">
+            @RenderBody()
+        </div>
+    </div>
+    <div class="music">
+        <span id="play-button" onclick="Audio_Stop()" class="pause"></span>
+        <span id="volume-button" class="volume" onclick="Volume_Off()"></span>
+        <input type="range" min="0" max="10" id="volume" oninput="Audio_Volume()" value="5" />
+        <audio id="audio" preload="auto" src="~/Content/select.mp3" loop="loop" autoplay="autoplay" />
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jquerymask")
+    @Scripts.Render("~/bundles/audio")
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

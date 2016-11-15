@@ -1,0 +1,54 @@
+﻿@{
+    ViewBag.Title = "Тест по дисциплине - \"" + ViewBag.DisciplineName + "\"";
+}
+@if (ViewBag.Сompleted == true)
+{
+    using (Ajax.BeginForm("IndexCount", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        InsertionMode = InsertionMode.Replace,
+        UpdateTargetId = "countCourse",
+        LoadingElementId = "loadingIndicator",
+    }))
+    {
+        @Html.AntiForgeryToken();
+        <div class="row center"><h3>Выберите курс</h3></div>
+        <div id="DisciplinesCourse" class="row">
+            <div class="col-offset-1 col-2">
+                <button type="submit" value="1" name="course" class="course-1"/>
+            </div>
+            <div class="col-2">
+                <button type="submit" value="2" name="course" class="course-2"/>
+            </div>
+            <div class="col-2">
+                <button type="submit" value="3" name="course" class="course-3"/>
+            </div>
+            <div class="col-2">
+                <button type="submit" value="4" name="course" class="course-4"/>
+            </div>
+            <div class="col-2">
+                <button type="submit" value="5" name="course" class="course-5"/>
+            </div>
+        </div>
+    }
+    using (Html.BeginForm("Index", "Disciplines", new { id = ViewBag.Id }, FormMethod.Post, new { role = "form" }))
+    {
+        @Html.AntiForgeryToken()
+        <div id="countCourse"></div>
+    }
+}
+else
+{
+    using (Html.BeginForm("Index", "Disciplines", new { id = ViewBag.Id }, FormMethod.Post, new { role = "form" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="row"><h3>У Вас есть незаконченный тест по дисциплине "@ViewBag.DisciplineName"</h3></div>
+        <div class="row"><h3>Хотите продолжить?</h3></div>
+        <div class="row center">
+            <button type="submit" value="Accept" name="submitButton" class="button">Да</button>
+        </div>
+        <div class="row center">
+            <button type="submit" value="Cancel" name="submitButton" class="button-Cancel">Нет</button>
+        </div>
+    }
+}

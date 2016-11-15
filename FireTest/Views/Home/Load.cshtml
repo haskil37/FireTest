@@ -1,0 +1,32 @@
+﻿@{
+    Layout = null;
+    ViewBag.Title = "FireTest";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/preload")
+</head>
+<body style="background: #000; overflow:hidden">    
+    <div style="visibility: hidden">@Html.Raw(ViewBag.Images)</div>
+    <script>
+        window.addEventListener('DOMContentLoaded', function () {
+            'use strict';
+            var ql = QueryLoader2(document.querySelector('body'), {
+                barColor: '#c4bd97',
+                backgroundColor: '#000',
+                percentage: true,
+                barHeight: 1,
+                minimumTime: 200,
+                fadeOutTime: 1000,
+            });
+        });
+        if (document.readyState || document.body.readyState == 'complete')
+            window.location = '@Url.Action("Index", "Home")';
+    </script>
+    <script src="~/Scripts/MathJax/MathJax.js"></script>
+</body>
+</html>
