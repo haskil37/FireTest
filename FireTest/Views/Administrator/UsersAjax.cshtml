@@ -1,37 +1,66 @@
 ﻿@model PagedList.IPagedList<FireTest.Models.UsersForAdmin>
 @using PagedList.Mvc;
-<table class="table">
-    <tr>
-        <th>
-            Фото
-        </th>
-        <th>
-            Имя
-        </th>
-        <th>
-            Учитель
-        </th>
-        <th></th>
-    </tr>
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                <img class="avatar-mini" src="~/Images/Avatars/@Html.DisplayFor(modelItem => item.Avatar)" />
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Teacher)
-            </td>
-        </tr>
-    }
+@using (Ajax.BeginForm("UsersAjaxSave", new AjaxOptions
+{
+    HttpMethod = "Post",
+}))
+{
+    <div class="row">
+        <table>
+            <tr>
+                <th>
+                    Фото
+                </th>
+                <th>
+                    Имя
+                </th>
+                <th>
+                    Учитель
+                </th>
+                <th>
+                    Администратор
+                </th>
+            </tr>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="center">
+                        <img class="avatar-mini" src="~/Images/Avatars/@Html.DisplayFor(modelItem => item.Avatar)" />
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td class="center">
+                        @if (item.Teacher == true || item.Administrator == true)
+                        {
+                            <input id="Teacher" name="Teacher" type="checkbox" value="@item.Id" checked="checked" onchange="$(this.form).submit();">
+                        }
+                        else
+                        {
+                            <input id="Teacher" name="Teacher" type="checkbox" value="@item.Id" onchange="$(this.form).submit();">
+                        }
+                        <span></span>
+                    </td>
+                    <td class="center">
+                        @if (item.Administrator == true)
+                        {
+                            <input id="Administrator" name="Administrator" value="@item.Id" type="checkbox" checked="checked" onchange="$(this.form).submit();"/>
+                        }
+                        else
+                        {                            
+                            <input id="Administrator" name="Administrator" value="@item.Id" type="checkbox" onchange="$(this.form).submit();" />
+                        }
+                        <span></span>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+    <div>
+        Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
 
-</table>
-<br />
-Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
-
-@Html.PagedListPager(Model, page => Url.Action("UsersAjax",
+        @Html.PagedListPager(Model, page => Url.Action("UsersAjax",
     new { page, currentFilter = ViewBag.CurrentFilter }),
     PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "Users" }))
+    </div>
+}

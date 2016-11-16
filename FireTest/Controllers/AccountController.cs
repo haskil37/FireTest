@@ -6,6 +6,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using FireTest.Models;
+using System.Text.RegularExpressions;
 
 namespace FireTest.Controllers
 {
@@ -71,12 +72,13 @@ namespace FireTest.Controllers
             {
                 return View(model);
             }
-
-            var result = await SignInManager.PasswordSignInAsync(model.Snils, model.Password, model.RememberMe, shouldLockout: true);
+            string login = model.Snils.Replace(" ", string.Empty);
+            login = login.Replace("-", string.Empty);
+            var result = await SignInManager.PasswordSignInAsync(login, model.Password, model.RememberMe, shouldLockout: true);
             switch (result)
             {
                 case SignInStatus.Success:
-                    if (UserManager.FindByName(model.Snils).EmailConfirmed)
+                    if (UserManager.FindByName(login).EmailConfirmed)
                         return RedirectToLocal(returnUrl);
                     AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
                     ModelState.AddModelError("", "Учетная запись не подтверждена. Если хотите получить письмо подтверждения повторно, то нажмите <a href='EmailReconfirm/" + UserManager.FindByName(model.Snils).Id + "'>здесь</a>.");
@@ -123,7 +125,9 @@ namespace FireTest.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Snils, Email = model.Email, Snils = model.Snils, Avatar = "NoAvatar.png", LastActivity = DateTime.Now };
+                string login = model.Snils.Replace(" ", string.Empty);
+                login = login.Replace("-", string.Empty);
+                var user = new ApplicationUser { UserName = login, Email = model.Email, Snils = model.Snils, Avatar = "NoAvatar.png", LastActivity = DateTime.Now };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -183,7 +187,9 @@ namespace FireTest.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await UserManager.FindByNameAsync(model.Snils);
+                string login = model.Snils.Replace(" ", string.Empty);
+                login = login.Replace("-", string.Empty);
+                var user = await UserManager.FindByNameAsync(login);
                 if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.Id)))
                     return View("ForgotPasswordConfirmation");
 
@@ -221,7 +227,9 @@ namespace FireTest.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            var user = await UserManager.FindByNameAsync(model.Snils);
+            string login = model.Snils.Replace(" ", string.Empty);
+            login = login.Replace("-", string.Empty);
+            var user = await UserManager.FindByNameAsync(login);
             if (user == null)
                 return RedirectToAction("Login", "Account", new { message = "Пароль сброшен" });
 

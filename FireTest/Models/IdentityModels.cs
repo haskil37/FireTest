@@ -50,6 +50,7 @@ namespace FireTest.Models
     }
     public class UsersForAdmin
     {
+        public string Id { get; set; }
         public string Avatar { get; set; }
         public string Name { get; set; }
         public bool Teacher { get; set; }

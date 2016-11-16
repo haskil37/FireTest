@@ -1,2 +1,43 @@
-﻿body {
+﻿input#SearchString {
+    height:35px;
+    margin-left:15px;
+}
+input#SearchString:before{
+  font-family: 'Glyphicons Halflings';
+  content: "\e003";
+  margin-top:5px;
+}
+#Users table {
+    border-collapse: collapse;
+    width:100%;
+}
+
+#Users table, #Users td, #Users th {
+    border: 1px solid;
+    padding:10px;
+}
+#Users input[type="checkbox"] {
+    /*display: none;*/
+    
+    position: absolute;
+    zoom: 1.5;
+    margin-left: 1px;
+    margin-top: 1px;
+    opacity: 0;
+    cursor: pointer;
+}
+#Users input[type="checkbox"]:hover ~ span {
+    color: rgb(255, 115, 0);
+}
+#Users input[type="checkbox"] ~ span {
+    vertical-align: middle;
+}
+#Users input[type="checkbox"] ~ span {
+    font-family: 'Glyphicons Halflings';
+}
+#Users input[type="checkbox"] ~ span:before {
+    content: "\e157";
+}
+#Users input[type="checkbox"]:checked ~ span:before {
+    content: "\e067";
 }

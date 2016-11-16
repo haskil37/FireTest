@@ -100,6 +100,9 @@ namespace FireTest.Controllers
         {
             string userId = User.Identity.GetUserId();
             ApplicationUser user = dbContext.Users.Find(userId);
+            if(user==null)
+                return PartialView(false);
+
             user.LastActivity = DateTime.Now;
             dbContext.SaveChanges();
 
