@@ -1,0 +1,37 @@
+﻿@model PagedList.IPagedList<FireTest.Models.UsersForAdmin>
+@using PagedList.Mvc;
+<table class="table">
+    <tr>
+        <th>
+            Фото
+        </th>
+        <th>
+            Имя
+        </th>
+        <th>
+            Учитель
+        </th>
+        <th></th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                <img class="avatar-mini" src="~/Images/Avatars/@Html.DisplayFor(modelItem => item.Avatar)" />
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Teacher)
+            </td>
+        </tr>
+    }
+
+</table>
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("UsersAjax",
+    new { page, currentFilter = ViewBag.CurrentFilter }),
+    PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "Users" }))

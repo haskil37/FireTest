@@ -1,0 +1,26 @@
+﻿@{
+    ViewBag.Title = "Пользователи";
+}
+@Styles.Render("~/Content/administrator")
+@using (Ajax.BeginForm("UsersAjax", new AjaxOptions
+{
+    HttpMethod = "GET",
+    InsertionMode = InsertionMode.Replace,
+    UpdateTargetId = "Users",
+}))
+{
+    <div class="row">
+        <span class="search">Поиск</span><input id="SearchString" name="SearchString" type="text">
+    </div>
+}
+<div id="Users">
+    @{ Html.RenderAction("UsersAjax"); }
+</div>
+@section scripts
+{
+    <script>
+    $('#SearchString').keyup(function () {
+        $(this.form).submit();
+    });
+    </script>
+}

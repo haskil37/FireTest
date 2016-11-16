@@ -44,6 +44,10 @@ namespace FireTest
             bundles.Add(new StyleBundle("~/Content/battle").Include(
                       "~/Content/battle.css"));
 
+            bundles.Add(new StyleBundle("~/Content/administrator").Include(
+                      "~/Content/PagedList.css",
+                      "~/Content/administrator.css"));
+
             bundles.Add(new StyleBundle("~/Content/login").Include(
                       "~/Content/login.css"));
         }

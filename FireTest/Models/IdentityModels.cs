@@ -48,6 +48,13 @@ namespace FireTest.Models
         public string Group { get; set; }
         public int Rating { get; set; }
     }
+    public class UsersForAdmin
+    {
+        public string Avatar { get; set; }
+        public string Name { get; set; }
+        public bool Teacher { get; set; }
+        public bool Administrator { get; set; }
+    }
     #endregion
     #region Структура (факультеты, дисциплины, специальности, квалификации, группы)
     public class Department
