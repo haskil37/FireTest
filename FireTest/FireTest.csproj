@@ -31164,6 +31164,8 @@
     <Content Include="Views\Administrator\Index.cshtml" />
     <Content Include="Views\Administrator\Users.cshtml" />
     <Content Include="Views\Administrator\UsersAjax.cshtml" />
+    <Content Include="Views\Administrator\TeacherSubjects.cshtml" />
+    <Content Include="Views\Administrator\TeacherSubjectsAjax.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,0 +1,51 @@
+﻿@model PagedList.IPagedList<FireTest.Models.SubjectAccess>
+@using PagedList.Mvc;
+@using (Ajax.BeginForm("TeacherSubjectsAjax", new AjaxOptions
+{
+    HttpMethod = "Get",
+    InsertionMode = InsertionMode.Replace,
+    UpdateTargetId = "Subjects",
+}))
+{
+    @Html.Hidden("Page", (int)ViewBag.Page)
+    <div class="row">
+        <table>
+            <tr>
+                <th>
+                    Название дисциплины                
+                </th>
+                <th>
+                    Имеет доступ
+                </th>
+            </tr>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td class="center">
+                        @if (item.Access == true)
+                        {
+                            <div class="buttonTeacherYes">
+                                <button type="submit" value="@item.Id" name="submitButton"></button>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="buttonTeacherNo">
+                                <button type="submit" value="@item.Id" name="submitButton"></button>
+                            </div>
+                        }
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+    <div>
+        Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
+        @Html.PagedListPager(Model, page => Url.Action("TeacherSubjectsAjax",
+            new { page, currentFilter = ViewBag.CurrentFilter }),
+            PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "Subjects" }))
+    </div>
+}

@@ -69,6 +69,12 @@ namespace FireTest.Models
         public string Name { get; set; }
         public int IdDepartment { get; set; }
     }
+    public class SubjectAccess
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public bool Access { get; set; }
+    }
     public class DepartmentsAndSubjects
     {
         public List<Department> Department { get; set; }

@@ -1,10 +1,13 @@
 ﻿@model PagedList.IPagedList<FireTest.Models.UsersForAdmin>
 @using PagedList.Mvc;
-@using (Ajax.BeginForm("UsersAjaxSave", new AjaxOptions
+@using (Ajax.BeginForm("UsersAjax", new AjaxOptions
 {
-    HttpMethod = "Post",
+    HttpMethod = "Get",
+    InsertionMode = InsertionMode.Replace,
+    UpdateTargetId = "Users",
 }))
 {
+    @Html.Hidden("Page", (int)ViewBag.Page)
     <div class="row">
         <table>
             <tr>
@@ -31,26 +34,35 @@
                         @Html.DisplayFor(modelItem => item.Name)
                     </td>
                     <td class="center">
-                        @if (item.Teacher == true || item.Administrator == true)
+                        @if (item.Administrator != true)
                         {
-                            <input id="Teacher" name="Teacher" type="checkbox" value="@item.Id" checked="checked" onchange="$(this.form).submit();">
+                            if (item.Teacher == true)
+                            {
+                                <div class="buttonTeacherYes">
+                                    <button type="submit" value="Teacher|@item.Id|false" name="submitButton"></button>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="buttonTeacherNo">
+                                    <button type="submit" value="Teacher|@item.Id|true" name="submitButton"></button>
+                                </div>
+                            }
                         }
-                        else
-                        {
-                            <input id="Teacher" name="Teacher" type="checkbox" value="@item.Id" onchange="$(this.form).submit();">
-                        }
-                        <span></span>
                     </td>
                     <td class="center">
                         @if (item.Administrator == true)
                         {
-                            <input id="Administrator" name="Administrator" value="@item.Id" type="checkbox" checked="checked" onchange="$(this.form).submit();"/>
+                            <div class="buttonTeacherYes">
+                                <button type="submit" value="Administrator|@item.Id|false" name="submitButton"></button>
+                            </div>
                         }
                         else
-                        {                            
-                            <input id="Administrator" name="Administrator" value="@item.Id" type="checkbox" onchange="$(this.form).submit();" />
+                        {
+                            <div class="buttonTeacherNo">
+                                <button type="submit" value="Administrator|@item.Id|true" name="submitButton"></button>
+                            </div>
                         }
-                        <span></span>
                     </td>
                 </tr>
             }

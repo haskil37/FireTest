@@ -1,24 +1,18 @@
 ﻿input#SearchString {
-    height:35px;
-    margin-left:15px;
-}
-input#SearchString:before{
-  font-family: 'Glyphicons Halflings';
-  content: "\e003";
-  margin-top:5px;
+    height: 35px;
+    margin-left: 15px;
 }
 #Users table {
     border-collapse: collapse;
-    width:100%;
+    width: 100%;
 }
-
-#Users table, #Users td, #Users th {
+#Users table,
+#Users td,
+#Users th {
     border: 1px solid;
-    padding:10px;
+    padding: 10px;
 }
 #Users input[type="checkbox"] {
-    /*display: none;*/
-    
     position: absolute;
     zoom: 1.5;
     margin-left: 1px;
@@ -40,4 +34,50 @@ input#SearchString:before{
 }
 #Users input[type="checkbox"]:checked ~ span:before {
     content: "\e067";
+}
+.buttonTeacherNo button,
+.buttonTeacherYes button {
+    font-size: 20px;
+    color: rgb(196, 189, 151);
+    background: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    vertical-align: middle;
+}
+.buttonTeacherNo button:hover,
+.buttonTeacherYes button:hover {
+    color: rgb(255, 115, 0);
+}
+.buttonTeacherNo button:before,
+.buttonTeacherYes button:before {
+    font-family: 'Glyphicons Halflings';
+}
+.buttonTeacherNo button:before {
+    content: "\e088";
+}
+.buttonTeacherYes button:before {
+    content: "\e089";
+}
+.pagination > li > a,
+.pagination > li > span {
+    background-color: transparent;
+    border: 1px solid rgb(196, 189, 151);
+}
+.pagination > li > a:hover,
+.pagination > li > span:hover,
+.pagination > li > a:focus,
+.pagination > li > span:focus {
+    background-color: rgba(196, 189, 151, 0.5);
+}
+.pagination > .active > a,
+.pagination > .active > span,
+.pagination > .active > a:hover,
+.pagination > .active > span:hover,
+.pagination > .active > a:focus,
+.pagination > .active > span:focus {
+    z-index: 2;
+    cursor: default;
+    background-color: rgb(255, 115, 0);
+    border-color: rgb(196, 189, 151);
 }
