@@ -1,20 +1,20 @@
 ﻿@{
-    ViewBag.Title = "Дисциплины";
+    ViewBag.Title = "Пользователи";
 }
 @Styles.Render("~/Content/administrator")
-@using (Ajax.BeginForm("TeacherSubjectsAjax", new AjaxOptions
+@using (Ajax.BeginForm("SelectTeacherAjax", new AjaxOptions
 {
     HttpMethod = "Get",
     InsertionMode = InsertionMode.Replace,
-    UpdateTargetId = "Subjects",
+    UpdateTargetId = "Users",
 }))
 {
     <div class="row">
         <h3>Поиск<span class="search"></span><input id="SearchString" name="SearchString" type="text"></h3>
     </div>
 }
-<div id="Subjects">
-    @{ Html.RenderAction("TeacherSubjectsAjax", new { Page = 1, userId = ViewBag.userId }); }
+<div id="Users">
+    @{ Html.RenderAction("SelectTeacherAjax", new { Page = 1 }); }
 </div>
 @section scripts
 {

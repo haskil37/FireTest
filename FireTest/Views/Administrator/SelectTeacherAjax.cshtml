@@ -1,0 +1,64 @@
+﻿@model PagedList.IPagedList<FireTest.Models.UsersForAdmin>
+@using PagedList.Mvc;
+@using (Ajax.BeginForm("SelectTeacherAjax", new AjaxOptions
+{
+    HttpMethod = "Get",
+    InsertionMode = InsertionMode.Replace,
+    UpdateTargetId = "Users",
+}))
+{
+    @Html.Hidden("Page", (int)ViewBag.Page)
+    <div class="row">
+        <table>
+            <tr>
+                <th>
+                    Фото
+                </th>
+                <th>
+                    Имя
+                </th>
+                <th>
+                    Ответственный <br/>за квалификации
+                </th>
+                <th>
+                    Дисциплины
+                </th>
+            </tr>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="center" width="100">
+                        <img class="avatar-mini" src="~/Images/Avatars/@Html.DisplayFor(modelItem => item.Avatar)" />
+                    </td>
+                    <td>
+                        @item.Name
+                    </td>
+                    <td class="center" width="200">
+                        @if (item.Qualification == true)
+                        {
+                            <div class="Yes">
+                                <button type="submit" value="@item.Id" name="submitButton"></button>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="No">
+                                <button type="submit" value="@item.Id" name="submitButton"></button>
+                            </div>
+                        }
+                    </td>
+                    <td class="center" width="250">
+                        <a href="TeacherSubjects?userId=@item.Id" class="button">Перейти к выбору</a>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+    <div>
+        Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
+
+        @Html.PagedListPager(Model, page => Url.Action("SelectTeacherAjax",
+        new { page, currentFilter = ViewBag.CurrentFilter }),
+        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "Users" }))
+    </div>
+}

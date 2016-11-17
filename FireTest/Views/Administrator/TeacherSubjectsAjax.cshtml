@@ -8,6 +8,7 @@
 }))
 {
     @Html.Hidden("Page", (int)ViewBag.Page)
+    @Html.Hidden("userId", (string)ViewBag.userId)
     <div class="row">
         <table>
             <tr>
@@ -24,16 +25,16 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Name)
                     </td>
-                    <td class="center">
+                    <td class="center" width="15%">
                         @if (item.Access == true)
                         {
-                            <div class="buttonTeacherYes">
+                            <div class="Yes">
                                 <button type="submit" value="@item.Id" name="submitButton"></button>
                             </div>
                         }
                         else
                         {
-                            <div class="buttonTeacherNo">
+                            <div class="No">
                                 <button type="submit" value="@item.Id" name="submitButton"></button>
                             </div>
                         }
@@ -45,7 +46,7 @@
     <div>
         Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
         @Html.PagedListPager(Model, page => Url.Action("TeacherSubjectsAjax",
-            new { page, currentFilter = ViewBag.CurrentFilter }),
+            new { page, currentFilter = ViewBag.CurrentFilter, userId = ViewBag.userId }),
             PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "Subjects" }))
     </div>
 }

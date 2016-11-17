@@ -2,41 +2,24 @@
     height: 35px;
     margin-left: 15px;
 }
-#Users table {
+#Users a {
+    text-decoration:none;
+}
+#Users table, #Subjects table {
     border-collapse: collapse;
     width: 100%;
 }
 #Users table,
 #Users td,
-#Users th {
+#Users th,
+#Subjects table,
+#Subjects td,
+#Subjects th {
     border: 1px solid;
     padding: 10px;
 }
-#Users input[type="checkbox"] {
-    position: absolute;
-    zoom: 1.5;
-    margin-left: 1px;
-    margin-top: 1px;
-    opacity: 0;
-    cursor: pointer;
-}
-#Users input[type="checkbox"]:hover ~ span {
-    color: rgb(255, 115, 0);
-}
-#Users input[type="checkbox"] ~ span {
-    vertical-align: middle;
-}
-#Users input[type="checkbox"] ~ span {
-    font-family: 'Glyphicons Halflings';
-}
-#Users input[type="checkbox"] ~ span:before {
-    content: "\e157";
-}
-#Users input[type="checkbox"]:checked ~ span:before {
-    content: "\e067";
-}
-.buttonTeacherNo button,
-.buttonTeacherYes button {
+.No button,
+.Yes button {
     font-size: 20px;
     color: rgb(196, 189, 151);
     background: none;
@@ -45,18 +28,18 @@
     cursor: pointer;
     vertical-align: middle;
 }
-.buttonTeacherNo button:hover,
-.buttonTeacherYes button:hover {
+.No button:hover,
+.Yes button:hover {
     color: rgb(255, 115, 0);
 }
-.buttonTeacherNo button:before,
-.buttonTeacherYes button:before {
+.No button:before,
+.Yes button:before {
     font-family: 'Glyphicons Halflings';
 }
-.buttonTeacherNo button:before {
+.No button:before {
     content: "\e088";
 }
-.buttonTeacherYes button:before {
+.Yes button:before {
     content: "\e089";
 }
 .pagination > li > a,

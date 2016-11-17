@@ -55,6 +55,7 @@ namespace FireTest.Models
         public string Name { get; set; }
         public bool Teacher { get; set; }
         public bool Administrator { get; set; }
+        public bool Qualification { get; set; }
     }
     #endregion
     #region Структура (факультеты, дисциплины, специальности, квалификации, группы)

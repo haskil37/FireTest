@@ -38,13 +38,13 @@
                         {
                             if (item.Teacher == true)
                             {
-                                <div class="buttonTeacherYes">
+                                <div class="Yes">
                                     <button type="submit" value="Teacher|@item.Id|false" name="submitButton"></button>
                                 </div>
                             }
                             else
                             {
-                                <div class="buttonTeacherNo">
+                                <div class="No">
                                     <button type="submit" value="Teacher|@item.Id|true" name="submitButton"></button>
                                 </div>
                             }
@@ -53,13 +53,13 @@
                     <td class="center">
                         @if (item.Administrator == true)
                         {
-                            <div class="buttonTeacherYes">
+                            <div class="Yes">
                                 <button type="submit" value="Administrator|@item.Id|false" name="submitButton"></button>
                             </div>
                         }
                         else
                         {
-                            <div class="buttonTeacherNo">
+                            <div class="No">
                                 <button type="submit" value="Administrator|@item.Id|true" name="submitButton"></button>
                             </div>
                         }
