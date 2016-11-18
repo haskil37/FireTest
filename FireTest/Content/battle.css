@@ -5,6 +5,9 @@
     width: 100%;
     margin-top: -100%;
 }
+#timeElapsed{
+    color: rgb(255, 115, 0);
+}
 input.course:empty,
 input.qualification:empty {
     display: none;

@@ -7,7 +7,7 @@
 }
 else
 {
-    @Html.Hidden("timeAfk", (int)ViewBag.Afk)
+    <div class="row center">Времени на ответ: <span id="timeElapsed"></span></div>
     <div class="row center"><h3>Вопрос №@ViewBag.Number</h3></div>
     <div class="row"><h3>@Model.QuestionText</h3></div>
     if (@Model.QuestionImage != null)
@@ -90,10 +90,22 @@ else
             </div>
         }
     </div>
+    <input hidden value="@ViewBag.Afk" name="timeAfk" />
     <input type="submit" class="button center" value="Ответить" id="Answer" />
     <script type="text/javascript">
         MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'question']);
         $('.sortable').sortable();
-        AFKInterval = setInterval(function () {afk()}, @ViewBag.Afk);
+        if (AFKInterval) clearInterval(AFKInterval);
+        AFKInterval = setInterval(function () {afk()}, @ViewBag.Afk * 1000);
+        sec = @ViewBag.Afk;
+        document.getElementById('timeElapsed').innerHTML = sec;
+        if (timer_e) clearInterval(timer_e);
+        timer_e = setInterval(
+                function () {
+                    sec--;
+                    if (sec <= 0)
+                        sec = 0;
+                    document.getElementById('timeElapsed').innerHTML = sec;
+                }, 1000);
     </script>
 }

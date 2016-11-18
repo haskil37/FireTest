@@ -254,6 +254,7 @@
     <Content Include="Content\reset.css" />
     <Content Include="Content\vs.png" />
     <Content Include="Content\Wall.jpg" />
+    <Content Include="Content\winner.mp3" />
     <Content Include="Content\winner.png" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
