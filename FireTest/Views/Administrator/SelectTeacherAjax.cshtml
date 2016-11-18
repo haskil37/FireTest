@@ -27,13 +27,13 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td class="center" width="100">
+                    <td class="center" min-width="100">
                         <img class="avatar-mini" src="~/Images/Avatars/@Html.DisplayFor(modelItem => item.Avatar)" />
                     </td>
                     <td>
                         @item.Name
                     </td>
-                    <td class="center" width="200">
+                    <td class="center" min-width="200">
                         @if (item.Qualification == true)
                         {
                             <div class="Yes">
@@ -47,7 +47,7 @@
                             </div>
                         }
                     </td>
-                    <td class="center" width="250">
+                    <td class="center" min-width="250">
                         <a href="TeacherSubjects?userId=@item.Id" class="button">Перейти к выбору</a>
                     </td>
                 </tr>

@@ -171,8 +171,8 @@ h3 {
 .text-success {
     text-align: center;
 }
-.questionImage{
-
+.questionImage img{
+    width:70%;
 }
 #wrapper {
     padding-left: 200px;

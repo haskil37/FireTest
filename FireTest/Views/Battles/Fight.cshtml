@@ -42,7 +42,6 @@
 }))
 {
     @Html.AntiForgeryToken()
-
     <div id="question">
         <div class="row center"><h3>Вопрос №@ViewBag.Number</h3></div>
         <div class="row"><h3>@Model.QuestionText</h3></div>
@@ -127,54 +126,58 @@
             }
         </div>
         <input type="submit" class="button center" value="Ответить" id="Answer" />
-        <script type="text/javascript">
-            MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'question']);
-            $('.sortable').sortable();
-        </script>
     </div>
 }
 @section scripts
 {
     @Scripts.Render("~/bundles/audio")
     <script type="text/javascript">
-    window.onload = start_timer();
-    var timer;
-    function start_timer() {
-        if (timer) clearInterval(timer);
-        mins = @ViewBag.Min;
-        secs = @ViewBag.Sec;
-        tmins = '';
-        tsecs = '';
-        if(mins < 10)
-            tmins = '0' + mins;
-        else
-            tmins = mins;
-        if(secs < 10)
-            tsecs =  '0' + secs;
-        else
-            tsecs = secs;
-        text = tmins + ':' + tsecs;
-        document.getElementById('timer').innerHTML = text;
-        timer = setInterval(
-	        function () {
-	            secs++;
-	            if (secs == 60)
-	            {
-	                secs = 0;
-	                mins++;
-	            }
-	            if(mins < 10)
-	                tmins = '0' + mins;
-	            else
-	                tmins = mins;
-	            if(secs < 10)
-	                tsecs =  '0' + secs;
-	            else
-	                tsecs = secs;
-	            text = tmins + ':' + tsecs;
-	            document.getElementById('timer').innerHTML = text;
-	        }, 1000);
-    };
-    setInterval(function () { $('#FightQuestionsRoW').load('/Battles/FightQuestionsRoW/' + @ViewBag.Id, { type: 'POST' }); }, 3000);
+        MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'question']);
+        $('.sortable').sortable();
+        window.onload = start_timer();
+        var timer;
+        function start_timer() {
+            if (timer) clearInterval(timer);
+            mins = @ViewBag.Min;
+            secs = @ViewBag.Sec;
+            tmins = '';
+            tsecs = '';
+            if(mins < 10)
+                tmins = '0' + mins;
+            else
+                tmins = mins;
+            if(secs < 10)
+                tsecs =  '0' + secs;
+            else
+                tsecs = secs;
+            text = tmins + ':' + tsecs;
+            document.getElementById('timer').innerHTML = text;
+            timer = setInterval(
+	            function () {
+	                secs++;
+	                if (secs == 60)
+	                {
+	                    secs = 0;
+	                    mins++;
+	                }
+	                if(mins < 10)
+	                    tmins = '0' + mins;
+	                else
+	                    tmins = mins;
+	                if(secs < 10)
+	                    tsecs =  '0' + secs;
+	                else
+	                    tsecs = secs;
+	                text = tmins + ':' + tsecs;
+	                document.getElementById('timer').innerHTML = text;
+	            }, 1000);
+        };
+        setInterval(function () { $('#FightQuestionsRoW').load('/Battles/FightQuestionsRoW/' + @ViewBag.Id, { type: 'POST' }); }, 3000);
+        function afk(){
+            $("#Answer").attr( "name", "afk" );
+            clearInterval(AFKInterval);
+            $("#Answer").click();
+        };
+        AFKInterval = setInterval(function () {afk()}, @ViewBag.Afk);
     </script>
 }

@@ -22,10 +22,52 @@ namespace FireTest.Controllers
                 .Where(u => u.AgreementOtherPlayer == true)
                 .Select(u => new
                 {
-                    id = u.Id
+                    id = u.Id,
+                    Row = u.RightOrWrongFirstPlayer,
+                    lastActivity = u.TimeEndFirstPlayer
                 }).SingleOrDefault();
             if (unfinishedBattle != null)
             {
+                Battle battle = dbContext.Battles.Find(unfinishedBattle.id);
+                double time = 0;
+                if (unfinishedBattle.Row == null) //Если не дал ниодного ответа
+                {
+                    double timeElapsed = (DateTime.Now - unfinishedBattle.lastActivity).TotalSeconds;
+                    int counAnswersLost = 0;
+                    for (int i = 0; i < battleQuestions; i++)
+                    {
+                        time = time + 60 / Math.Pow(2, i);
+                        if (time < timeElapsed)
+                            counAnswersLost++;
+                    }
+                    if (counAnswersLost != 0)
+                    {
+                        string answers = "0";
+                        for (int i = 1; i < counAnswersLost; i++)
+                            answers = answers + "|0";
+                        battle.RightOrWrongFirstPlayer = answers;
+                        battle.AnswersFirstPlayer = answers;
+                    }
+                }
+                else
+                {
+                    double timeElapsed = (DateTime.Now - unfinishedBattle.lastActivity).TotalSeconds;
+                    int counAnswersLost = 0;
+                    for (int i = 0; i < battleQuestions - unfinishedBattle.Row.Split('|').Count(); i++)
+                    {
+                        time = time + 60 / Math.Pow(2, i);
+                        if (time < timeElapsed)
+                            counAnswersLost++;
+                    }
+                    if (counAnswersLost != 0)
+                    {
+                        for (int i = 1; i < counAnswersLost; i++)
+                        {
+                            battle.RightOrWrongFirstPlayer += "|0";
+                            battle.AnswersFirstPlayer += "|0";
+                        }
+                    }
+                }
                 ApplicationUser user = dbContext.Users.Find(userId); //Пересылаем и делаем его занятым.
                 user.Busy = true;
                 dbContext.SaveChanges();
@@ -37,10 +79,53 @@ namespace FireTest.Controllers
                 .Where(u => u.AgreementOtherPlayer == true)
                 .Select(u => new
                 {
-                    id = u.Id
+                    id = u.Id,
+                    Row = u.RightOrWrongSecondPlayer,
+                    lastActivity = u.TimeEndSecondPlayer
                 }).SingleOrDefault();
             if (unfinishedBattle != null)
             {
+                Battle battle = dbContext.Battles.Find(unfinishedBattle.id);
+                double time = 0;
+                if (unfinishedBattle.Row == null) //Если не дал ниодного ответа
+                {
+                    double timeElapsed = (DateTime.Now - unfinishedBattle.lastActivity).TotalSeconds;
+                    int counAnswersLost = 0;
+                    for (int i = 0; i < battleQuestions; i++)
+                    {
+                        time = time + 60 / Math.Pow(2, i);
+                        if (time < timeElapsed)
+                            counAnswersLost++;
+                    }
+                    if (counAnswersLost != 0)
+                    {
+                        string answers = "0";
+                        for (int i = 1; i < counAnswersLost; i++)
+                            answers = answers + "|0";
+                        battle.RightOrWrongSecondPlayer = answers;
+                        battle.AnswersSecondPlayer = answers;
+                    }
+                }
+                else
+                {
+                    double timeElapsed = (DateTime.Now - unfinishedBattle.lastActivity).TotalSeconds;
+                    int counAnswersLost = 0;
+                    for (int i = 0; i < battleQuestions - unfinishedBattle.Row.Split('|').Count(); i++)
+                    {
+                        time = time + 60 / Math.Pow(2, i);
+                        if (time < timeElapsed)
+                            counAnswersLost++;
+                    }
+                    if (counAnswersLost != 0)
+                    {
+                        for (int i = 1; i < counAnswersLost; i++)
+                        {
+                            battle.RightOrWrongSecondPlayer += "|0";
+                            battle.AnswersSecondPlayer += "|0";
+                        }
+                    }
+                }
+
                 ApplicationUser user = dbContext.Users.Find(userId); //Пересылаем и делаем его занятым.
                 user.Busy = true;
                 dbContext.SaveChanges();
@@ -203,22 +288,108 @@ namespace FireTest.Controllers
                 .Where(u => u.AgreementOtherPlayer == true)
                 .Select(u => new
                 {
-                    id = u.Id
+                    id = u.Id,
+                    Row = u.RightOrWrongFirstPlayer,
+                    lastActivity = u.TimeEndFirstPlayer
                 }).SingleOrDefault();
             if (unfinishedBattle != null)
-                return RedirectToAction("Fight", new { id = unfinishedBattle.id });
+            {
+                Battle battleReturn = dbContext.Battles.Find(unfinishedBattle.id);
+                double time = 0;
+                if (unfinishedBattle.Row == null) //Если не дал ниодного ответа
+                {
+                    for (int i = 0; i < battleQuestions; i++)
+                    {
+                        time = time + 60 / Math.Pow(2, i);
+                    }
+                    if ((DateTime.Now - unfinishedBattle.lastActivity).TotalSeconds >= time)
+                    {
+                        string answers = "0";
+                        for (int i = 1; i < battleQuestions; i++)
+                            answers = answers + "|0";
+                        battleReturn.RightOrWrongFirstPlayer = answers;
+                        battleReturn.AnswersFirstPlayer = answers;
 
+                        battleReturn.TimeEndFirstPlayer = DateTime.Now;
+                        battleReturn.EndFirstPlayer = true;
+                        dbContext.SaveChanges();
+                    }
+                }
+                else
+                {
+                    //Считаем сколько осталось
+                    for (int i = 0; i < battleQuestions - unfinishedBattle.Row.Split('|').Count(); i++)
+                    {
+                        time = time + 60 / Math.Pow(2, i);
+                    }
+                    if ((DateTime.Now - unfinishedBattle.lastActivity).TotalSeconds >= time)
+                    {
+                        for (int i = battleReturn.RightOrWrongFirstPlayer.Split('|').Count() - 1; i < battleQuestions; i++)
+                        {
+                            battleReturn.RightOrWrongFirstPlayer += "|0";
+                            battleReturn.AnswersFirstPlayer += "|0";
+                        }
+                        battleReturn.TimeEndFirstPlayer = DateTime.Now;
+                        battleReturn.EndFirstPlayer = true;
+                        dbContext.SaveChanges();
+                    }
+                }
+                return RedirectToAction("Fight", new { id = unfinishedBattle.id });
+            }
             unfinishedBattle = dbContext.Battles //Если идет схватка пересылаем на нее (второй игрок)
                 .Where(u => u.SecondPlayer == userId)
                 .Where(u => string.IsNullOrEmpty(u.Winner) == true)
                 .Where(u => u.AgreementOtherPlayer == true)
                 .Select(u => new
                 {
-                    id = u.Id
+                    id = u.Id,
+                    Row = u.RightOrWrongSecondPlayer,
+                    lastActivity = u.TimeEndSecondPlayer
                 }).SingleOrDefault();
             if (unfinishedBattle != null)
-                return RedirectToAction("Fight", new { id = unfinishedBattle.id });
+            {
+                Battle battleReturn = dbContext.Battles.Find(unfinishedBattle.id);
+                double time = 0;
+                if (unfinishedBattle.Row == null) //Если не дал ниодного ответа
+                {
+                    for (int i = 0; i < battleQuestions; i++)
+                    {
+                        time = time + 60 / Math.Pow(2, i);
+                    }
+                    if ((DateTime.Now - unfinishedBattle.lastActivity).TotalSeconds >= time)
+                    {
+                        string answers = "0";
+                        for (int i = 1; i < battleQuestions; i++)
+                            answers = answers + "|0";
+                        battleReturn.RightOrWrongFirstPlayer = answers;
+                        battleReturn.AnswersFirstPlayer = answers;
 
+                        battleReturn.TimeEndFirstPlayer = DateTime.Now;
+                        battleReturn.EndFirstPlayer = true;
+                        dbContext.SaveChanges();
+                    }
+                }
+                else
+                {
+                    //Считаем сколько осталось
+                    for (int i = 0; i < battleQuestions - unfinishedBattle.Row.Split('|').Count(); i++)
+                    {
+                        time = time + 60 / Math.Pow(2, i);
+                    }
+                    if ((DateTime.Now - unfinishedBattle.lastActivity).TotalSeconds >= time)
+                    {
+                        for (int i = battleReturn.RightOrWrongFirstPlayer.Split('|').Count() - 1; i < battleQuestions; i++)
+                        {
+                            battleReturn.RightOrWrongFirstPlayer += "|0";
+                            battleReturn.AnswersFirstPlayer += "|0";
+                        }
+                        battleReturn.TimeEndFirstPlayer = DateTime.Now;
+                        battleReturn.EndFirstPlayer = true;
+                        dbContext.SaveChanges();
+                    }
+                }
+                return RedirectToAction("Fight", new { id = unfinishedBattle.id });
+            }
             var emptyBattle = dbContext.Battles //Есть ли пустая запись в бд то используем ее
                 .Where(u => u.FirstPlayer == userId)
                 .Where(u => string.IsNullOrEmpty(u.Winner) == true)
@@ -463,13 +634,18 @@ namespace FireTest.Controllers
 
             Questions model = new Questions();
             model = SelectQuestion(id);
-
+            ViewBag.Afk = 60000; //Заменить на то что исчезает после считываения
             return View(model);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public PartialViewResult FightQuestions(int id, List<int> AnswersIDs)
+        public PartialViewResult FightQuestions(int id, List<int> AnswersIDs, string afk, int timeAfk = 60000)
         {
+            if (!string.IsNullOrEmpty(afk))
+                ViewBag.Afk = timeAfk/2;
+            else
+                ViewBag.Afk = 60000;
+
             var battle = dbContext.Battles.Find(id);
             if (!battle.AgreementOtherPlayer) //Если попали сюда сами и второго юзера нет, то домой
                 return PartialView();
@@ -601,41 +777,98 @@ namespace FireTest.Controllers
                     idOtherPlayer = battle.FirstPlayer;
                 }
                 ApplicationUser otherUser = dbContext.Users.Find(idOtherPlayer);
-                //30 секунд небыло активности - значит оффлайн
-                //Корректно рассчитать все оставшиеся ответы и закончить им и не смотреть на занятость, он может заходить
-                //И его время поменять
-                if (otherUser.Busy == false || otherUser.LastActivity < DateTime.Now.AddSeconds(-30))
+                DateTime lastActivity;
+                if (battle.FirstPlayer == otherUser.Id)
+                    lastActivity = battle.TimeEndSecondPlayer;
+                else
+                    lastActivity = battle.TimeEndFirstPlayer;
+
+                //Если 60 секунд небыло ответа
+                if (lastActivity < DateTime.Now.AddSeconds(-60))
                 {
-                    ViewBag.Result = true;
+                    //Если второго игрока нет - считаем время которое ждать до конца, в зависимости от кол-ва его ответов.
+                    double time = 0;
                     if (battle.FirstPlayer == otherUser.Id)
                     {
-                        if (battle.RightOrWrongFirstPlayer == null)
+                        if (battle.RightOrWrongFirstPlayer == null) //Если противник не дал ниодного ответа
                         {
-                            battle.RightOrWrongFirstPlayer = "0";
-                            dbContext.SaveChanges();
+                            for (int i = 1; i < battleQuestions - 1; i++) //Начинаем с 1 и вычитаем 1 из-за того что уже минуту ждали
+                            {
+                                time = time + 60 / Math.Pow(2, i);
+                            }
+                            if ((DateTime.Now - lastActivity).TotalSeconds >= time)
+                            {
+                                string answers = "0";
+                                for (int i = 1; i < battleQuestions; i++)
+                                    answers = answers + "|0";
+                                battle.RightOrWrongFirstPlayer = answers;
+                                battle.AnswersFirstPlayer = answers;
+
+                                battle.TimeEndFirstPlayer = DateTime.Now;
+                                battle.EndFirstPlayer = true;
+                                dbContext.SaveChanges();
+                            }
                         }
-                        for (int i = battle.RightOrWrongFirstPlayer.Split('|').Count() - 1; i < battleQuestions; i++)
+                        else
                         {
-                            battle.RightOrWrongFirstPlayer += "|0";
+                            //Считаем сколько осталось
+                            for (int i = 1; i < battleQuestions - battle.RightOrWrongFirstPlayer.Split('|').Count() - 1; i++) //Начинаем с 1 и вычитаем 1 из-за того что уже минуту ждали
+                            {
+                                time = time + 60 / Math.Pow(2, i);
+                            }
+                            if ((DateTime.Now - lastActivity).TotalSeconds >= time)
+                            {
+                                for (int i = battle.RightOrWrongFirstPlayer.Split('|').Count(); i < battleQuestions; i++)
+                                {
+                                    battle.RightOrWrongFirstPlayer += "|0";
+                                    battle.AnswersFirstPlayer += "|0";
+                                }
+                                battle.TimeEndFirstPlayer = DateTime.Now;
+                                battle.EndFirstPlayer = true;
+                                dbContext.SaveChanges();
+                            }
                         }
-                        battle.TimeEndFirstPlayer = DateTime.Now;
-                        battle.EndFirstPlayer = true;
                     }
-                    else
+                    else //Тоже самое если другой игрок вышел
                     {
                         if (battle.RightOrWrongSecondPlayer == null)
                         {
-                            battle.RightOrWrongSecondPlayer = "0";
-                            dbContext.SaveChanges();
+                            for (int i = 1; i < battleQuestions - 1; i++) //Начинаем с 1 и вычитаем 1 из-за того что уже минуту ждали
+                            {
+                                time = time + 60 / Math.Pow(2, i);
+                            }
+                            if ((DateTime.Now - lastActivity).TotalSeconds >= time)
+                            {
+                                string answers = "0";
+                                for (int i = 1; i < battleQuestions; i++)
+                                    answers = answers + "|0";
+                                battle.RightOrWrongSecondPlayer = answers;
+                                battle.AnswersSecondPlayer = answers;
+
+                                battle.TimeEndSecondPlayer = DateTime.Now;
+                                battle.EndSecondPlayer = true;
+                                dbContext.SaveChanges();
+                            }
                         }
-                        for (int i = battle.RightOrWrongSecondPlayer.Split('|').Count() - 1; i < battleQuestions; i++)
+                        else
                         {
-                            battle.RightOrWrongSecondPlayer += "|0";
+                            for (int i = 1; i < battleQuestions - battle.RightOrWrongSecondPlayer.Split('|').Count() - 1; i++) //Начинаем с 1 и вычитаем 1 из-за того что уже минуту ждали
+                            {
+                                time = time + 60 / Math.Pow(2, i);
+                            }
+                            if ((DateTime.Now - lastActivity).TotalSeconds >= time)
+                            {
+                                for (int i = battle.RightOrWrongSecondPlayer.Split('|').Count(); i < battleQuestions; i++)
+                                {
+                                    battle.RightOrWrongSecondPlayer += "|0";
+                                    battle.AnswersSecondPlayer += "|0";
+                                }
+                                battle.TimeEndSecondPlayer = DateTime.Now;
+                                battle.EndSecondPlayer = true;
+                                dbContext.SaveChanges();
+                            }
                         }
-                        battle.TimeEndSecondPlayer = DateTime.Now;
-                        battle.EndSecondPlayer = true;
-                    }
-                    dbContext.SaveChanges();
+                    }                    
                 }
             }
             ViewBag.Id = id;
@@ -927,6 +1160,7 @@ namespace FireTest.Controllers
             string userId = User.Identity.GetUserId();
             if (userId == battle.FirstPlayer) //Сюда первый юзер
             {
+                battle.TimeEndFirstPlayer = DateTime.Now; //Для отслеживания
                 if (battle.AnswersFirstPlayer != null && battle.AnswersFirstPlayer.Count() > 0)
                     battle.AnswersFirstPlayer += "|" + answer;
                 else
@@ -934,6 +1168,7 @@ namespace FireTest.Controllers
             }
             else //Сюда второй
             {
+                battle.TimeEndSecondPlayer = DateTime.Now; //Для отслеживания
                 if (battle.AnswersSecondPlayer != null && battle.AnswersSecondPlayer.Count() > 0)
                     battle.AnswersSecondPlayer += "|" + answer;
                 else

@@ -7,6 +7,7 @@
 }
 else
 {
+    @Html.Hidden("timeAfk", (int)ViewBag.Afk)
     <div class="row center"><h3>Вопрос №@ViewBag.Number</h3></div>
     <div class="row"><h3>@Model.QuestionText</h3></div>
     if (@Model.QuestionImage != null)
@@ -93,5 +94,6 @@ else
     <script type="text/javascript">
         MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'question']);
         $('.sortable').sortable();
+        AFKInterval = setInterval(function () {afk()}, @ViewBag.Afk);
     </script>
 }

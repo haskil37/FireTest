@@ -18,18 +18,24 @@
 </div>
 <div class="row">
     <div class="col-offset-1 col-4 center">
+        @if (ViewBag.Winner == 1)
+        {
+            <img class="winner" src="~/Content/winner.png" />
+        }
+    </div>
+    <div class="col-offset-2 col-4 center">
+        @if (ViewBag.Winner == 2)
+        {
+            <img class="winner" src="~/Content/winner.png" />
+        }
+    </div>
+</div>
+<div id="Finish" class="row">
+    <div class="col-offset-1 col-4 center">
         <img class="avatar" src="@ViewBag.AvatarFirst" />
- @if (ViewBag.Winner == 1)
-            {        <span class="winner"></span>
-
-            }
     </div>
     <div class="col-offset-2 col-4 center">
         <img class="avatar" src="@ViewBag.AvatarSecond" />
- @if (ViewBag.Winner == 2)
-            {        <span class="winner"></span>
-
-            }
     </div>
 </div>
 <div class="row">
