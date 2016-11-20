@@ -5,7 +5,7 @@
 #Users a {
     text-decoration:none;
 }
-#Users table, #Subjects table {
+#Users table, #Subjects table, #Tags table {
     border-collapse: collapse;
     width: 100%;
 }
@@ -14,7 +14,10 @@
 #Users th,
 #Subjects table,
 #Subjects td,
-#Subjects th {
+#Subjects th,
+#Tags table,
+#Tags td,
+#Tags th {
     border: 1px solid;
     padding: 10px;
 }

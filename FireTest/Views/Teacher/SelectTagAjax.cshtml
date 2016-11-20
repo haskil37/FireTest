@@ -1,0 +1,39 @@
+﻿@model PagedList.IPagedList<String>
+@using PagedList.Mvc;
+@using (Ajax.BeginForm("SelectTagAjax", new AjaxOptions
+{
+    HttpMethod = "Get",
+    InsertionMode = InsertionMode.Replace,
+    UpdateTargetId = "Tags",
+}))
+{
+    <div class="row">
+        <table>
+            <tr>
+                <th>
+                    Разделы
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    Без раздела
+                </td>
+            </tr>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <a href="SelectQuestion/@item" name="Subject">@item</a>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+    <div>
+        Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
+
+        @Html.PagedListPager(Model, page => Url.Action("SelectTagAjax",
+        new { page, currentFilter = ViewBag.CurrentFilter }),
+        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "SelectTagAjax" }))
+    </div>
+}

@@ -1,0 +1,17 @@
+﻿@using (Ajax.BeginForm("CreateTestAjax", null, new AjaxOptions()
+{
+    HttpMethod = "Get",
+    InsertionMode = InsertionMode.Replace,
+    UpdateTargetId = "Questions",
+}, new { id = "CreateTestAjax" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="row center">
+        <div class="col-4">
+            Дисциплина
+        </div>
+        <div class="col-8">
+            @Html.DropDownList("Subjects", ViewBag.Subjects as SelectList, new { @onchange = "$(this.form).submit();" })
+        </div>
+    </div>
+}

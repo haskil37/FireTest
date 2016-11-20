@@ -1,0 +1,15 @@
+﻿@{
+    ViewBag.Title = "Дисциплины";
+}
+@Styles.Render("~/Content/administrator")
+<div id="Subjects">
+    @{ Html.RenderAction("SelectSubjectsAjax", new { page = 1 }); }
+</div>
+@section scripts
+{
+    <script>
+    $('#SearchString').keyup(function () {
+        $(this.form).submit();
+    });
+    </script>
+}

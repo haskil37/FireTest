@@ -31169,6 +31169,13 @@
     <Content Include="Views\Administrator\TeacherSubjectsAjax.cshtml" />
     <Content Include="Views\Administrator\SelectTeacher.cshtml" />
     <Content Include="Views\Administrator\SelectTeacherAjax.cshtml" />
+    <Content Include="Views\Teacher\SelectSubjects.cshtml" />
+    <Content Include="Views\Teacher\SelectSubjectsAjax.cshtml" />
+    <Content Include="Views\Teacher\SelectTag.cshtml" />
+    <Content Include="Views\Teacher\SelectTagAjax.cshtml" />
+    <Content Include="Views\Teacher\CreateTest.cshtml" />
+    <Content Include="Views\Teacher\CreateTestAjax.cshtml" />
+    <Content Include="Views\Teacher\CreateTestSelect.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

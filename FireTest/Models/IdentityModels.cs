@@ -218,6 +218,13 @@ namespace FireTest.Models
         public string NameTest { get; set; }
         public string Questions { get; set; }
     }
+    public class TeacherTestDetails
+    {
+        public int Id { get; set; }
+        [Required]
+        public string NameTest { get; set; }
+        public List<Question> Questions { get; set; }
+    }
     public class Examination
     {
         public int Id { get; set; }

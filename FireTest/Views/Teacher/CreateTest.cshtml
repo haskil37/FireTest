@@ -1,0 +1,17 @@
+﻿@{
+    ViewBag.Title = "Создать тест";
+}
+@using (Html.BeginForm("CreateTest", "Teacher"))
+{
+    @Html.AntiForgeryToken()
+    <div id="Questions" class="row">
+        @{ Html.RenderAction("CreateTestSelect"); }
+    </div>
+    <div class="row center">
+        <input type="submit" value="Сохранить тест" class="button" />
+    </div>
+}
+
+<div class="row center" >
+    @Html.ActionLink("На главную", "Index", null, new { @class = "button-Cancel" })
+</div>

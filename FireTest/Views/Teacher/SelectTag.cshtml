@@ -1,0 +1,26 @@
+﻿@{
+    ViewBag.Title = "Выбор раздела";
+}
+@Styles.Render("~/Content/administrator")
+@using (Ajax.BeginForm("SelectTagAjax", new AjaxOptions
+{
+    HttpMethod = "Get",
+    InsertionMode = InsertionMode.Replace,
+    UpdateTargetId = "Tags",
+}))
+{
+    <div class="row">
+        <h3>Поиск<span class="search"></span><input id="SearchString" name="SearchString" type="text"></h3>
+    </div>
+}
+<div id="Tags">
+    @{ Html.RenderAction("SelectTagAjax", new { page = 1, subject = ViewBag.Subject }); }
+</div>
+@section scripts
+{
+    <script>
+    $('#SearchString').keyup(function () {
+        $(this.form).submit();
+    });
+    </script>
+}
