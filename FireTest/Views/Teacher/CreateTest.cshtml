@@ -1,17 +1,15 @@
 ﻿@{
-    ViewBag.Title = "Создать тест";
+    ViewBag.Title = "Создание теста";
 }
-@using (Html.BeginForm("CreateTest", "Teacher"))
-{
-    @Html.AntiForgeryToken()
-    <div id="Questions" class="row">
-        @{ Html.RenderAction("CreateTestSelect"); }
-    </div>
-    <div class="row center">
-        <input type="submit" value="Сохранить тест" class="button" />
-    </div>
-}
-
-<div class="row center" >
-    @Html.ActionLink("На главную", "Index", null, new { @class = "button-Cancel" })
+@Styles.Render("~/Content/administrator")
+<div id="Questions">
+    @{ Html.RenderAction("CreateTestAjax", new { Page = 1 }); }
 </div>
+@section scripts
+{
+    <script>
+    $('#SearchString').keyup(function () {
+        $(this.form).submit();
+    });
+    </script>
+}

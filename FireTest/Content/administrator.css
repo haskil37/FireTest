@@ -2,10 +2,10 @@
     height: 35px;
     margin-left: 15px;
 }
-#Users a {
+#Users a, #Questions a, #Subjects a {
     text-decoration:none;
 }
-#Users table, #Subjects table, #Tags table {
+#Users table, #Subjects table, #Questions table {
     border-collapse: collapse;
     width: 100%;
 }
@@ -15,9 +15,9 @@
 #Subjects table,
 #Subjects td,
 #Subjects th,
-#Tags table,
-#Tags td,
-#Tags th {
+#Questions table,
+#Questions td,
+#Questions th {
     border: 1px solid;
     padding: 10px;
 }
@@ -66,4 +66,12 @@
     cursor: default;
     background-color: rgb(255, 115, 0);
     border-color: rgb(196, 189, 151);
+}
+.input{
+    width: 100%;
+}
+select{
+    width: 100%;
+    background-color: rgb(196, 189, 151);
+    outline: none;
 }

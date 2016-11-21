@@ -1,19 +1,86 @@
-﻿<div id="Questions" class="row">
-    @using (Ajax.BeginForm("CreateTestAjax", new AjaxOptions
-    {
-        HttpMethod = "Get",
-        InsertionMode = InsertionMode.Replace,
-        UpdateTargetId = "Questions",
-    }))
-    {
-        @Html.AntiForgeryToken()
-        <div class="row center">
-            <div class="col-4">
-                Дисциплина
-            </div>
-            <div class="col-8">
-                @Html.DropDownList("Subjects", ViewBag.Subjects as SelectList, new { @onchange = "$(this.form).submit();" })
-            </div>
+﻿@model PagedList.IPagedList<FireTest.Models.SubjectAccess>
+@using PagedList.Mvc;
+@using (Ajax.BeginForm("CreateTestAjax", new AjaxOptions
+{
+    HttpMethod = "Get",
+    InsertionMode = InsertionMode.Replace,
+    UpdateTargetId = "Questions",
+}))
+{    @Html.Hidden("Page", (int)ViewBag.Page)
+    <div class="row">
+        <div class="col-2">Название теста</div>
+        <div class="col-10">
+            <input name="NameTest" type="text" class="input" value="@ViewBag.Name">
         </div>
-    }
-</div>
+    </div>
+    <div class="row">
+        <div class="col-2">Дисциплина</div>
+        <div class="col-10">
+            @Html.DropDownList("Subjects", ViewBag.Subjects as SelectList, new { @onchange = "$(this.form).submit();" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2">Название раздела</div>
+        <div class="col-10">
+            @Html.DropDownList("Tags", ViewBag.Tags as SelectList, new { @onchange = "$(this.form).submit();" })
+        </div>
+    </div>
+    <div class="row">
+        <h3>Поиск<span class="search"></span><input id="SearchString" name="SearchString" type="text" value="@ViewBag.CurrentFilter"></h3>
+    </div>
+    <div class="row">
+        <table>
+            <tr>
+                <th>
+                    Вопросы
+                </th>
+                <th>
+                    В тесте?
+                </th>
+            </tr>
+
+            @foreach (var item in Model)
+                {
+                <tr>
+                    <td>
+                        @item.Name
+                    </td>
+                    <td class="center" width="15%">
+                        @if (item.Access == true)
+                        {
+                            <div class="Yes">
+                                <button type="submit" value="@item.Id" name="submitButton"></button>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="No">
+                                <button type="submit" value="@item.Id" name="submitButton"></button>
+                            </div>
+                        }
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+    <div>
+        Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
+
+        @Html.PagedListPager(Model, page => Url.Action("CreateTestAjax",
+        new { page, currentFilter = ViewBag.CurrentFilter }),
+        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "Questions" }))
+    </div>
+    <script>
+        (function ($) {
+            $.fn.setCursorToTextEnd = function () {
+                var $initialVal = this.val();
+                this.val($initialVal);
+            };
+        })(jQuery);
+        $('#SearchString').focus();
+        $('#SearchString').setCursorToTextEnd();
+        $('#SearchString').keyup(function () {
+            $(this.form).submit();
+        });
+    </script>
+}
