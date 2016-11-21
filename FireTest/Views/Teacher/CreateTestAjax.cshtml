@@ -6,11 +6,13 @@
     InsertionMode = InsertionMode.Replace,
     UpdateTargetId = "Questions",
 }))
-{    @Html.Hidden("Page", (int)ViewBag.Page)
+{    
+    @Html.Hidden("page", (int)ViewBag.page)
     <div class="row">
         <div class="col-2">Название теста</div>
         <div class="col-10">
-            <input name="NameTest" type="text" class="input" value="@ViewBag.Name">
+            <input name="NameTest" type="text" class="input" value="@ViewBag.NameTest">
+            <button type="submit" class="save">Сохранить</button>
         </div>
     </div>
     <div class="row">
@@ -67,7 +69,7 @@
         Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
 
         @Html.PagedListPager(Model, page => Url.Action("CreateTestAjax",
-        new { page, currentFilter = ViewBag.CurrentFilter }),
+        new { page, currentFilter = ViewBag.CurrentFilter, Tags = Session["Tags"], Subjects = Session["Subjects"] }),
         PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "Questions" }))
     </div>
     <script>

@@ -1,0 +1,10 @@
+﻿@model FireTest.Models.TeacherTestDetails
+@{
+    ViewBag.Title = "Редактировать тест";
+}
+@Styles.Render("~/Content/administrator")
+@{ Html.RenderAction("EditOld", new { Page = 1 }); }
+@*@{ Html.RenderAction("EditNew", new { Page = 1 }); }*@
+<div class="row center">
+    @Html.ActionLink("На главную", "Index", null, new { @class = "button-Cancel" })
+</div>

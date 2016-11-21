@@ -1,0 +1,31 @@
+﻿@model FireTest.Models.TeacherTestDetails
+@{
+    ViewBag.Title = "Подробности";
+}
+@Styles.Render("~/Content/administrator")
+<div class="row" id="Tests">
+    <table>
+        <tr>
+            <td><b>Название:</b></td>
+            <td>@Model.NameTest</td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <b>
+                    Вопросы:
+                </b>
+            </td>
+        </tr>
+        @foreach (var item in Model.Questions)
+        {
+            <tr>
+                <td></td>
+                <td>@Html.DisplayFor(d => item.QuestionText)</td>
+            </tr>
+        }
+    </table>
+    <p>
+        @Html.ActionLink("Редактировать", "Edit", new { id = Model.Id }, new { @class = "button-Cancel" }) |
+        @Html.ActionLink("На главную", "Index", null, new { @class = "button-Cancel" })
+    </p>
+</div>

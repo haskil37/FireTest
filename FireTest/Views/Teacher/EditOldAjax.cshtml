@@ -1,0 +1,68 @@
+﻿@model PagedList.IPagedList<FireTest.Models.SubjectAccess>
+@using PagedList.Mvc;
+@using (Ajax.BeginForm("EditOldAjax", new AjaxOptions
+{
+    HttpMethod = "Get",
+    InsertionMode = InsertionMode.Replace,
+    UpdateTargetId = "QuestionsOld",
+}))
+{    
+    @Html.Hidden("page", (int)ViewBag.page)
+    <div class="row">
+        <div class="col-2">Название теста</div>
+        <div class="col-10">
+            <input name="NameTest" type="text" class="input" value="@ViewBag.NameTest">
+        </div>
+    </div>
+    <div class="row">
+        <h3>Поиск<span class="search"></span><input id="SearchStringOld" name="SearchString" type="text" value="@ViewBag.CurrentFilter"></h3>
+    </div>
+    <div class="row textback center">Вопросы в тесте</div>
+    <br />
+    <div class="row">
+        <table>
+            <tr>
+                <th>
+                    Вопросы
+                </th>
+                <th>
+                    В тесте?
+                </th>
+            </tr>
+
+            @foreach (var item in Model)
+                {
+                <tr>
+                    <td>
+                        @item.Name
+                    </td>
+                    <td class="center" width="15%">
+                        <div class="Yes">
+                            <button type="submit" value="@item.Id" name="submitButton"></button>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+    <div>
+        Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
+
+        @Html.PagedListPager(Model, page => Url.Action("EditOldAjax",
+        new { page, currentFilter = ViewBag.CurrentFilter }),
+        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "QuestionsOld" }))
+    </div>
+    <script>
+        (function ($) {
+            $.fn.setCursorToTextEnd = function () {
+                var $initialVal = this.val();
+                this.val($initialVal);
+            };
+        })(jQuery);
+        $('#SearchStringOld').focus();
+        $('#SearchStringOld').setCursorToTextEnd();
+        $('#SearchStringOld').keyup(function () {
+            $(this.form).submit();
+        });
+    </script>
+}

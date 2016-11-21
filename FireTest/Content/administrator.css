@@ -1,23 +1,30 @@
-﻿input#SearchString {
+﻿input#SearchString, input#SearchStringOld{
     height: 35px;
     margin-left: 15px;
+}
+.button a{
+    text-decoration:none;
+}
+.save{
+    float: right;
+    position: absolute;
+    right: 2px;
+    bottom: 4px;
+    background: rgb(255, 115, 0);
+    border: 0;
+    cursor: pointer;
 }
 #Users a, #Questions a, #Subjects a {
     text-decoration:none;
 }
-#Users table, #Subjects table, #Questions table {
+table {
     border-collapse: collapse;
     width: 100%;
 }
-#Users table,
-#Users td,
-#Users th,
-#Subjects table,
-#Subjects td,
-#Subjects th,
-#Questions table,
-#Questions td,
-#Questions th {
+
+table,
+td,
+th {
     border: 1px solid;
     padding: 10px;
 }

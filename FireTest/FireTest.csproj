@@ -31171,6 +31171,11 @@
     <Content Include="Views\Administrator\SelectTeacherAjax.cshtml" />
     <Content Include="Views\Teacher\CreateTest.cshtml" />
     <Content Include="Views\Teacher\CreateTestAjax.cshtml" />
+    <Content Include="Views\Teacher\Details.cshtml" />
+    <Content Include="Views\Teacher\Delete.cshtml" />
+    <Content Include="Views\Teacher\Edit.cshtml" />
+    <Content Include="Views\Teacher\EditOld.cshtml" />
+    <Content Include="Views\Teacher\EditOldAjax.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
