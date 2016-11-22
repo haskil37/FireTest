@@ -90,8 +90,9 @@ namespace FireTest.Controllers
         }
         public PartialViewResult CreateTestAjax(string currentFilter, string searchString, int? page, string NameTest, int? Subjects, string Tags, int? submitButton)
         {
-            if ((int)Session["Subjects"] != Subjects || (string)Session["Tags"] != Tags)
-                page = 1;
+            if (Session["Subjects"] != null && Session["Tags"] != null)
+                if ((int)Session["Subjects"] != Subjects || (string)Session["Tags"] != Tags)
+                    page = 1;
             Session["Subjects"] = Subjects;
             Session["Tags"] = Tags;
 
@@ -195,7 +196,10 @@ namespace FireTest.Controllers
             tempTags = dbContext.Questions
                 .Where(u => u.IdSubject == sub)
                 .Select(u => u.Tag).Distinct().ToList(); //Берем все разделы
-            tempTags[0] = "Все разделы";
+            if (tempTags.Count == 0)
+                tempTags.Add("Все разделы");
+            else
+                tempTags[0] = "Все разделы";
             tempTags.Add("Без раздела");
             selectList = tempTags //Выпадающий список разделов
                 .Select(u => new SelectListItem()
@@ -287,10 +291,7 @@ namespace FireTest.Controllers
             Session["IdTest"] = id;
             return View(testDetails);
         }
-        public PartialViewResult EditOld()
-        {
-            return PartialView();
-        }
+
         public PartialViewResult EditOldAjax(string currentFilter, string searchString, int? page, string NameTest, int? submitButton)
         {
             string userId = User.Identity.GetUserId();
@@ -308,6 +309,7 @@ namespace FireTest.Controllers
             TeacherTestDetails testDetails = new TeacherTestDetails();
             ViewBag.NameTest = test.NameTest;
             List<int> questions = test.Questions.Split('|').Select(int.Parse).ToList();
+            ViewBag.Submit = false;
             if (submitButton != null)
             {
                 int index = questions.IndexOf(submitButton.Value);
@@ -321,6 +323,7 @@ namespace FireTest.Controllers
                         newQuestions = item.ToString();
                 }
                 test.Questions = newQuestions;
+                ViewBag.Submit = true; //Чтобы обновить таблицу с вопросами (не работает)
                 dbContext.SaveChanges();
             }
 
@@ -354,11 +357,159 @@ namespace FireTest.Controllers
             int pageNumber = (page ?? 1);
             if (model.ToPagedList(pageNumber, pageSize).PageCount < page)
                 pageNumber = model.ToPagedList(pageNumber, pageSize).PageCount;
+            if (pageNumber == 0)
+                pageNumber = 1;
             ViewBag.page = pageNumber;
 
             return PartialView(model.ToPagedList(pageNumber, pageSize));
         }
 
+        public PartialViewResult EditNewAjax(string currentFilter, string searchString, int? page, int? Subjects, string Tags, int? submitButton)
+        {
+            string userId = User.Identity.GetUserId();
+            int IdTest = (int)Session["IdTest"];
+            if (Session["Subjects"] != null && Session["Tags"] != null)
+                if ((int)Session["Subjects"] != Subjects || (string)Session["Tags"] != Tags)
+                    page = 1;
+            Session["Subjects"] = Subjects;
+            Session["Tags"] = Tags;
+
+            TeacherTest test = dbContext.TeacherTests.Find(IdTest);
+            ViewBag.Submit = false;
+            if (submitButton != null)
+            {
+                if (test.Questions != null && test.Questions.Count() != 0)
+                    test.Questions += "|" + submitButton;
+                else
+                    test.Questions = submitButton.ToString();
+
+                ViewBag.Submit = true; //Чтобы обновить таблицу с вопросами теста
+                dbContext.SaveChanges();
+            }
+
+            List<string> questions = new List<string>();
+            if (test != null && test.Questions != null)
+                questions = test.Questions.Split('|').ToList();
+
+            if (!string.IsNullOrEmpty(searchString))
+                page = 1;
+            else
+                searchString = currentFilter;
+            ViewBag.CurrentFilter = searchString;
+
+            string temp = dbContext.TeachersAccess.Where(u => u.TeacherId == userId).Select(u => u.TeacherSubjects).SingleOrDefault();
+            List<string> userSubjects = new List<string>(); //Берем в массив ид предметов у которых у нас доступ
+            if (!string.IsNullOrEmpty(temp))
+                userSubjects = temp.Split('|').ToList();
+
+            var tempSubjects = dbContext.Subjects.Where(u => userSubjects.Contains(u.Id.ToString())).Select(u => new
+            {
+                Id = u.Id,
+                Name = u.Name
+            }); //Записываем предметы в список
+            var selectList = tempSubjects //Добавляем выпадающий список из разрешенных предметов
+                    .Select(u => new SelectListItem()
+                    {
+                        Text = u.Name,
+                        Value = u.Id.ToString(),
+                        Selected = u.Id == Subjects
+                    }).ToList();
+            ViewBag.Subjects = selectList;
+
+            List<string> tempTags;
+
+            int sub; //Если выбран предмет то используем его, если нет, то выбираем первый в списке разрешенных
+            if (Subjects != null)
+                sub = Subjects.Value;
+            else
+            {
+                userSubjects.Sort();
+                sub = Convert.ToInt32(userSubjects[0]);
+            }
+
+            tempTags = dbContext.Questions
+                .Where(u => u.IdSubject == sub)
+                .Select(u => u.Tag).Distinct().ToList(); //Берем все разделы
+            if (tempTags.Count == 0)
+                tempTags.Add("Все разделы");
+            else
+                tempTags[0] = "Все разделы";
+            tempTags.Add("Без раздела");
+            selectList = tempTags //Выпадающий список разделов
+                .Select(u => new SelectListItem()
+                {
+                    Value = u,
+                    Text = u,
+                    Selected = u == Tags
+                }).ToList();
+            ViewBag.Tags = selectList;
+
+            var tempQuestions = dbContext.Questions //Берем все вопросы дисциплины, которых нет в тесте
+                .Where(u => u.IdSubject == sub)
+                .Where(u => !questions.Contains(u.Id.ToString()))
+                .Select(u => new {
+                    Id = u.Id,
+                    Text = u.QuestionText
+                }).ToList();
+
+            if (Tags != "Все разделы" && Tags != "Без раздела")
+            {
+                tempQuestions = dbContext.Questions //Берем все вопросы дисциплины нужного раздела
+                    .Where(u => u.IdSubject == sub)
+                    .Where(u => u.Tag == Tags)
+                    .Select(u => new {
+                        Id = u.Id,
+                        Text = u.QuestionText
+                    }).ToList();
+            }
+            if (Tags == "Без раздела")
+            {
+                tempQuestions = dbContext.Questions //Берем все вопросы дисциплины без раздела
+                    .Where(u => u.IdSubject == sub)
+                    .Where(u => string.IsNullOrEmpty(u.Tag))
+                    .Select(u => new {
+                        Id = u.Id,
+                        Text = u.QuestionText
+                    }).ToList();
+            }
+            List<SubjectAccess> model = new List<SubjectAccess>(); //Использую это т.к. надо точно такие же поля
+            foreach (var item in tempQuestions)
+            {
+                SubjectAccess subject = new SubjectAccess();
+                if (!String.IsNullOrEmpty(searchString) && item.Text.ToLower().Contains(searchString.ToLower()))
+                {
+                    subject.Id = item.Id;
+                    subject.Name = item.Text;
+                    if (questions.Contains(item.Id.ToString()))
+                        subject.Access = true;
+                    else
+                        subject.Access = false;
+                    model.Add(subject);
+                }
+                if (String.IsNullOrEmpty(searchString))
+                {
+                    subject.Id = item.Id;
+                    subject.Name = item.Text;
+                    if (questions.Contains(item.Id.ToString()))
+                        subject.Access = true;
+                    else
+                        subject.Access = false;
+                    model.Add(subject);
+                }
+            }
+
+            model = model.OrderBy(u => u.Name).ToList();
+
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+            if (model.ToPagedList(pageNumber, pageSize).PageCount < page)
+                pageNumber = model.ToPagedList(pageNumber, pageSize).PageCount;
+            if (pageNumber == 0)
+                pageNumber = 1;
+            ViewBag.page = pageNumber;
+
+            return PartialView(model.ToPagedList(pageNumber, pageSize));
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

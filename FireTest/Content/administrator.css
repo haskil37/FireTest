@@ -1,6 +1,7 @@
-﻿input#SearchString, input#SearchStringOld{
+﻿input#SearchString, input#SearchStringOld, input#SearchStringNew{
     height: 35px;
     margin-left: 15px;
+    outline-color: rgb(255, 115, 0);
 }
 .button a{
     text-decoration:none;

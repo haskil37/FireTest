@@ -1,31 +1,36 @@
 ﻿@model PagedList.IPagedList<FireTest.Models.SubjectAccess>
 @using PagedList.Mvc;
-@using (Ajax.BeginForm("EditOldAjax", new AjaxOptions
+@using (Ajax.BeginForm("EditNewAjax", new AjaxOptions
 {
     HttpMethod = "Get",
     InsertionMode = InsertionMode.Replace,
-    UpdateTargetId = "QuestionsOld",
+    UpdateTargetId = "QuestionsNew",
 }))
 {
     if (ViewBag.Submit == true)
     {
         <script>
-            $('#form1').submit();
+            $('#form0').submit();
         </script>
     }
     @Html.Hidden("page", (int)ViewBag.page)
-    <div class="row">
-        <div class="col-2">Название теста</div>
-        <div class="col-10">
-            <input name="NameTest" type="text" class="input" value="@ViewBag.NameTest">
-            <button type="submit" class="save">Сохранить</button>
-    </div>
-    </div>
-    <div class="row">
-        <h3>Поиск<span class="search"></span><input id="SearchStringOld" name="SearchString" type="text" value="@ViewBag.CurrentFilter"></h3>
-    </div>
-    <div class="row textback center">Вопросы в тесте</div>
+    <div class="row textback center">Остальные вопросы</div>
     <br />
+    <div class="row">
+        <div class="col-2">Дисциплина</div>
+        <div class="col-10">
+            @Html.DropDownList("Subjects", ViewBag.Subjects as SelectList, new { @onchange = "$(this.form).submit();" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2">Название раздела</div>
+        <div class="col-10">
+            @Html.DropDownList("Tags", ViewBag.Tags as SelectList, new { @onchange = "$(this.form).submit();" })
+        </div>
+    </div>
+    <div class="row">
+        <h3>Поиск<span class="search"></span><input id="SearchStringNew" name="SearchString" type="text" value="@ViewBag.CurrentFilter"></h3>
+    </div>
     <div class="row">
         <table>
             <tr>
@@ -44,7 +49,7 @@
                         @item.Name
                     </td>
                     <td class="center" width="15%">
-                        <div class="Yes">
+                        <div class="No">
                             <button type="submit" value="@item.Id" name="submitButton"></button>
                         </div>
                     </td>
@@ -55,9 +60,9 @@
     <div>
         Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
 
-        @Html.PagedListPager(Model, page => Url.Action("EditOldAjax",
-        new { page, currentFilter = ViewBag.CurrentFilter }),
-        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "QuestionsOld" }))
+        @Html.PagedListPager(Model, page => Url.Action("EditNewAjax",
+        new { page, currentFilter = ViewBag.CurrentFilter, Tags = Session["Tags"], Subjects = Session["Subjects"] }),
+        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "QuestionsNew" }))
     </div>
     <script>
         (function ($) {
@@ -66,10 +71,10 @@
                 this.val($initialVal);
             };
         })(jQuery);
-        $('#SearchStringOld').focus();
-        $('#SearchStringOld').setCursorToTextEnd();
-        $('#SearchStringOld').keyup(function () {
-            $('#form0').submit();
+        $('#SearchStringNew').focus();
+        $('#SearchStringNew').setCursorToTextEnd();
+        $('#SearchStringNew').keyup(function () {
+            $('#form1').submit();
         });
     </script>
 }

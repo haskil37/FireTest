@@ -4,9 +4,7 @@
 }
 @Styles.Render("~/Content/administrator")
 <div class="row">
-    <div class="col-4">
-        <a href="CreateTest" class="button">Создать тест по дисциплине</a>
-    </div>
+    <a href="CreateTest" class="button">Создать тест по дисциплине</a>
 </div>
 <br />
 <div class="row" id="Tests">
@@ -27,9 +25,9 @@
                     @Html.DisplayFor(modelItem => item.NameTest)
                 </td>
                 <td>
-                    @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }, new { @class = "button-Cancel" }) |
-                    @Html.ActionLink("Подробности", "Details", new { id = item.Id }, new { @class = "button-Cancel" }) |
-                    @Html.ActionLink("Удалить", "Delete", new { id = item.Id }, new { @class = "button-Cancel" })
+                    @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Подробности", "Details", new { id = item.Id }) |
+                    @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
                 </td>
             </tr>
         }

@@ -3,8 +3,22 @@
     ViewBag.Title = "Редактировать тест";
 }
 @Styles.Render("~/Content/administrator")
-@{ Html.RenderAction("EditOld", new { Page = 1 }); }
-@*@{ Html.RenderAction("EditNew", new { Page = 1 }); }*@
-<div class="row center">
+<div id="QuestionsOld">
+    @{ Html.RenderAction("EditOldAjax", new { Page = 1 }); }
+</div>
+<div id="QuestionsNew">
+    @{ Html.RenderAction("EditNewAjax", new { Page = 1 }); }
+</div><div class="row center">
     @Html.ActionLink("На главную", "Index", null, new { @class = "button-Cancel" })
 </div>
+@section scripts
+{
+    <script>
+        $('#SearchStringOld').keyup(function () {
+            $('#form0').submit();
+        });
+        $('#SearchStringNew').keyup(function () {
+            $('#form1').submit();
+        });
+    </script>
+}
