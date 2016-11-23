@@ -119,6 +119,13 @@ namespace FireTest.Models
         public int IdQuestion { get; set; }
         public string AnswerText { get; set; }
     }
+    public class ViewCreateQuestion
+    {
+        [Required(ErrorMessage = "Вы не написали текст вопроса")]
+        public string QuestionText { get; set; }
+        public List<string> Answers { get; set; }
+        public List<bool> AnswersCorrects { get; set; }
+    }
     #endregion
     #region Самотестирование
     public class SelfyTestQualification

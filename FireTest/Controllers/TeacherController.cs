@@ -65,7 +65,6 @@ namespace FireTest.Controllers
             dbContext.SaveChanges();
             return RedirectToAction("Index");
         }
-
         public ActionResult CreateTest()
         {
             Session.Clear();
@@ -269,7 +268,6 @@ namespace FireTest.Controllers
 
             return PartialView(model.ToPagedList(pageNumber, pageSize));
         }
-
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -291,7 +289,6 @@ namespace FireTest.Controllers
             Session["IdTest"] = id;
             return View(testDetails);
         }
-
         public PartialViewResult EditOldAjax(string currentFilter, string searchString, int? page, string NameTest, int? submitButton)
         {
             string userId = User.Identity.GetUserId();
@@ -363,7 +360,6 @@ namespace FireTest.Controllers
 
             return PartialView(model.ToPagedList(pageNumber, pageSize));
         }
-
         public PartialViewResult EditNewAjax(string currentFilter, string searchString, int? page, int? Subjects, string Tags, int? submitButton)
         {
             string userId = User.Identity.GetUserId();
@@ -509,6 +505,94 @@ namespace FireTest.Controllers
             ViewBag.page = pageNumber;
 
             return PartialView(model.ToPagedList(pageNumber, pageSize));
+        }
+        public ActionResult NewQuestion()
+        {
+            string userId = User.Identity.GetUserId();
+            string temp = dbContext.TeachersAccess.Where(u => u.TeacherId == userId).Select(u => u.TeacherSubjects).SingleOrDefault();
+            List<string> userSubjects = new List<string>(); //Берем в массив ид предметов у которых у нас доступ
+            if (!string.IsNullOrEmpty(temp))
+                userSubjects = temp.Split('|').ToList();
+
+            var tempSubjects = dbContext.Subjects.Where(u => userSubjects.Contains(u.Id.ToString())).Select(u => new
+            {
+                Id = u.Id,
+                Name = u.Name
+            }); //Записываем предметы в список
+            var selectList = tempSubjects //Добавляем выпадающий список из разрешенных предметов
+                    .Select(u => new SelectListItem()
+                    {
+                        Text = u.Name,
+                        Value = u.Id.ToString(),
+                    }).ToList();
+            ViewBag.Subjects = selectList;
+
+            selectList = dbContext.Departments //Добавляем выпадающий список из кафедр
+               .Select(u => new SelectListItem()
+               {
+                   Text = u.Name,
+                   Value = u.Id.ToString(),
+               }).ToList();
+            ViewBag.Departments = selectList;
+
+            var courses = new[]{ //Добавляем выпадающий список курсов
+                 new SelectListItem{ Value="1",Text="Курс 1"},
+                 new SelectListItem{ Value="2",Text="Курс 2"},
+                 new SelectListItem{ Value="3",Text="Курс 3"},
+                 new SelectListItem{ Value="4",Text="Курс 4"},
+                 new SelectListItem{ Value="5",Text="Курс 5"},
+             };
+            ViewBag.Courses = courses; 
+            return View();
+        }
+        [HttpPost]
+        public ActionResult NewQuestion(ViewCreateQuestion model)
+        {
+            if (!ModelState.IsValid)
+            {
+                string userId = User.Identity.GetUserId();
+                string temp = dbContext.TeachersAccess.Where(u => u.TeacherId == userId).Select(u => u.TeacherSubjects).SingleOrDefault();
+                List<string> userSubjects = new List<string>(); //Берем в массив ид предметов у которых у нас доступ
+                if (!string.IsNullOrEmpty(temp))
+                    userSubjects = temp.Split('|').ToList();
+
+                var tempSubjects = dbContext.Subjects.Where(u => userSubjects.Contains(u.Id.ToString())).Select(u => new
+                {
+                    Id = u.Id,
+                    Name = u.Name
+                }); //Записываем предметы в список
+                var selectList = tempSubjects //Добавляем выпадающий список из разрешенных предметов
+                        .Select(u => new SelectListItem()
+                        {
+                            Text = u.Name,
+                            Value = u.Id.ToString(),
+                        }).ToList();
+                ViewBag.Subjects = selectList;
+
+                selectList = dbContext.Departments //Добавляем выпадающий список из кафедр
+                   .Select(u => new SelectListItem()
+                   {
+                       Text = u.Name,
+                       Value = u.Id.ToString(),
+                   }).ToList();
+                ViewBag.Departments = selectList;
+
+                var courses = new[]{ //Добавляем выпадающий список курсов
+                 new SelectListItem{ Value="1",Text="Курс 1"},
+                 new SelectListItem{ Value="2",Text="Курс 2"},
+                 new SelectListItem{ Value="3",Text="Курс 3"},
+                 new SelectListItem{ Value="4",Text="Курс 4"},
+                 new SelectListItem{ Value="5",Text="Курс 5"},
+                };
+                ViewBag.Courses = courses;
+
+                return View();
+            }
+            return View();
+        }
+        public ActionResult CreateExam()
+        {
+            return View();
         }
         protected override void Dispose(bool disposing)
         {

@@ -1,0 +1,124 @@
+﻿@model FireTest.Models.ViewCreateQuestion
+@{
+    ViewBag.Title = "Добавить вопрос";
+}
+@Styles.Render("~/Content/administrator")
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="row center">
+        <h4>Добавить вопрос</h4>
+        <br>
+        <div class="row">
+            <div class="col-2">
+                Кафедра
+            </div>
+            <div class="col-10">
+                @Html.DropDownList("Departments", ViewBag.Departments as SelectList)
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2">
+                Дисциплина
+            </div>
+            <div class="col-10">
+                @Html.DropDownList("Subjects", ViewBag.Subjects as SelectList)
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2">
+                Курс
+            </div>
+            <div class="col-10">
+                @Html.DropDownList("Courses", ViewBag.Courses as SelectList)
+            </div>
+        </div>
+        @Html.ValidationMessageFor(model => model.QuestionText, "", new { @class = "text-danger" })
+        <div class="row">
+            <div class="col-2">
+                Текст вопроса
+            </div>
+            <div class="col-10">
+                @Html.TextAreaFor(model => model.QuestionText, 5, 20, null)
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2">
+                Раздел
+            </div>
+            <div class="col-10">
+                @Html.TextArea("Tag")
+            </div>
+        </div>
+        <div class="row">
+            <div class="row text-center">
+                <div class="col-2">
+                    № п/п
+                </div>
+                <div class="col-8">
+                    Текст ответов
+                </div>
+                <div>
+                    Правильный
+                </div>
+            </div>
+            @for (int i = 0; i < 8; i++)
+            {
+                <div class="row">
+                    <div class="col-2">
+                        <b>@(i + 1)</b>
+                    </div>
+                    <div class="col-8">
+                        <textarea cols="20" id="Answers" name="Answers" rows="2"></textarea>
+                    </div>
+                    <div class="col-2 correct">
+                        <input id="@i" type="checkbox" name="AnswersCorrect" value="@i" />
+                        <label for="@i"></label>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="row left">
+            @Html.Partial("LaTex")
+        </div>
+        <div class="row">
+            <input type="submit" value="Сохранить" class="button" />
+        </div>
+    </div>
+}
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $("#formula_text").on("change input paste keyup", function () {
+            formula_refresh();
+        });
+        function formula_text_insert(value) {
+            $("#formula_text").val($("#formula_text").val() + value);
+            formula_refresh();
+        };
+        function formula_refresh() {
+            $("#formula").html("$$" + $("#formula_text").val() + "$$");
+            if ($("#L1").prop("checked")) {
+                $("#formula_text_copy").html("$$" + $("#formula_text").val() + "$$");
+            }
+            else {
+                $("#formula_text_copy").html("\\(" + $("#formula_text").val() + "\\)");
+            }
+            $('[name=TypeLatex]').change(function () {
+                if ($("#L1").prop("checked")) {
+                    $("#formula_text_copy").html("$$" + $("#formula_text").val() + "$$");
+                }
+                else {
+                    $("#formula_text_copy").html("\\(" + $("#formula_text").val() + "\\)");
+                }
+            });
+            if ($("#formula_text").val() == "") {
+                $("#formula_text_copy").html("&nbsp;");
+                $("#formula").empty();
+            }
+            MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'formula']);
+        }
+    </script>
+}

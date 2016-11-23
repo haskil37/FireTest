@@ -348,7 +348,13 @@ input[type=range]:focus::-ms-fill-upper {
     background: rgb(196, 189, 151);
 }
 .center {
-    text-align:center;
+    text-align: center;
+}
+.right {
+    text-align: right;
+}
+.left {
+    text-align: left;
 }
 .row {
     display: table;

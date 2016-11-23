@@ -1,0 +1,341 @@
+﻿<div class="spoiler">
+    <span class="headline">Ввод формулы</span>
+</div>
+<div class="-closed">
+    <div id="formul" class="row">
+        <div id="LatexMenu" class="LatexMenu">
+            <div class="formul-tabs">
+                <label for="formul-tab-1" class="formul-tab">Математика</label>
+                <label for="formul-tab-2" class="formul-tab">Греческий алфавит</label>
+                <label for="formul-tab-3" class="formul-tab">Связи</label>
+                <label for="formul-tab-4" class="formul-tab">Логика</label>
+                <label for="formul-tab-5" class="formul-tab">Символы</label>
+                <label for="formul-tab-6" class="formul-tab">Стрелки</label>
+            </div>
+            <input id="formul-tab-1" name="tab-group" type="radio" checked="checked" class="tab-radio" />
+            <div class="tab-content">
+                <div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\tilde{ab}');">\(\tilde{ab}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\hat{ab}');">\(\hat{ab}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\widetilde{abc}');">\(\widetilde{abc} \)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\widehat{abc}');">\(\widehat{abc}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\overleftarrow{ba}');">\(\overleftarrow{ba}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\overrightarrow{ab}');">\(\overrightarrow{ab}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\overline{ab}');">\(\overline{ab}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\underline{ab}');">\(\underline{ab}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\overbrace{ab}');">\(\overbrace{ab}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\underbrace{ab}');">\(\underbrace{ab}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\overset{d}{abc}');">\(\overset{d}{abc}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\underset{d}{abc}');">\(\underset{d}{abc}\)</div>
+                </div>
+                <div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\sqrt{ab}');">\(\sqrt{ab}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\sqrt[n]{ab}');">\(\sqrt[n]{ab}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\f\'');">\(f'\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\frac{a}{b}');">\(\frac{a}{b}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('x^{k}');">\(x^{k}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('x_{n}');">\(x_{n}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\lim_{a\\to b}');">$$\lim_{a\to b}$$</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\frac{\\partial y}{\\partial x}');">\(\frac{\partial y}{\partial x}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\frac{\\partial^2 y}{\\partial x^2}');">\(\frac{\partial^2 y}{\partial x^2}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\begin{bmatrix}a & b \\\\c & d \\end{bmatrix}');">\(\begin{bmatrix}a & b \\c & d \end{bmatrix}\)</div>
+                </div>
+                <div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\x =\\begin{cases}a & x = 0\\\\b & x > 0\\end{cases}');">\(x =\begin{cases}a & x = 0\\b & x > 0\end{cases}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\big(a\\big)');">\(\big(a\big)\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\big\\{a\\big\\\}');">\(\big\{a\big\}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\int');">\(\int\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\int_a^b x');">\(\int_a^b x\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\oint');">\(\oint\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\oint_a^b x');">\(\oint_a^b x\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\iint');">\(\iint\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\iint_{a}^{b}');">\(\iint_{a}^{b}\)</div>
+                </div>
+                <div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\sum_a^b x');">\(\sum_a^b x\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\bigsqcup_a^b x');">\(\bigsqcup_a^b x\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\prod_a^b x');">\(\prod_a^b x\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\coprod_a^b x');">\(\coprod_a^b x\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\bigcap_a^b x');">\(\bigcap_a^b x\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\bigcup_a^b x');">\(\bigcup_a^b x\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\bigvee_a^b x');">\(\bigvee_a^b x\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\bigwedge_a^b x');">\(\bigwedge_a^b x\)</div>
+                </div>
+            </div>
+
+            <input id="formul-tab-2" name="tab-group" type="radio" class="tab-radio" />
+            <div class="tab-content">
+                <div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\alpha');">\(\alpha\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\beta');">\(\beta\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\gamma');">\(\gamma\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\delta');">\(\delta\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\epsilon');">\(\epsilon\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\varepsilon');">\(\varepsilon\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\zeta');">\(\zeta\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\eta');">\(\eta\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\theta');">\(\theta\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\vartheta');">\(\vartheta\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\gamma');">\(\gamma\)</div>
+                </div>
+                <div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\kappa');">\(\kappa\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\lambda');">\(\lambda\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\mu');">\(\mu\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\nu');">\(\nu\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\xi');">\(\xi\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('o');">\(o\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\pi');">\(\pi\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\varpi');">\(\varpi\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\rho');">\(\rho\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\varrho');">\(\varrho\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\sigma');">\(\sigma\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\varsigma');">\(\varsigma\)</div>
+                </div>
+                <div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\tau');">\(\tau\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\upsilon');">\(\upsilon\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\phi');">\(\phi\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\varphi');">\(\varphi\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\chi');">\(\chi\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\psi');">\(\psi\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\omega');">\(\omega\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\Gamma');">\(\Gamma\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\Delta');">\(\Delta\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\Theta');">\(\Theta\)</div>
+                </div>
+                <div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\Lambda');">\(\Lambda\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\Xi');">\(\Xi\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\Pi');">\(\Pi\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\Sigma');">\(\Sigma\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\Upsilon');">\(\Upsilon\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\Phi');">\(\Phi\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\Psi');">\(\Psi\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\Omega');">\(\Omega\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\$');">\(\$\)</div>
+                </div>
+            </div>
+
+            <input id="formul-tab-3" name="tab-group" type="radio" class="tab-radio" />
+            <div class="tab-content">
+                <div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\leq');">\(\leq\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\geq');">\(\geq\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\prec');">\(\prec\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\succ');">\(\succ\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\preceq');">\(\preceq\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\succeq');">\(\succeq\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\ll');">\(\ll\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\gg');">\(\gg\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\subset');">\(\subset\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\supset');">\(\supset\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\subseteq');">\(\subseteq\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\supseteq');">\(\supseteq\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\sqsubseteq');">\(\sqsubseteq\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\sqsupseteq');">\(\sqsupseteq\)</div>
+                </div>
+                <div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\in');">\(\in\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\ni');">\(\ni\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\vdash');">\(\vdash\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\dashv');">\(\dashv\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\bowtie');">\(\bowtie\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\smile');">\(\smile\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\frown');">\(\frown\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\sim');">\(\sim\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\simeq');">\(\simeq\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\asymp');">\(\asymp\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\approx');">\(\approx\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\equiv');">\(\equiv\)</div>
+                </div>
+                <div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\cong');">\(\cong\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\mid');">\(\mid\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\parallel');">\(\parallel\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\neq');">\(\neq\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\doteq');">\(\doteq\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\perp');">\(\perp\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\models');">\(\models\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\propto');">\(\propto\)</div>
+                </div>
+            </div>
+
+            <input id="formul-tab-4" name="tab-group" type="radio" class="tab-radio" />
+            <div class="tab-content">
+                <div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\hat{a}');">\(\hat{a}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\check{a}');">\(\check{a}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\acute{a}');">\(\acute{a}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\grave{a}');">\(\grave{a}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\bar{a}');">\(\bar{a}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\vec{a}');">\(\vec{a}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\dot{a}');">\(\dot{a}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\ddot{a}');">\(\ddot{a}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\breve{a}');">\(\breve{a}\)</div>
+                </div>
+                <div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\tilde{a}');">\(\tilde{a}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\circ');">\(\circ\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\bullet');">\(\bullet\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\ast');">\(\ast\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\star');">\(\star\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\uplus');">\(\uplus\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\amalg');">\(\amalg\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\bigcirc');">\(\bigcirc\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\odot');">\(\odot\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\otimes');">\(\otimes\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\oplus');">\(\oplus\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\oslash');">\(\oslash\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\ominus');">\(\ominus\)</div>
+                </div>
+                <div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\triangleright');">\(\triangleright\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\triangleleft');">\(\triangleleft\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\bigtriangleup');">\(\bigtriangleup\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\bigtriangledown');">\(\bigtriangledown\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\wr');">\(\wr\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\setminus');">\(\setminus\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\wedge');">\(\wedge\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\vee');">\(\vee\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\sqcap');">\(\sqcap\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\cup');">\(\cup\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\sqcup');">\(\sqcup\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\cap');">\(\cap\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\div');">\(\div\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\times');">\(\times\)</div>
+                </div>
+            </div>
+
+            <input id="formul-tab-5" name="tab-group" type="radio" class="tab-radio" />
+            <div class="tab-content">
+                <div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\hbar');">\(\hbar\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\imath');">\(\imath\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\jmath');">\(\jmath\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\aleph');">\(\aleph\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\Re');">\(\Re\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\Im');">\(\Im\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\mathbb{C}');">\(\mathbb{C}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\mathbb{P}');">\(\mathbb{P}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\mathbb{R}');">\(\mathbb{R}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\mathbb{Z}');">\(\mathbb{Z}\)</div>
+                </div>
+                <div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\mathbb{Q}');">\(\mathbb{Q}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\mathbb{N}');">\(\mathbb{N}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\mathbb{I}');">\(\mathbb{I}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\mathbb{k}');">\(\mathbb{k}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\cdots');">\(\cdots\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\ddots');">\(\ddots\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\vdots');">\(\vdots\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\ldots');">\(\ldots\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\mp');">\(\mp\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\pm');">\(\pm\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\times');">\(\times\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\div');">\(\div\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\backslash');">\(\backslash\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('|');">\(|\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\|');">\(\|\)</div>
+                </div>
+                <div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\nabla');">\(\nabla\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\triangle');">\(\triangle\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\top');">\(\top\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\bot');">\(\bot\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\forall');">\(\forall\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\exists');">\(\exists\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\neg');">\(\neg\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\flat');">\(\flat\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\infty');">\(\infty\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\partial');">\(\partial\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\emptyset');">\(\emptyset\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\wp');">\(\wp\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\ell');">\(\ell\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\prime');">\(\prime\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\surd');">\(\surd\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\angle');">\(\angle\)</div>
+                </div>
+                <div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\natural');">\(\natural\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\sharp');">\(\sharp\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\spadesuit');">\(\spadesuit\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\clubsuit');">\(\clubsuit\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\heartsuit');">\(\heartsuit\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\diamondsuit');">\(\diamondsuit\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\%');">\(\%\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\times');">\(\times\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\bigotimes');">\(\bigotimes\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\bigoplus');">\(\bigoplus\)</div>
+                </div>
+            </div>
+
+            <input id="formul-tab-6" name="tab-group" type="radio" class="tab-radio" />
+            <div class="tab-content">
+                <div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\leftarrow');">\(\leftarrow\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\rightarrow');">\(\rightarrow\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\Leftarrow');">\(\Leftarrow\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\Rightarrow');">\(\Rightarrow\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\leftrightarrow');">\(\leftrightarrow\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\Leftrightarrow');">\(\Leftrightarrow\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\mapsto');">\(\mapsto\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\longmapsto');">\(\longmapsto\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\leftharpoonup');">\(\leftharpoonup\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\leftharpoondown');">\(\leftharpoondown\)</div>
+                </div>
+                <div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\rightharpoonup');">\(\rightharpoonup\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\rightharpoondown');">\(\rightharpoondown\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\longleftarrow');">\(\longleftarrow\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\longrightarrow');">\(\longrightarrow\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\Longleftarrow');">\(\Longleftarrow\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\Longrightarrow');">\(\Longrightarrow\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\longleftrightarrow');">\(\longleftrightarrow\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\Longleftrightarrow');">\(\Longleftrightarrow\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\uparrow');">\(\uparrow\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\Uparrow');">\(\Uparrow\)</div>
+                </div>
+                <div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\downarrow');">\(\downarrow\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\Downarrow');">\(\Downarrow\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\updownarrow');">\(\updownarrow\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\Updownarrow');">\(\Updownarrow\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\hookleftarrow');">\(\hookleftarrow\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\hookrightarrow');">\(\hookrightarrow\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\rightleftharpoons');">\(\rightleftharpoons\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\nearrow');">\(\nearrow\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\nwarrow');">\(\nwarrow\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\searrow');">\(\searrow\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\swarrow');">\(\swarrow\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\overset{a}{\\leftarrow}');">\(\overset{a}{\leftarrow}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\overset{a}{\\rightarrow}');">\(\overset{a}{\rightarrow}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\underset{a}{\\leftarrow}');">\(\underset{a}{\leftarrow}\)</div>
+                    <div class="LatexButton" onclick="formula_text_insert('\\underset{a}{\\rightarrow}');">\(\underset{a}{\rightarrow}\)</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <textarea id="formula_text"></textarea>
+            <div id="formula" style="font-size: 0px; height:70px"></div>
+        </div>
+
+        <div class="row">
+            <p>Выберите как будет отображаться формула, а потом скопируйте код из синего поля и вставьте в нужное место</p>
+            <div>
+                <div class="row">
+                    <input id="L1" type="radio" name="TypeLatex" value="1" checked="checked" />
+                    <label for="L1">Формула отдельной строкой</label>
+                </div>
+                <div class="row">
+                    <input id="L2" type="radio" name="TypeLatex" value="2" />
+                    <label for="L2" style="text-align:left;">Формула в строке с текстом</label>
+                </div>
+            </div>
+            <div id="formula_text_copy" class="c-body">&nbsp;</div>
+        </div>
+    </div>
+    <script>
+        MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'LatexMenu']);
+    </script>
+</div>

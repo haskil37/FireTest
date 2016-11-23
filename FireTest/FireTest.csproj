@@ -31176,6 +31176,9 @@
     <Content Include="Views\Teacher\Edit.cshtml" />
     <Content Include="Views\Teacher\EditOldAjax.cshtml" />
     <Content Include="Views\Teacher\EditNewAjax.cshtml" />
+    <Content Include="Views\Teacher\IndexExams.cshtml" />
+    <Content Include="Views\Teacher\NewQuestion.cshtml" />
+    <Content Include="Views\Teacher\LaTex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

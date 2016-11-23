@@ -1,0 +1,38 @@
+﻿@model IEnumerable<FireTest.Models.Examination>
+<div class="substrate">
+    <div class="row"><h3>Заголовок</h3></div>
+    <div class="row">Тут какой-то текст хотели</div>
+    <div class="row" id="Tests">
+        <table>
+            <tr>
+                <th>
+                    Запланированные тестирования:
+                </th>
+                <th width="10%"></th>
+                <th>
+                </th>
+            </tr>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Date)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Редактировать", "EditExams", new { id = item.Id }, new { @class = "battle-buttonCancel" }) |
+                        @Html.ActionLink("Подробности", "DetailsExams", new { id = item.Id }, new { @class = "battle-buttonCancel" }) |
+                        @Html.ActionLink("Удалить", "DeleteExams", new { id = item.Id }, new { @class = "battle-buttonCancel" })
+                    </td>
+                </tr>
+            }
+        </table>
+        <br />
+        <br />
+        <div class="row">
+            <a href="CreateExam" class="button">Запланировать тестирование</a>
+        </div>
+    </div>
+</div>
