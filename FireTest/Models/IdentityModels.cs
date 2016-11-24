@@ -5,6 +5,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Collections;
 
 namespace FireTest.Models
 {
@@ -123,8 +124,30 @@ namespace FireTest.Models
     {
         [Required(ErrorMessage = "Вы не написали текст вопроса")]
         public string QuestionText { get; set; }
+        public string Tag { get; set; }        
+        [AnswersValidate]
         public List<string> Answers { get; set; }
-        public List<bool> AnswersCorrects { get; set; }
+        [Required(ErrorMessage = "Должен быть указан хотя бы один правильный ответ")]
+        public List<int> AnswersCorrects { get; set; }
+    }
+    public class AnswersValidate : ValidationAttribute
+    {
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        {
+            var list = value as IList;
+            int count = 0;
+            foreach(string item in list)
+            {
+                if (string.IsNullOrEmpty(item))
+                {
+                    count++;
+                }
+            }
+            if (count == 8)
+                return new ValidationResult("Должен быть хотя бы один ответ");
+
+            return ValidationResult.Success;
+        }
     }
     #endregion
     #region Самотестирование

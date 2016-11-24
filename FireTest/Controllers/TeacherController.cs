@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using static FireTest.Controllers.ManageController;
 
 namespace FireTest.Controllers
 {
@@ -506,8 +507,9 @@ namespace FireTest.Controllers
 
             return PartialView(model.ToPagedList(pageNumber, pageSize));
         }
-        public ActionResult NewQuestion()
+        public ActionResult NewQuestion(string Message)
         {
+            ViewBag.StatusMessage = Message;
             string userId = User.Identity.GetUserId();
             string temp = dbContext.TeachersAccess.Where(u => u.TeacherId == userId).Select(u => u.TeacherSubjects).SingleOrDefault();
             List<string> userSubjects = new List<string>(); //Берем в массив ид предметов у которых у нас доступ
@@ -542,11 +544,12 @@ namespace FireTest.Controllers
                  new SelectListItem{ Value="4",Text="Курс 4"},
                  new SelectListItem{ Value="5",Text="Курс 5"},
              };
-            ViewBag.Courses = courses; 
+            ViewBag.Courses = courses;
+            ViewBag.Type = 1;
             return View();
         }
         [HttpPost]
-        public ActionResult NewQuestion(ViewCreateQuestion model)
+        public ActionResult NewQuestion(ViewCreateQuestion model, int Subjects, int Departments, int Courses, int Type)
         {
             if (!ModelState.IsValid)
             {
@@ -566,6 +569,7 @@ namespace FireTest.Controllers
                         {
                             Text = u.Name,
                             Value = u.Id.ToString(),
+                            Selected = u.Id == Subjects
                         }).ToList();
                 ViewBag.Subjects = selectList;
 
@@ -574,21 +578,76 @@ namespace FireTest.Controllers
                    {
                        Text = u.Name,
                        Value = u.Id.ToString(),
+                       Selected = u.Id == Departments
                    }).ToList();
                 ViewBag.Departments = selectList;
 
-                var courses = new[]{ //Добавляем выпадающий список курсов
-                 new SelectListItem{ Value="1",Text="Курс 1"},
-                 new SelectListItem{ Value="2",Text="Курс 2"},
-                 new SelectListItem{ Value="3",Text="Курс 3"},
-                 new SelectListItem{ Value="4",Text="Курс 4"},
-                 new SelectListItem{ Value="5",Text="Курс 5"},
-                };
-                ViewBag.Courses = courses;
-
-                return View();
+                List<int> tempCourses = new List<int>() { 1, 2, 3, 4, 5 }; //Добавляем выпадающий список курсов
+                selectList = tempCourses
+                   .Select(u => new SelectListItem()
+                   {
+                       Text = u.ToString(),
+                       Value = u.ToString(),
+                       Selected = u == Courses
+                   }).ToList();                
+                ViewBag.Courses = selectList;
+                ViewBag.Type = Type;
+                return View(model);
             }
-            return View();
+
+
+            List<string> answers = new List<string>();
+            List<int> answersCorrect = new List<int>();
+            int correct = 0;
+            foreach (var item in model.Answers)
+            {
+                if (!String.IsNullOrEmpty(item))
+                {
+                    answers.Add(item);
+                    if (model.AnswersCorrects.Contains(correct))
+                        answersCorrect.Add(answers.Count() - 1);
+                }
+                correct++;
+            }
+            Question newQuestion = new Question();
+            newQuestion.QuestionText = model.QuestionText;
+            newQuestion.IdCourse = Courses;
+            newQuestion.IdDepartment = Departments;
+            newQuestion.IdSubject = Subjects;
+            newQuestion.Tag = model.Tag;
+            //Временно
+            newQuestion.QuestionImage = null;
+            //Временно
+            dbContext.Questions.Add(newQuestion);
+            dbContext.SaveChanges();
+            int index = newQuestion.Id;
+
+            List<int> indexAnswers = new List<int>();
+            Answer newAnswer = new Answer();
+            for (int i = 0; i < answers.Count(); i++)
+            {
+                newAnswer.IdQuestion = index;
+                newAnswer.AnswerText = answers[i];
+                dbContext.Answers.Add(newAnswer);
+                dbContext.SaveChanges();
+                indexAnswers.Add(newAnswer.Id);
+            }
+            int count = 0;
+            string answerCorrectIndex = "";
+            foreach (int item in indexAnswers)
+            {
+                if (answersCorrect.Contains(count))
+                {
+                    if (answerCorrectIndex.Length > 0)
+                        answerCorrectIndex += "," + item;
+                    else
+                        answerCorrectIndex = "" + item;
+                }
+                count++;
+            }
+            newQuestion.IdCorrect = answerCorrectIndex;
+            dbContext.SaveChanges();
+            return RedirectToAction("NewQuestion", new { Message = "Вопрос был успешно добавлен" });
         }
         public ActionResult CreateExam()
         {

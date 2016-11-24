@@ -143,7 +143,7 @@ select {
     color: white;
 }
 .formul-tab:hover {
-    background-color: #e94d76;
+    background-color: rgb(255, 115, 0);
 }
 .formula-border {
     border: 1px solid gray;
@@ -176,4 +176,26 @@ select {
 .LatexButton:hover {
     background: rgba(114, 191, 230, 0.7);
     color: white;
+}
+.type-tab {
+    display: inline-block;
+    cursor: pointer;
+    padding: 8px;
+    background-color:rgba(114, 191, 230, 0.7);
+    padding-left: 5px;
+    color: white;
+    border-radius:5px;
+}
+.type-tab:hover {
+    background-color: rgb(255, 115, 0);
+}
+.type-content,
+.type-radio {
+    display: none;
+}
+.type-radio:checked + .type-content {
+    display: block;
+}
+.active{
+    background-color: rgb(255, 115, 0);
 }
