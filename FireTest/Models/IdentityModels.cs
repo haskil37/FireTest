@@ -130,6 +130,14 @@ namespace FireTest.Models
         [Required(ErrorMessage = "Должен быть указан хотя бы один правильный ответ")]
         public List<int> AnswersCorrects { get; set; }
     }
+    public class ViewEditQuestion
+    {
+        [Required(ErrorMessage = "Вы не написали текст вопроса")]
+        public string QuestionText { get; set; }
+        public string Tag { get; set; }
+        public List<Answer> Answers { get; set; }
+        public List<int> AnswersCorrects { get; set; }
+    }
     public class AnswersValidate : ValidationAttribute
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
@@ -137,12 +145,8 @@ namespace FireTest.Models
             var list = value as IList;
             int count = 0;
             foreach(string item in list)
-            {
                 if (string.IsNullOrEmpty(item))
-                {
                     count++;
-                }
-            }
             if (count == 8)
                 return new ValidationResult("Должен быть хотя бы один ответ");
 

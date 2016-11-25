@@ -549,9 +549,9 @@ namespace FireTest.Controllers
             return View();
         }
         [HttpPost]
-        public ActionResult NewQuestion(ViewCreateQuestion model, int Subjects, int Departments, int Courses, int Type)
+        public ActionResult NewQuestion(ViewCreateQuestion model, int Subjects, int Departments, int Courses, int Type, List<string> AnswersSequence, List<string> AnswersConformity)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || Type != 1)
             {
                 string userId = User.Identity.GetUserId();
                 string temp = dbContext.TeachersAccess.Where(u => u.TeacherId == userId).Select(u => u.TeacherSubjects).SingleOrDefault();
@@ -592,23 +592,44 @@ namespace FireTest.Controllers
                    }).ToList();                
                 ViewBag.Courses = selectList;
                 ViewBag.Type = Type;
-                return View(model);
-            }
-
-
-            List<string> answers = new List<string>();
-            List<int> answersCorrect = new List<int>();
-            int correct = 0;
-            foreach (var item in model.Answers)
-            {
-                if (!String.IsNullOrEmpty(item))
+                if (Type == 1)
+                    return View(model);
+                if (Type == 2)
                 {
-                    answers.Add(item);
-                    if (model.AnswersCorrects.Contains(correct))
-                        answersCorrect.Add(answers.Count() - 1);
+                    int countAnswers = 0;
+                    foreach (string item in AnswersSequence)
+                        if (string.IsNullOrEmpty(item))
+                            countAnswers++;
+                    if (countAnswers == 8)
+                    {
+                        ViewBag.Error = "Должен быть хотя бы один ответ";
+                        return View(model);
+                    }
+                    if (string.IsNullOrEmpty(model.QuestionText))
+                    {
+                        ViewBag.Answers = AnswersSequence;
+                        return View(model);
+                    }
                 }
-                correct++;
+                if (Type == 3)
+                {
+                    int countAnswers = 0;
+                    for (int i = 0; i < 4; i++)
+                        if (!string.IsNullOrEmpty(AnswersConformity[i]) && !string.IsNullOrEmpty(AnswersConformity[i + 4]))
+                            countAnswers++;
+                    if (string.IsNullOrEmpty(model.QuestionText))
+                    {
+                        ViewBag.Answers = AnswersConformity;
+                        return View(model);
+                    }
+                    if (countAnswers == 0) //Если хоть 1 пара есть, то норм
+                    {
+                        ViewBag.Error = "Должна быть хотя бы одна пара значений";
+                        return View(model);
+                    }
+                }
             }
+
             Question newQuestion = new Question();
             newQuestion.QuestionText = model.QuestionText;
             newQuestion.IdCourse = Courses;
@@ -622,32 +643,294 @@ namespace FireTest.Controllers
             dbContext.SaveChanges();
             int index = newQuestion.Id;
 
-            List<int> indexAnswers = new List<int>();
-            Answer newAnswer = new Answer();
-            for (int i = 0; i < answers.Count(); i++)
+            if (Type == 1)
             {
-                newAnswer.IdQuestion = index;
-                newAnswer.AnswerText = answers[i];
-                dbContext.Answers.Add(newAnswer);
-                dbContext.SaveChanges();
-                indexAnswers.Add(newAnswer.Id);
-            }
-            int count = 0;
-            string answerCorrectIndex = "";
-            foreach (int item in indexAnswers)
-            {
-                if (answersCorrect.Contains(count))
+                List<string> answers = new List<string>();
+                List<int> answersCorrect = new List<int>();
+                int correct = 0;
+                foreach (var item in model.Answers)
                 {
-                    if (answerCorrectIndex.Length > 0)
-                        answerCorrectIndex += "," + item;
-                    else
-                        answerCorrectIndex = "" + item;
+                    if (!String.IsNullOrEmpty(item))
+                    {
+                        answers.Add(item);
+                        if (model.AnswersCorrects.Contains(correct))
+                            answersCorrect.Add(answers.Count() - 1);
+                    }
+                    correct++;
                 }
-                count++;
+
+                List<int> indexAnswers = new List<int>();
+                Answer newAnswer = new Answer();
+                for (int i = 0; i < answers.Count(); i++)
+                {
+                    newAnswer.IdQuestion = index;
+                    newAnswer.AnswerText = answers[i];
+                    dbContext.Answers.Add(newAnswer);
+                    dbContext.SaveChanges();
+                    indexAnswers.Add(newAnswer.Id);
+                }
+                int count = 0;
+                string answerCorrectIndex = "";
+                foreach (int item in indexAnswers)
+                {
+                    if (answersCorrect.Contains(count))
+                    {
+                        if (answerCorrectIndex.Length > 0)
+                            answerCorrectIndex += "," + item;
+                        else
+                            answerCorrectIndex = "" + item;
+                    }
+                    count++;
+                }
+                newQuestion.IdCorrect = answerCorrectIndex;
+                dbContext.SaveChanges();
             }
-            newQuestion.IdCorrect = answerCorrectIndex;
-            dbContext.SaveChanges();
+            if (Type == 2)
+            {
+                List<string> answers = new List<string>();
+                foreach (var item in AnswersSequence)
+                    if (!String.IsNullOrEmpty(item))
+                        answers.Add(item);
+
+                List<int> indexAnswers = new List<int>();
+                Answer newAnswer = new Answer();
+                for (int i = 0; i < answers.Count(); i++)
+                {
+                    newAnswer.IdQuestion = index;
+                    newAnswer.AnswerText = answers[i];
+                    dbContext.Answers.Add(newAnswer);
+                    dbContext.SaveChanges();
+                    indexAnswers.Add(newAnswer.Id);
+                }
+                string answerCorrectIndex = "~";
+                foreach (int item in indexAnswers)
+                    answerCorrectIndex += item + ",";
+                answerCorrectIndex = answerCorrectIndex.Substring(0, answerCorrectIndex.Length - 1);
+                newQuestion.IdCorrect = answerCorrectIndex;
+                dbContext.SaveChanges();
+            }
+            if (Type == 3)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    if (string.IsNullOrEmpty(AnswersConformity[i]) || string.IsNullOrEmpty(AnswersConformity[i + 4]))
+                    {
+                        AnswersConformity[i] = null;
+                        AnswersConformity[i + 4] = null;
+                    }
+                }
+                List<string> answers = new List<string>();
+
+                foreach (var item in AnswersConformity)
+                    if (!String.IsNullOrEmpty(item))
+                        answers.Add(item);
+                List<int> indexAnswers = new List<int>();
+                Answer newAnswer = new Answer();
+                for (int i = 0; i < answers.Count(); i++)
+                {
+                    newAnswer.IdQuestion = index;
+                    newAnswer.AnswerText = answers[i];
+                    dbContext.Answers.Add(newAnswer);
+                    dbContext.SaveChanges();
+                    indexAnswers.Add(newAnswer.Id);
+                }
+                string answerCorrectIndex = "#";
+                int halfCount = indexAnswers.Count() / 2;
+                for (int i = 0; i < halfCount; i++)
+                {
+                    if (i > 0)
+                        answerCorrectIndex += "," + indexAnswers[i] + "=" + indexAnswers[i + halfCount];
+                    else
+                        answerCorrectIndex += indexAnswers[i] + "=" + indexAnswers[i + halfCount];
+                }
+                newQuestion.IdCorrect = answerCorrectIndex;
+                dbContext.SaveChanges();
+            }
             return RedirectToAction("NewQuestion", new { Message = "Вопрос был успешно добавлен" });
+        }
+        public ActionResult EditQuestionSelect()
+        {
+            return View();
+        }
+        public PartialViewResult EditQuestionSelectAjax(string currentFilter, string searchString, int? page, string NameTest, int? Subjects, string Tags)
+        {
+            string userId = User.Identity.GetUserId();
+
+            if (!string.IsNullOrEmpty(searchString))
+                page = 1;
+            else
+                searchString = currentFilter;
+            ViewBag.CurrentFilter = searchString;
+
+            string temp = dbContext.TeachersAccess.Where(u => u.TeacherId == userId).Select(u => u.TeacherSubjects).SingleOrDefault();
+            List<string> userSubjects = new List<string>(); //Берем в массив ид предметов у которых у нас доступ
+            if (!string.IsNullOrEmpty(temp))
+                userSubjects = temp.Split('|').ToList();
+
+            var tempSubjects = dbContext.Subjects.Where(u => userSubjects.Contains(u.Id.ToString())).Select(u => new
+            {
+                Id = u.Id,
+                Name = u.Name
+            }); //Записываем предметы в список
+            var selectList = tempSubjects //Добавляем выпадающий список из разрешенных предметов
+                    .Select(u => new SelectListItem()
+                    {
+                        Text = u.Name,
+                        Value = u.Id.ToString(),
+                        Selected = u.Id == Subjects
+                    }).ToList();
+            ViewBag.Subjects = selectList;
+
+            List<string> tempTags;
+
+            int sub; //Если выбран предмет то используем его, если нет, то выбираем первый в списке разрешенных
+            if (Subjects != null)
+                sub = Subjects.Value;
+            else
+            {
+                userSubjects.Sort();
+                sub = Convert.ToInt32(userSubjects[0]);
+            }
+
+            tempTags = dbContext.Questions
+                .Where(u => u.IdSubject == sub)
+                .Select(u => u.Tag).Distinct().ToList(); //Берем все разделы
+            if (tempTags.Count == 0)
+                tempTags.Add("Все разделы");
+            else
+                tempTags[0] = "Все разделы";
+            tempTags.Add("Без раздела");
+            selectList = tempTags //Выпадающий список разделов
+                .Select(u => new SelectListItem()
+                {
+                    Value = u,
+                    Text = u,
+                    Selected = u == Tags
+                }).ToList();
+            ViewBag.Tags = selectList;
+
+            var tempQuestions = dbContext.Questions //Берем все вопросы дисциплины
+                .Where(u => u.IdSubject == sub)
+                .Select(u => new {
+                    Id = u.Id,
+                    Text = u.QuestionText
+                }).ToList();
+            if (Tags != "Все разделы" && Tags != "Без раздела")
+            {
+                tempQuestions = dbContext.Questions //Берем все вопросы дисциплины нужного раздела
+                    .Where(u => u.IdSubject == sub)
+                    .Where(u => u.Tag == Tags)
+                    .Select(u => new {
+                        Id = u.Id,
+                        Text = u.QuestionText
+                    }).ToList();
+            }
+            if (Tags == "Без раздела")
+            {
+                tempQuestions = dbContext.Questions //Берем все вопросы дисциплины без раздела
+                    .Where(u => u.IdSubject == sub)
+                    .Where(u => string.IsNullOrEmpty(u.Tag))
+                    .Select(u => new {
+                        Id = u.Id,
+                        Text = u.QuestionText
+                    }).ToList();
+            }
+
+            List<SubjectAccess> model = new List<SubjectAccess>(); //Использую это т.к. надо точно такие же поля
+            foreach (var item in tempQuestions)
+            {
+                SubjectAccess subject = new SubjectAccess();
+                if (!String.IsNullOrEmpty(searchString) && item.Text.ToLower().Contains(searchString.ToLower()))
+                {
+                    subject.Id = item.Id;
+                    subject.Name = item.Text;
+                    model.Add(subject);
+                }
+                if (String.IsNullOrEmpty(searchString))
+                {
+                    subject.Id = item.Id;
+                    subject.Name = item.Text;
+                    model.Add(subject);
+                }
+            }
+
+            model = model.OrderBy(u => u.Name).ToList();
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+            ViewBag.page = pageNumber;
+
+            return PartialView(model.ToPagedList(pageNumber, pageSize));
+        }
+        public ActionResult EditQuestion (int id)
+        {
+            //ТЕСТИРОВАНИЕ иДОБАВЛЕНИЕ ДРУГИХ ТИПОВ
+            string userId = User.Identity.GetUserId();
+            string temp = dbContext.TeachersAccess.Where(u => u.TeacherId == userId).Select(u => u.TeacherSubjects).SingleOrDefault();
+            List<string> userSubjects = new List<string>(); //Берем в массив ид предметов у которых у нас доступ
+            if (!string.IsNullOrEmpty(temp))
+                userSubjects = temp.Split('|').ToList();
+
+            var question = dbContext.Questions.Find(id); //Данные вопроса
+
+            var tempSubjects = dbContext.Subjects.Where(u => userSubjects.Contains(u.Id.ToString())).Select(u => new
+            {
+                Id = u.Id,
+                Name = u.Name
+            }); //Записываем предметы в список
+            var selectList = tempSubjects //Добавляем выпадающий список из разрешенных предметов
+                    .Select(u => new SelectListItem()
+                    {
+                        Text = u.Name,
+                        Value = u.Id.ToString(),
+                        Selected = u.Id == question.IdSubject
+                    }).ToList();
+            ViewBag.Subjects = selectList;
+
+            selectList = dbContext.Departments //Добавляем выпадающий список из кафедр
+               .Select(u => new SelectListItem()
+               {
+                   Text = u.Name,
+                   Value = u.Id.ToString(),
+                   Selected = u.Id == question.IdSubject
+               }).ToList();
+            ViewBag.Departments = selectList;
+
+            List<int> tempCourses = new List<int>() { 1, 2, 3, 4, 5 }; //Добавляем выпадающий список курсов
+            selectList = tempCourses
+               .Select(u => new SelectListItem()
+               {
+                   Text = u.ToString(),
+                   Value = u.ToString(),
+                   Selected = u == question.IdCourse
+               }).ToList();
+            ViewBag.Courses = selectList;
+
+            var model = new ViewEditQuestion();
+            model.QuestionText = question.QuestionText;
+            model.Tag = question.Tag;
+            string correct = question.IdCorrect;
+            if (correct[0] != '~' && correct[0] != '#') //Если обычный вопрос
+            {
+                ViewBag.Type = 1;
+                List<string> correctAnswers = correct.Split(',').ToList();
+                List<int> AnswersTrue = new List<int>();
+                for (int i = 0; i < 8; i++)
+                {
+                    Answer tempAnswer = new Answer();
+                    if (correctAnswers.Count != 0)
+                    {
+                        tempAnswer.IdQuestion = id;
+                        tempAnswer.Id = Convert.ToInt32(correctAnswers[i]);
+                        tempAnswer.AnswerText = dbContext.Answers.Find(Convert.ToInt32(correctAnswers[i])).AnswerText;
+                        correctAnswers.RemoveAt(i);
+                        if (tempAnswer.Id == Convert.ToInt32(correctAnswers[i]))
+                            AnswersTrue.Add(i);
+                    }
+                    model.Answers.Add(tempAnswer);
+                    model.AnswersCorrects = AnswersTrue;
+                }
+            }
+            return View(model);
         }
         public ActionResult CreateExam()
         {
