@@ -1,16 +1,16 @@
 ﻿@model PagedList.IPagedList<FireTest.Models.SubjectAccess>
 @using PagedList.Mvc;
-@using (Ajax.BeginForm("EditNewAjax", new AjaxOptions
+@using (Ajax.BeginForm("EditNewAjax", null, new AjaxOptions
 {
     HttpMethod = "Get",
     InsertionMode = InsertionMode.Replace,
     UpdateTargetId = "QuestionsNew",
-}))
+}, new { id = "New" }))
 {
     if (ViewBag.Submit == true)
     {
         <script>
-            $('#form0').submit();
+            $('#Old').submit();
         </script>
     }
     @Html.Hidden("page", (int)ViewBag.page)
@@ -74,7 +74,7 @@
         $('#SearchStringNew').focus();
         $('#SearchStringNew').setCursorToTextEnd();
         $('#SearchStringNew').keyup(function () {
-            $('#form1').submit();
+            $('#New').submit();
         });
     </script>
 }

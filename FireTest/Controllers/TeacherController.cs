@@ -17,7 +17,7 @@ namespace FireTest.Controllers
         ApplicationDbContext dbContext = new ApplicationDbContext();
         public ActionResult Index()
         {
-            var tests = dbContext.TeacherTests.ToList().Where(u => u.TeacherId == User.Identity.GetUserId()).Where(u=>!string.IsNullOrEmpty(u.NameTest));
+            var tests = dbContext.TeacherTests.ToList().Where(u => u.TeacherId == User.Identity.GetUserId()).Where(u => !string.IsNullOrEmpty(u.NameTest));
 
             return View(tests);
         }
@@ -38,7 +38,7 @@ namespace FireTest.Controllers
             TeacherTestDetails testDetails = new TeacherTestDetails();
             testDetails.Id = teacherTest.Id;
             testDetails.NameTest = teacherTest.NameTest;
-            List<string> questions = teacherTest.Questions.Split(',').ToList();
+            List<string> questions = teacherTest.Questions.Split('|').ToList();
             testDetails.Questions = new List<Question>();
             foreach (string item in questions)
                 testDetails.Questions.Add(dbContext.Questions.Find(Convert.ToInt32(item)));
@@ -69,7 +69,6 @@ namespace FireTest.Controllers
         public ActionResult CreateTest()
         {
             Session.Clear();
-
             string userId = User.Identity.GetUserId();
             var result = dbContext.TeacherTests
                 .Where(u => u.TeacherId == userId)
@@ -250,7 +249,7 @@ namespace FireTest.Controllers
                         subject.Access = false;
                     model.Add(subject);
                 }
-                if(String.IsNullOrEmpty(searchString))
+                if (String.IsNullOrEmpty(searchString))
                 {
                     subject.Id = item.Id;
                     subject.Name = item.Text;
@@ -271,6 +270,7 @@ namespace FireTest.Controllers
         }
         public ActionResult Edit(int? id)
         {
+            Session.Clear();
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -446,27 +446,28 @@ namespace FireTest.Controllers
                 .Where(u => !questions.Contains(u.Id.ToString()))
                 .Select(u => new {
                     Id = u.Id,
-                    Text = u.QuestionText
+                    Text = u.QuestionText,
+                    Tag = u.Tag
                 }).ToList();
 
             if (Tags != "Все разделы" && Tags != "Без раздела")
             {
-                tempQuestions = dbContext.Questions //Берем все вопросы дисциплины нужного раздела
-                    .Where(u => u.IdSubject == sub)
+                tempQuestions = tempQuestions //Берем все вопросы дисциплины нужного раздела
                     .Where(u => u.Tag == Tags)
                     .Select(u => new {
                         Id = u.Id,
-                        Text = u.QuestionText
+                        Text = u.Text,
+                        Tag = u.Tag
                     }).ToList();
             }
             if (Tags == "Без раздела")
             {
-                tempQuestions = dbContext.Questions //Берем все вопросы дисциплины без раздела
-                    .Where(u => u.IdSubject == sub)
+                tempQuestions = tempQuestions //Берем все вопросы дисциплины без раздела
                     .Where(u => string.IsNullOrEmpty(u.Tag))
                     .Select(u => new {
                         Id = u.Id,
-                        Text = u.QuestionText
+                        Text = u.Text,
+                        Tag = u.Tag
                     }).ToList();
             }
             List<SubjectAccess> model = new List<SubjectAccess>(); //Использую это т.к. надо точно такие же поля
@@ -589,7 +590,7 @@ namespace FireTest.Controllers
                        Text = u.ToString(),
                        Value = u.ToString(),
                        Selected = u == Courses
-                   }).ToList();                
+                   }).ToList();
                 ViewBag.Courses = selectList;
                 ViewBag.Type = Type;
                 if (Type == 1)
@@ -750,12 +751,17 @@ namespace FireTest.Controllers
         }
         public ActionResult EditQuestionSelect()
         {
+            Session.Clear();
             return View();
         }
         public PartialViewResult EditQuestionSelectAjax(string currentFilter, string searchString, int? page, string NameTest, int? Subjects, string Tags)
         {
             string userId = User.Identity.GetUserId();
-
+            if (Session["Subjects"] != null && Session["Tags"] != null)
+                if ((int)Session["Subjects"] != Subjects || (string)Session["Tags"] != Tags)
+                    page = 1;
+            Session["Subjects"] = Subjects;
+            Session["Tags"] = Tags;
             if (!string.IsNullOrEmpty(searchString))
                 page = 1;
             else
@@ -861,9 +867,10 @@ namespace FireTest.Controllers
 
             return PartialView(model.ToPagedList(pageNumber, pageSize));
         }
-        public ActionResult EditQuestion (int id)
+        public ActionResult EditQuestion(int id, string Message)
         {
-            //ТЕСТИРОВАНИЕ иДОБАВЛЕНИЕ ДРУГИХ ТИПОВ
+            ViewBag.Id = id;
+            ViewBag.StatusMessage = Message;
             string userId = User.Identity.GetUserId();
             string temp = dbContext.TeachersAccess.Where(u => u.TeacherId == userId).Select(u => u.TeacherSubjects).SingleOrDefault();
             List<string> userSubjects = new List<string>(); //Берем в массив ид предметов у которых у нас доступ
@@ -908,29 +915,320 @@ namespace FireTest.Controllers
             var model = new ViewEditQuestion();
             model.QuestionText = question.QuestionText;
             model.Tag = question.Tag;
+            model.Answers = new List<Answer>();
+            List<bool> tempAnswersCorrects = new List<bool>();
             string correct = question.IdCorrect;
             if (correct[0] != '~' && correct[0] != '#') //Если обычный вопрос
             {
                 ViewBag.Type = 1;
                 List<string> correctAnswers = correct.Split(',').ToList();
                 List<int> AnswersTrue = new List<int>();
-                for (int i = 0; i < 8; i++)
+                var Answers = dbContext.Answers
+                    .Where(u => u.IdQuestion == id)
+                    .Select(u => new
+                    {
+                        Id = u.Id,
+                        AnswerText = u.AnswerText
+                    }).ToList();
+                correctAnswers.Sort();
+                int i = 0;
+                foreach (var item in Answers)
+                {
+                    if (correctAnswers.Contains(item.Id.ToString()))
+                    {
+                        tempAnswersCorrects.Add(true);
+                        
+                        i++;
+                    }
+                    else
+                        tempAnswersCorrects.Add(false);
+                    Answer tempAnswer = new Answer();
+                    tempAnswer.Id = item.Id;
+                    tempAnswer.AnswerText = item.AnswerText;
+                    model.Answers.Add(tempAnswer);
+                }
+                ViewBag.Corrects = tempAnswersCorrects;
+            }
+            if (correct[0] == '~')
+            {
+                ViewBag.Type = 2;
+                var Answers = dbContext.Answers
+                    .Where(u => u.IdQuestion == id)
+                    .Select(u => new
+                    {
+                        Id = u.Id,
+                        AnswerText = u.AnswerText
+                    }).ToList();
+                foreach (var item in Answers)
                 {
                     Answer tempAnswer = new Answer();
-                    if (correctAnswers.Count != 0)
-                    {
-                        tempAnswer.IdQuestion = id;
-                        tempAnswer.Id = Convert.ToInt32(correctAnswers[i]);
-                        tempAnswer.AnswerText = dbContext.Answers.Find(Convert.ToInt32(correctAnswers[i])).AnswerText;
-                        correctAnswers.RemoveAt(i);
-                        if (tempAnswer.Id == Convert.ToInt32(correctAnswers[i]))
-                            AnswersTrue.Add(i);
-                    }
+                    tempAnswer.Id = item.Id;
+                    tempAnswer.AnswerText = item.AnswerText;
                     model.Answers.Add(tempAnswer);
-                    model.AnswersCorrects = AnswersTrue;
+                }
+            }
+            if (correct[0] == '#')
+            {
+                ViewBag.Type = 3;
+                correct = correct.Substring(1);
+                List<string> correctAnswersCouple = correct.Split(',').ToList();
+                foreach (string item in correctAnswersCouple)
+                {
+                    List<string> correctAnswers = item.Split('=').ToList();
+                    foreach (string item2 in correctAnswers)
+                    {
+                        var Answers = dbContext.Answers
+                                .Where(u => u.Id.ToString() == item2)
+                                .Select(u => new
+                                {
+                                    Id = u.Id,
+                                    AnswerText = u.AnswerText
+                                }).ToList();
+                        foreach (var item3 in Answers)
+                        {
+                            Answer tempAnswer = new Answer();
+                            tempAnswer.Id = item3.Id;
+                            tempAnswer.AnswerText = item3.AnswerText;
+                            model.Answers.Add(tempAnswer);
+                        }
+                    }
                 }
             }
             return View(model);
+        }
+        [HttpPost]
+        public ActionResult EditQuestion(ViewEditQuestion Question, int Type, int id, int Subjects, int Departments, int Courses)
+        {
+            if (!ModelState.IsValid)
+                return View(Question);
+
+            var question = dbContext.Questions.Find(id);
+            question.IdCourse = Courses;
+            question.IdDepartment = Departments;
+            question.IdSubject = Subjects;
+            question.QuestionText = Question.QuestionText;
+
+            var NewAnswersId = dbContext.Answers
+                    .Where(u => u.IdQuestion == id)
+                    .Select(u => u.Id).ToList();
+            int i = 0;
+            string NewAnswersCorrect = question.IdCorrect;
+            string tempNewAnswersCorrect = "";
+            int count = 0;
+            foreach (var item in Question.Answers)
+            {
+                if (item != null && !string.IsNullOrEmpty(item.AnswerText))
+                    count++;
+            }
+            if (Type == 1)
+            {
+                if (count == NewAnswersId.Count())
+                {
+                    foreach (var item in NewAnswersId)
+                    {
+                        var NewAnswers = dbContext.Answers.Find(item);
+                        NewAnswers.AnswerText = Question.Answers[i].AnswerText;
+                        if (Question.AnswersCorrects.Contains(i))
+                        {
+                            if (tempNewAnswersCorrect.Length > 0)
+                                tempNewAnswersCorrect += "," + NewAnswers.Id;
+                            else
+                                tempNewAnswersCorrect = "" + NewAnswers.Id;
+                        }
+                        i++;
+                    }
+                }
+                if (count < NewAnswersId.Count())
+                {
+                    foreach (var item in NewAnswersId)
+                    {
+                        var delete = dbContext.Answers.Find(item);
+                        dbContext.Answers.Remove(delete);
+                    }
+                    for (int j = 0; j < 8;)
+                    {
+                        if (!string.IsNullOrEmpty(Question.Answers[j].AnswerText))
+                        {
+                            Answer NewAnswers = new Answer();
+                            NewAnswers.IdQuestion = id;
+                            NewAnswers.AnswerText = Question.Answers[j].AnswerText;
+                            dbContext.Answers.Add(NewAnswers);
+                            dbContext.SaveChanges();
+
+                            if (Question.AnswersCorrects.Contains(j))
+                            {
+                                if (tempNewAnswersCorrect.Length > 0)
+                                    tempNewAnswersCorrect += "," + NewAnswers.Id;
+                                else
+                                    tempNewAnswersCorrect = "" + NewAnswers.Id;
+                            }
+                        }
+                        j++;
+                    }
+                }
+                if (count > NewAnswersId.Count())
+                {
+                    for (int j = 0; j < 8;)
+                    {
+                        if (!string.IsNullOrEmpty(Question.Answers[j].AnswerText))
+                        {
+                            Answer NewAnswers = new Answer();
+                            if (NewAnswersId.Count() > j)
+                            {
+                                NewAnswers = dbContext.Answers.Find(NewAnswersId[j]);
+                                NewAnswers.AnswerText = Question.Answers[j].AnswerText;
+                            }
+                            else
+                            {
+                                NewAnswers.IdQuestion = id;
+                                NewAnswers.AnswerText = Question.Answers[j].AnswerText;
+                                dbContext.Answers.Add(NewAnswers);
+                                dbContext.SaveChanges();
+                            }
+                            if (Question.AnswersCorrects.Contains(j))
+                            {
+                                if (tempNewAnswersCorrect.Length > 0)
+                                    tempNewAnswersCorrect += "," + NewAnswers.Id;
+                                else
+                                    tempNewAnswersCorrect = "" + NewAnswers.Id;
+                            }
+                        }
+                        j++;
+                    }
+                }
+            }
+            if (Type == 2)
+            {
+                if (count == NewAnswersId.Count())
+                {
+                    tempNewAnswersCorrect = "~";
+                    foreach (var item in NewAnswersId)
+                    {
+                        var NewAnswers = dbContext.Answers.Find(item);
+                        NewAnswers.AnswerText = Question.Answers[i].AnswerText;
+                        tempNewAnswersCorrect += NewAnswers.Id + ",";
+                        i++;
+                    }
+                    tempNewAnswersCorrect = tempNewAnswersCorrect.Substring(0, tempNewAnswersCorrect.Length - 1);
+                }
+                if (count > NewAnswersId.Count())
+                {
+                    tempNewAnswersCorrect = "~";
+                    for (int j = 0; j < 8;)
+                    {
+                        if (!string.IsNullOrEmpty(Question.Answers[j].AnswerText))
+                        {
+                            Answer NewAnswers = new Answer();
+                            if (NewAnswersId.Count() > j)
+                            {
+                                NewAnswers = dbContext.Answers.Find(NewAnswersId[j]);
+                                NewAnswers.AnswerText = Question.Answers[j].AnswerText;
+                                tempNewAnswersCorrect += NewAnswers.Id + ",";
+                            }
+                            else
+                            {
+                                NewAnswers.IdQuestion = id;
+                                NewAnswers.AnswerText = Question.Answers[j].AnswerText;
+                                dbContext.Answers.Add(NewAnswers);
+                                dbContext.SaveChanges();
+                                tempNewAnswersCorrect += NewAnswers.Id + ",";
+                            }
+                        }
+                        j++;
+                    }
+                    tempNewAnswersCorrect = tempNewAnswersCorrect.Substring(0, tempNewAnswersCorrect.Length - 1);
+                }
+                if (count < NewAnswersId.Count())
+                {
+                    foreach (var item in NewAnswersId)
+                    {
+                        var delete = dbContext.Answers.Find(item);
+                        dbContext.Answers.Remove(delete);
+                    }
+                    tempNewAnswersCorrect = "~";
+                    for (int j = 0; j < 8;)
+                    {
+                        if (!string.IsNullOrEmpty(Question.Answers[j].AnswerText))
+                        {
+                            Answer NewAnswers = new Answer();
+                            NewAnswers.IdQuestion = id;
+                            NewAnswers.AnswerText = Question.Answers[j].AnswerText;
+                            dbContext.Answers.Add(NewAnswers);
+                            dbContext.SaveChanges();
+                            tempNewAnswersCorrect += NewAnswers.Id + ",";
+                        }
+                        j++;
+                    }
+                    tempNewAnswersCorrect = tempNewAnswersCorrect.Substring(0, tempNewAnswersCorrect.Length - 1);
+                }
+            }
+            if (Type == 3)
+            {
+                if (count == NewAnswersId.Count())
+                {
+                    List<int> indexAnswers = new List<int>();
+                    foreach (var item in NewAnswersId)
+                    {
+                        var NewAnswers = dbContext.Answers.Find(item);
+                        NewAnswers.AnswerText = Question.Answers[i].AnswerText;
+                        indexAnswers.Add(NewAnswers.Id);
+                        i++;
+                    }
+                    tempNewAnswersCorrect = "#";
+                    int halfCount = indexAnswers.Count() / 2;
+                    for (int j = 0; j < halfCount; j++)
+                    {
+                        if (j > 0)
+                            tempNewAnswersCorrect += "," + indexAnswers[j] + "=" + indexAnswers[j + halfCount];
+                        else
+                            tempNewAnswersCorrect += indexAnswers[j] + "=" + indexAnswers[j + halfCount];
+                    }
+                }
+                else
+                {
+                    for (int j = 0; j < 4; j++)
+                    {
+                        if (string.IsNullOrEmpty(Question.Answers[j].AnswerText) || string.IsNullOrEmpty(Question.Answers[j + 4].AnswerText))
+                        {
+                            Question.Answers[j].AnswerText = null;
+                            Question.Answers[j + 4].AnswerText = null;
+                        }
+                    }
+                    foreach (var item in NewAnswersId)
+                    {
+                        var delete = dbContext.Answers.Find(item);
+                        dbContext.Answers.Remove(delete);
+                    }
+
+                    List<string> answers = new List<string>();
+
+                    foreach (var item in Question.Answers)
+                        if (!String.IsNullOrEmpty(item.AnswerText))
+                            answers.Add(item.AnswerText);
+                    List<int> indexAnswers = new List<int>();
+                    Answer newAnswer = new Answer();
+                    for (int j = 0; j < answers.Count(); j++)
+                    {
+                        newAnswer.IdQuestion = id;
+                        newAnswer.AnswerText = answers[j];
+                        dbContext.Answers.Add(newAnswer);
+                        dbContext.SaveChanges();
+                        indexAnswers.Add(newAnswer.Id);
+                    }
+                    tempNewAnswersCorrect = "#";
+                    int halfCount = indexAnswers.Count() / 2;
+                    for (int j = 0; j < halfCount; j++)
+                    {
+                        if (j > 0)
+                            tempNewAnswersCorrect += "," + indexAnswers[j] + "=" + indexAnswers[j + halfCount];
+                        else
+                            tempNewAnswersCorrect += indexAnswers[j] + "=" + indexAnswers[j + halfCount];
+                    }
+                }
+            }
+            question.IdCorrect = tempNewAnswersCorrect;
+            dbContext.SaveChanges();
+            return RedirectToAction("EditQuestion", new { id, Message = "Вопрос был успешно изменен" });
         }
         public ActionResult CreateExam()
         {

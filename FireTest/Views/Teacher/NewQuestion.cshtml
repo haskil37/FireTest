@@ -165,39 +165,41 @@
             <input id="type-tab-3" name="Type" type="radio" class="type-radio" value="3" />
         }
         <div class="type-content">
-            <p class="text-success">@ViewBag.Error</p>
-            <div class="textback">
-                Расположите ответы в правильном порядке по парам
-            </div>
             <div class="row">
-                @for (int i = 0; i < 4; i++)
-                {
-                    <div class="col-5">
-                        <div class="row">
-                            @if (ViewBag.Answers != null && ViewBag.Answers[i] != null)
-                            {
-                                <textarea cols="20" id="AnswersConformity[@i]" name="AnswersConformity[@i]" rows="2">@ViewBag.Answers[i]</textarea>
-                            }
-                            else
-                            {
-                                <textarea cols="20" id="AnswersConformity[@i]" name="AnswersConformity[@i]" rows="2"></textarea>
-                            }
+                <p class="text-success">@ViewBag.Error</p>
+                <div class="textback">
+                    Расположите ответы в правильном порядке по парам
+                </div>
+                <div class="row">
+                    @for (int i = 0; i < 4; i++)
+                    {
+                        <div class="col-5">
+                            <div class="row">
+                                @if (ViewBag.Answers != null && ViewBag.Answers[i] != null)
+                                {
+                                    <textarea cols="20" id="AnswersConformity[@i]" name="AnswersConformity[@i]" rows="2">@ViewBag.Answers[i]</textarea>
+                                }
+                                else
+                                {
+                                    <textarea cols="20" id="AnswersConformity[@i]" name="AnswersConformity[@i]" rows="2"></textarea>
+                                }
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-2"><span class="equals">=</span></div>
-                    <div class="col-5">
-                        <div class="row">
-                            @if (ViewBag.Answers != null && ViewBag.Answers[i+4] != null)
-                            {
-                                <textarea cols="20" id="AnswersConformity[@(i+4)]" name="AnswersConformity[@(i+4)]" rows="2">@ViewBag.Answers[i+4]</textarea>
-                            }
-                            else
-                            {
-                                <textarea cols="20" id="AnswersConformity[@(i+4)]" name="AnswersConformity[@(i+4)]" rows="2"></textarea>
-                            }
+                        <div class="col-2"><span class="equals">=</span></div>
+                        <div class="col-5">
+                            <div class="row">
+                                @if (ViewBag.Answers != null && ViewBag.Answers[i + 4] != null)
+                                {
+                                    <textarea cols="20" id="AnswersConformity[@(i+4)]" name="AnswersConformity[@(i+4)]" rows="2">@ViewBag.Answers[i + 4]</textarea>
+                                }
+                                else
+                                {
+                                    <textarea cols="20" id="AnswersConformity[@(i+4)]" name="AnswersConformity[@(i+4)]" rows="2"></textarea>
+                                }
+                            </div>
                         </div>
-                    </div>
-                }
+                    }
+                </div>
             </div>
         </div>
         <div class="row left">

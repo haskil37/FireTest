@@ -113,11 +113,6 @@ th {
 .input {
     width: 100%;
 }
-select {
-    width: 100%;
-    background-color: rgb(196, 189, 151);
-    outline: none;
-}
 .c-body {
     color: black;
     background-color: rgba(114, 191, 230, 0.7);

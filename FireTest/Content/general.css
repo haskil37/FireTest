@@ -270,10 +270,17 @@ h3 {
     -ms-user-select: none;
     user-select: none;
 }
+select {
+    width: 100%;
+    background-color: rgb(196, 189, 151);
+    outline: none;
+    font-size: 20px;
+}
 input[type="text"], textarea, input[type="password"] {
     background-color: rgb(196, 189, 151);  
     border: none;
     font-size: 20px;
+    font-family: 'Helvetica', 'Arial', sans-serif;
 }
 input[type=range] {
     -webkit-appearance: none;
@@ -1097,6 +1104,12 @@ li.sortable-placeholder {
     }
     .avatar{
         width: 100px;
+    }
+    select{
+        font-size:14px;
+    }
+    textarea{
+        font-size:14px;
     }
 }
 @media(max-width:768px) {
