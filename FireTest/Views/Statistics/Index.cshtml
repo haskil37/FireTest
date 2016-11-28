@@ -1,0 +1,22 @@
+﻿@{
+    ViewBag.Title = "Статистика";
+}
+@Styles.Render("~/Content/statistic")
+
+@using (Ajax.BeginForm("Index", new AjaxOptions
+{
+    HttpMethod = "Post",
+    InsertionMode = InsertionMode.Replace,
+    UpdateTargetId = "Statistic",
+}))
+{
+    <select name="id" onchange="$(this.form).submit();">
+        <option value="1">Правильные ответы</option>
+        <option value="0">Поединки</option>
+    </select>
+}
+<div id="Statistic"></div>
+@section scripts
+{
+    @Scripts.Render("~/bundles/statistic")
+}

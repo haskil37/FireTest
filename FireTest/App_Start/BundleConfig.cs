@@ -32,6 +32,9 @@ namespace FireTest
                         "~/Scripts/jquery.form.min.js",
                         "~/Scripts/jquery.Jcrop.min.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/statistic").Include(
+                        "~/Scripts/Chart.min.js"));
+
             bundles.Add(new StyleBundle("~/Content/general").Include(
                       "~/Content/reset.css",
                       "~/Content/general.css",
@@ -47,6 +50,9 @@ namespace FireTest
             bundles.Add(new StyleBundle("~/Content/administrator").Include(
                       "~/Content/PagedList.css",
                       "~/Content/administrator.css"));
+
+            bundles.Add(new StyleBundle("~/Content/statistic").Include(
+                      "~/Content/statistic.css"));
 
             bundles.Add(new StyleBundle("~/Content/login").Include(
                       "~/Content/login.css"));

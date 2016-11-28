@@ -1,0 +1,36 @@
+﻿<script>
+    var ctx = document.getElementById("chart-area").getContext("2d");
+    var myPieChart = new Chart(ctx, config);
+    var config = {
+        type: 'pie',
+        data: {
+            datasets: [{
+                data: [300, 50],
+                backgroundColor: [
+                    "#ff7300",
+                    "#70bee6",
+                ],
+            }],
+            labels: [
+                "Поражений",
+                "Побед",
+            ]
+        },
+        options: {
+            responsive: true,
+            legend: {
+                labels: {
+                    fontSize: 20,
+                    fontColor: "#c4bd97"
+                }
+            }
+
+        },
+        animation: {
+            animateRotate: false
+        },
+    };
+</script>
+<div id="canvas-holder">
+    <canvas id="chart-area" />
+</div>

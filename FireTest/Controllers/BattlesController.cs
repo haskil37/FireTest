@@ -601,7 +601,7 @@ namespace FireTest.Controllers
                     number = result.AnswersFirstPlayer.Split('|').ToList().Count(); //Общее количество ответов
 
                 if (count == number) //Если ответов столько же сколько и вопросов то идем на страницу статистики.
-                    return RedirectToAction("BattleEnd", new { fightId });
+                    return RedirectToAction("BattleEnd", new { id = fightId });
 
                 if (result.TimeStartFirstPlayer == result.TimeEndFirstPlayer) //Значит только начали, но время end надо тоже обновить для мониторинга АФК
                 {
@@ -623,7 +623,7 @@ namespace FireTest.Controllers
                     number = result.AnswersSecondPlayer.Split('|').ToList().Count(); //Общее количество ответов
 
                 if (count == number) //Если ответов столько же сколько и вопросов то идем на страницу статистики.
-                    return RedirectToAction("BattleEnd", new { fightId });
+                    return RedirectToAction("BattleEnd", new { id = fightId });
 
                 if (result.TimeStartSecondPlayer == result.TimeEndSecondPlayer) //Значит только начали, но время end надо тоже обновить для мониторинга АФК
                 {
