@@ -3,15 +3,15 @@
         type: 'pie',
         data: {
             datasets: [{
-                data: [@ViewBag.BattlesLose, @ViewBag.BattlesWin],
+                data: [@ViewBag.Answers, @ViewBag.AnswersCorrect],
                 backgroundColor: [
                     "#ff7300",
                     "#70bee6",
                 ],
             }],
             labels: [
-                "Поражения",
-                "Победы",
+                "Неправильные ответы",
+                "Правильные ответы",
             ]
         },
         options: {

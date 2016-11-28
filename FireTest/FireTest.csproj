@@ -31187,6 +31187,8 @@
     <Content Include="Views\Teacher\EditQuestion.cshtml" />
     <Content Include="Views\Statistics\Index.cshtml" />
     <Content Include="Views\Statistics\CountBattles.cshtml" />
+    <Content Include="Views\Statistics\CountAnswers.cshtml" />
+    <Content Include="Views\Statistics\UserStatistics.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1019,7 +1019,6 @@ li.sortable-placeholder {
 #users .content ul a:hover {
     background-color: rgba(255, 115, 0, 0.7);
 }
-
 /*Devices Display*/
 
 @media(min-width:1400px) {

@@ -10,13 +10,24 @@
     UpdateTargetId = "Statistic",
 }))
 {
-    <select name="id" onchange="$(this.form).submit();">
-        <option value="1">Правильные ответы</option>
-        <option value="0">Поединки</option>
-    </select>
+    <div class="row">
+        <div class="col-8">Выберите в выпадающем списке какая статистика Вас интересует</div>
+        <div class="col-4">
+            <select name="id" onchange="$(this.form).submit();">
+                <option value="0">Ответы на вопросы</option>
+                <option value="1">Поединки</option>
+            </select>
+        </div>
+    </div>
 }
-<div id="Statistic"></div>
+<div id="Statistic">
+    @{ Html.RenderAction("CountAnswers"); }
+</div>
 @section scripts
 {
     @Scripts.Render("~/bundles/statistic")
+    <script>
+        var ctx = document.getElementById("chart");
+        var myPieChart = new Chart(ctx, config);
+    </script>
 }
