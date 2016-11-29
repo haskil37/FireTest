@@ -1,0 +1,27 @@
+﻿canvas{
+    width: 100% !important;
+    max-width: 800px;
+    height: auto !important;
+}
+.break{
+    font-size: 20px;
+    word-wrap: break-word;
+}
+.lineCorrect{   
+    background: rgb(114, 191, 230);
+    width: 34px;
+    height: 5px;
+    vertical-align: middle;
+    display: table-cell;
+}
+.lineWrong{
+    background: rgb(255, 115, 0);
+    width: 34px;
+    height: 5px;
+    vertical-align: middle;
+    display: table-cell;
+}
+.Correct h3, .Wrong h3{   
+    display: table-cell;
+    text-align: left;
+}

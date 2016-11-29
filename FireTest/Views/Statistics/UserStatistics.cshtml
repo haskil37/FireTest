@@ -1,6 +1,8 @@
 ﻿<script>
     var option = {
+        responsive: true,
         legend: {
+            display: false,
             labels: {
                 fontSize: 20,
                 fontColor: "#c4bd97"
@@ -11,6 +13,7 @@
         }
     };
     var optionQ = {
+        responsive: false,
         animation: {
             animateRotate: false
         },
@@ -19,9 +22,9 @@
         },
         tooltips: {
             enabled: false
-        }
+        },
+        percentageInnerCutout: 10
     };
-
     var configA = {
         type: 'pie',
         data: {
@@ -144,11 +147,50 @@
 <div class="row">
     <div class="col-6">
         <div class="col-offset-1 col-10 textback center">Количество правильных ответов</div>
-        <canvas id="chartA" />
     </div>
     <div class="col-6">
         <div class="col-offset-1 col-10 textback center">Количество поединков</div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-6">
+        <div class="col-offset-1 col-10 center">            
+            <div class="row Correct"><div class="lineCorrect"></div><h3>Правильные ответы</h3></div>
+            <div class="row Wrong"><div class="lineWrong"></div><h3>Неверные ответы</h3></div>
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="col-offset-1 col-10 center">
+            <div class="row Correct"><div class="lineCorrect"></div><h3>Победы в поединках</h3></div>
+            <div class="row Wrong"><div class="lineWrong"></div><h3>Поражения в поединках</h3></div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-6">
+        <canvas id="chartA" />
+    </div>
+    <div class="col-6">
         <canvas id="chartB" />
+    </div>
+</div>
+<div class="row">
+    <div class="textback center">Заголовок про % в квалификации</div>
+
+    <div class="col-offset-1 col-2">
+        <div class="center break">Пожарный</div>
+    </div>
+    <div class="col-2">
+        <div class="center break">Командир отделения</div>
+    </div>
+    <div class="col-2">
+        <div class="center break">Начальник караула</div>
+    </div>
+    <div class="col-2">
+        <div class="center break">Инспектор</div>
+    </div>
+    <div class="col-2">
+        <div class="center break">Инженер ПБ</div>
     </div>
 </div>
 <div class="row">

@@ -253,6 +253,7 @@
     <Content Include="Content\InspectorQ.png" />
     <Content Include="Content\InspectorQHover.png" />
     <Content Include="Content\reset.css" />
+    <Content Include="Content\statistic.css" />
     <Content Include="Content\vs.png" />
     <Content Include="Content\Wall.jpg" />
     <Content Include="Content\winner.mp3" />
