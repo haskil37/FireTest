@@ -197,3 +197,28 @@ th {
 .equals{
     font-size: 30px;
 }
+.file-upload-button {
+    color: rgb(196, 189, 151);
+    background-color: rgba(114, 191, 230, 0.7);
+    border: 0;
+    cursor: pointer;
+    border-radius: 3px;
+    outline: none;
+    font-size: 100%;
+    white-space: normal;
+    min-width: 200px;
+    padding: 5px;
+}
+.file-upload-button:hover {
+    background-color: rgba(255, 115, 0, 0.7);
+}
+.file-upload mark{
+    background-color:transparent;
+    color: rgb(196, 189, 151);
+    cursor: pointer;
+}
+.file-upload input[type=file]{
+    visibility: hidden;
+    display: none;
+    opacity: 0;
+}

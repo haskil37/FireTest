@@ -8,6 +8,7 @@ using System.Web.Mvc;
 
 namespace FireTest.Controllers
 {
+    [Authorize]
     public class BattlesController : Controller
     {
         ApplicationDbContext dbContext = new ApplicationDbContext();

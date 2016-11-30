@@ -3,7 +3,7 @@
     ViewBag.Title = "Добавить вопрос";
 }
 @Styles.Render("~/Content/administrator")
-@using (Html.BeginForm())
+@using (Html.BeginForm("NewQuestion", "Teacher", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -50,6 +50,18 @@
             </div>
             <div class="col-10">
                 @Html.TextAreaFor(model => model.Tag)
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2">
+                Изображение
+            </div>
+            <div class="col-10 left">
+                <label class="file-upload">
+                    <mark>Файл не выбран</mark>
+                    <input type="file" name="uploadfile" accept="image/jpeg,image/png,image/gif,image/jpeg">
+                    <span class="file-upload-button">Выбрать</span>
+                </label>
             </div>
         </div>
         <div class="row">
@@ -214,6 +226,28 @@
 {
     @Scripts.Render("~/bundles/jqueryval")
     <script>
+        $(function () {
+            var wrapper = $(".file-upload"),
+                inp = wrapper.find("input"),
+                lbl = wrapper.find("mark");
+
+            var file_api = (window.File && window.FileReader && window.FileList && window.Blob) ? true : false;
+
+            inp.change(function () {
+                var file_name;
+                if (file_api && inp[0].files[0])
+                    file_name = inp[0].files[0].name;
+                else
+                    file_name = inp.val().replace("C:\\fakepath\\", '');
+
+                if (!file_name.length)
+                    return;
+
+                if (lbl.is(":visible")) {
+                    lbl.text(file_name);
+                }
+            }).change();
+        });
         $("#formula_text").on("change input paste keyup", function () {
             formula_refresh();
         });

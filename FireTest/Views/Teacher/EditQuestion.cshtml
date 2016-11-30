@@ -3,7 +3,7 @@
     ViewBag.Title = "Редактировать вопрос";
 }
 @Styles.Render("~/Content/administrator")
-@using (Html.BeginForm())
+@using (Html.BeginForm("EditQuestion", "Teacher", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -52,6 +52,41 @@
                 @Html.TextAreaFor(model => model.Tag)
             </div>
         </div>
+        @if (!string.IsNullOrEmpty(ViewBag.QuestionImage))
+        {
+            <div class="row">
+                <div class="col-2">
+                    Изображение
+                </div>
+                <div class="col-6 questionImage center">
+                    <img src="~/Images/Questions/@ViewBag.QuestionImage" />
+                </div>
+                <div class="col-4">
+                    <input type="submit" value="Удалить" class="button" name="Delete" />
+                    <br />
+                    <label class="file-upload">
+                        <mark>Файл не выбран</mark>
+                        <input type="file" name="uploadfile" accept="image/jpeg,image/png,image/gif,image/jpeg">
+                        <span class="file-upload-button">Заменить</span>
+                    </label>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-2">
+                    Изображение
+                </div>
+                <div class="col-10 left">
+                    <label class="file-upload">
+                        <mark>Файл не выбран</mark>
+                        <input type="file" name="uploadfile" accept="image/jpeg,image/png,image/gif,image/jpeg">
+                        <span class="file-upload-button">Выбрать</span>
+                    </label>
+                </div>
+            </div>
+        }
         @if (ViewBag.Type == 1)
         {
             <div class="row">
@@ -179,6 +214,31 @@
 {
     @Scripts.Render("~/bundles/jqueryval")
     <script>
+        $(function () {
+            var wrapper = $(".file-upload"),
+                inp = wrapper.find("input"),
+                lbl = wrapper.find("mark");
+
+            var file_api = (window.File && window.FileReader && window.FileList && window.Blob) ? true : false;
+
+            inp.change(function () {
+                var file_name;
+                if (file_api && inp[0].files[0])
+                    file_name = inp[0].files[0].name;
+                else
+                    file_name = inp.val().replace("C:\\fakepath\\", '');
+
+                if (!file_name.length)
+                    return;
+
+                if (lbl.is(":visible")) {
+                    lbl.text(file_name);
+                }
+            }).change();
+        });
+        $(window).resize(function () {
+            $(".file-upload input").triggerHandler("change");
+        });
         $("#formula_text").on("change input paste keyup", function () {
             formula_refresh();
         });

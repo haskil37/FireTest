@@ -72,13 +72,69 @@ namespace FireTest.Controllers
                 year = user.Year.ToString();
             ViewBag.Avatar = "/Images/Avatars/" + user.Avatar;
             ViewBag.Course = user.Course;
+            List<bool> selected = new List<bool>() { false, false, false };
+            List<bool> selectedGroup = new List<bool>() { false, false, false, false };
+            string group = "";
+            if (!string.IsNullOrEmpty(user.Group))
+            {
+                switch (user.Group.Substring(1))
+                {
+                    case "1":
+                        selected[1] = true;
+                        break;
+                    case "2":
+                        selected[2] = true;
+                        break;
+                    default:
+                        selected[0] = true;
+                        break;
+                }
+                group = user.Group.Substring(1);
+                if (group.Length == 1)
+                {
+                    switch (group)
+                    {
+                        case "1":
+                            selectedGroup[1] = true;
+                            break;
+                        case "2":
+                            selectedGroup[2] = true;
+                            break;
+                        case "3":
+                            selectedGroup[3] = true;
+                            break;
+                        case "4":
+                            selectedGroup[4] = true;
+                            break;
+                    }
+                }
+            }
+            var data = new[]{
+                     new SelectListItem{ Value="1",Text="Факультет пожарной безопасности", Selected=selected[1]},
+                     new SelectListItem{ Value="2",Text="Факультет техносферной безопасности", Selected=selected[2]},
+                     new SelectListItem{ Value="0",Text="Факультет платных образовательных услуг", Selected=selected[0]},
+                 };
+            ViewBag.Faculty = data.ToList();
+            if (!string.IsNullOrEmpty(group) && group.Length == 1)
+            {
+                data = new[]{
+                     new SelectListItem{ Value="1",Text="1 учебная группа", Selected=selectedGroup[1]},
+                     new SelectListItem{ Value="2",Text="2 учебная группа", Selected=selectedGroup[2]},
+                     new SelectListItem{ Value="3",Text="3 учебная группа", Selected=selectedGroup[3]},
+                     new SelectListItem{ Value="4",Text="4 учебная группа", Selected=selectedGroup[4]},
+                };
+                ViewBag.Group = data.ToList();
+            }
+            else
+            {
+
+            }
             var model = new IndexViewModel
             {
                 Name = user.Name,
                 SubName = user.SubName,
                 Family = user.Family,
                 Year = year,
-                Group = user.Group,
             };
 
             return View(model);
@@ -112,7 +168,7 @@ namespace FireTest.Controllers
                 user.Name = model.Name;
                 user.SubName = model.SubName;
                 user.Family = model.Family;
-                user.Group = model.Group;
+                //user.Group = model.Group;
                 user.Year = Convert.ToInt32(model.Year);
                 DateTime entrance = DateTime.Parse("1 Sep " + user.Year);
                 TimeSpan diff = DateTime.Now.Subtract(entrance);

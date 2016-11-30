@@ -55,17 +55,27 @@
                 </div>
             </div>
             <div class="row">
-                @Html.LabelFor(m => m.Group, new { @class = "col-4" })
+                <div class="col-4">Факультет</div>
                 <div class="col-8">
-                    @Html.TextBoxFor(m => m.Group)
-                    <span class="pen"></span>
-                    @Html.ValidationMessageFor(m => m.Group, "", new { @class = "text-danger" })
+                    @Html.DropDownList("Faculty", ViewBag.Faculty as SelectList)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4">Учебная группа</div>
+                <div class="col-8">
+                    @Html.DropDownList("Group", ViewBag.Group as SelectList)
                 </div>
             </div>
             <div class="row">
                 <label class="col-4">Курс</label>
                 <div class="col-8">
                     <input value="@ViewBag.Course" type="text" disabled="disabled" />
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-4">Группа</label>
+                <div class="col-8">
+                    <input value="@ViewBag.Group" type="text" disabled="disabled" />
                 </div>
             </div>
             <div class="row center">
@@ -81,6 +91,23 @@
 @section scripts
 {
     <script>
+        $('#Faculty').on('change', function() {
+            $("#Group").empty();
+            if(this.value == 1 || this.value == 2)
+            {            
+                $("#Group").append(new Option("1 учебная группа", "1"));
+                $("#Group").append(new Option("2 учебная группа", "2"));
+                $("#Group").append(new Option("3 учебная группа", "3"));
+                $("#Group").append(new Option("4 учебная группа", "4"));
+            }
+            if(this.value == 0)
+            {            
+                $("#Group").append(new Option("1 учебная группа", "1"));
+                $("#Group").append(new Option("4 учебная группа", "2"));
+                $("#Group").append(new Option("2,1 учебная группа", "3"));
+                $("#Group").append(new Option("2,2 учебная группа", "4"));
+            }
+        })
         $("#Year").focusout(function (e) {
             var year = $("#Year").val();
             if (year <= 1966) {

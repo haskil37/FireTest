@@ -3,11 +3,15 @@ using Microsoft.AspNet.Identity;
 using PagedList;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using System.Drawing;
+using System.Drawing.Imaging;
 using static FireTest.Controllers.ManageController;
+using System.Security.Cryptography;
 
 namespace FireTest.Controllers
 {
@@ -550,7 +554,7 @@ namespace FireTest.Controllers
             return View();
         }
         [HttpPost]
-        public ActionResult NewQuestion(ViewCreateQuestion model, int Subjects, int Departments, int Courses, int Type, List<string> AnswersSequence, List<string> AnswersConformity)
+        public ActionResult NewQuestion(ViewCreateQuestion model, int Subjects, int Departments, int Courses, int Type, List<string> AnswersSequence, List<string> AnswersConformity, HttpPostedFileBase uploadfile)
         {
             if (!ModelState.IsValid || Type != 1)
             {
@@ -587,7 +591,7 @@ namespace FireTest.Controllers
                 selectList = tempCourses
                    .Select(u => new SelectListItem()
                    {
-                       Text = u.ToString(),
+                       Text = "Курс "+u.ToString(),
                        Value = u.ToString(),
                        Selected = u == Courses
                    }).ToList();
@@ -637,9 +641,15 @@ namespace FireTest.Controllers
             newQuestion.IdDepartment = Departments;
             newQuestion.IdSubject = Subjects;
             newQuestion.Tag = model.Tag;
-            //Временно
-            newQuestion.QuestionImage = null;
-            //Временно
+            if (uploadfile != null) //Загрузка картинки вопроса, если есть
+            {
+                string extension = Path.GetExtension(uploadfile.FileName).ToLower();
+                MD5 md5 = MD5.Create();
+                byte[] avatar = new byte[uploadfile.ContentLength];
+                string ImageName = BitConverter.ToString(md5.ComputeHash(avatar)).Replace("-", "").ToLower();
+                uploadfile.SaveAs(Server.MapPath("~/Images/Questions/" + ImageName + extension));
+                newQuestion.QuestionImage = ImageName + extension;
+            }
             dbContext.Questions.Add(newQuestion);
             dbContext.SaveChanges();
             int index = newQuestion.Id;
@@ -878,6 +888,8 @@ namespace FireTest.Controllers
                 userSubjects = temp.Split('|').ToList();
 
             var question = dbContext.Questions.Find(id); //Данные вопроса
+            if (!string.IsNullOrEmpty(question.QuestionImage))
+                ViewBag.QuestionImage = question.QuestionImage;
 
             var tempSubjects = dbContext.Subjects.Where(u => userSubjects.Contains(u.Id.ToString())).Select(u => new
             {
@@ -914,7 +926,7 @@ namespace FireTest.Controllers
 
             var model = new ViewEditQuestion();
             model.QuestionText = question.QuestionText;
-            model.Tag = question.Tag;
+            model.Tag = question.Tag;            
             model.Answers = new List<Answer>();
             List<bool> tempAnswersCorrects = new List<bool>();
             string correct = question.IdCorrect;
@@ -997,7 +1009,7 @@ namespace FireTest.Controllers
             return View(model);
         }
         [HttpPost]
-        public ActionResult EditQuestion(ViewEditQuestion Question, int Type, int id, int Subjects, int Departments, int Courses)
+        public ActionResult EditQuestion(ViewEditQuestion Question, int Type, int id, int Subjects, int Departments, int Courses, string Delete, HttpPostedFileBase uploadfile)
         {
             if (!ModelState.IsValid)
                 return View(Question);
@@ -1227,6 +1239,21 @@ namespace FireTest.Controllers
                 }
             }
             question.IdCorrect = tempNewAnswersCorrect;
+            if (!string.IsNullOrEmpty(Delete))
+            {
+                System.IO.File.Delete(Server.MapPath("~/Images/Questions/" + question.QuestionImage));
+                question.QuestionImage = null;
+
+            }
+            if (uploadfile != null) //Загрузка картинки вопроса, если есть
+            {
+                string extension = Path.GetExtension(uploadfile.FileName).ToLower();
+                MD5 md5 = MD5.Create();
+                byte[] avatar = new byte[uploadfile.ContentLength];
+                string ImageName = BitConverter.ToString(md5.ComputeHash(avatar)).Replace("-", "").ToLower();
+                uploadfile.SaveAs(Server.MapPath("~/Images/Questions/" + ImageName + extension));
+                question.QuestionImage = ImageName + extension;
+            }
             dbContext.SaveChanges();
             return RedirectToAction("EditQuestion", new { id, Message = "Вопрос был успешно изменен" });
         }

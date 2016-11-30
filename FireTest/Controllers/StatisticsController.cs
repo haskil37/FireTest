@@ -8,6 +8,7 @@ using System.Web.Mvc;
 
 namespace FireTest.Controllers
 {
+    [Authorize]
     public class StatisticsController : Controller
     {
         ApplicationDbContext dbContext = new ApplicationDbContext();

@@ -20,9 +20,6 @@ namespace FireTest.Models
         [StringLength(4, ErrorMessage = "Год поступления должен состоять из 4 цифр.", MinimumLength = 4)]
         [Display(Name = "Год поступления")]
         public string Year { get; set; }
-        [Required]
-        [Display(Name = "Группа")]
-        public string Group { get; set; }
     }
 
     public class ChangePasswordViewModel
