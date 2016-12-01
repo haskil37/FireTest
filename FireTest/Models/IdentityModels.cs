@@ -23,7 +23,7 @@ namespace FireTest.Models
         public bool Invited { get; set; }
         public int BattleCount { get; set; }
         public int BattleWinCount { get; set; }
-        public int Rating { get; set; }
+        public double Rating { get; set; }
         public int AnswersCount { get; set; }
         public int CorrectAnswersCount { get; set; }
         public bool Busy { get; set; }

@@ -71,20 +71,28 @@ namespace FireTest.Controllers
         }
         public ActionResult Index()
         {
+            var groups = dbContext.Users.Select(u => u.Group).Distinct().ToList();
+            var selectList = groups //Выпадающий список групп
+                    .Select(u => new SelectListItem()
+                    {
+                        Value = u,
+                        Text = u,
+                    }).ToList();
+            ViewBag.Groups = selectList;
             return View();
         }
         [HttpPost]
-        public PartialViewResult Index(int id, string userId) //Это для учителя
+        public PartialViewResult Index(string Groups) //Это для учителя
         {
-            switch (id)
-            {
-                case 1:
-                    CountBattles(userId);
-                    return PartialView("CountBattles");
-                default:
-                    CountAnswers(userId);
-                    return PartialView("CountAnswers");
-            }
+            var groups = dbContext.Users.Select(u => u.Group).Distinct().ToList();
+            var selectList = groups //Выпадающий список разделов
+                    .Select(u => new SelectListItem()
+                    {
+                        Value = u,
+                        Text = u,
+                    }).ToList();
+            ViewBag.Groups = selectList;
+            return PartialView();
         }
     }
 }

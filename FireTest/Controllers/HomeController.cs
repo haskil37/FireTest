@@ -16,7 +16,6 @@ namespace FireTest.Controllers
         ApplicationDbContext dbContext = new ApplicationDbContext();
         private IdentityResult UpdateCourseAndGroup(string userID)
         {
-            //Обновлять еще и группу
             try
             {
                 ApplicationUser user = dbContext.Users.Find(userID);
@@ -29,9 +28,19 @@ namespace FireTest.Controllers
                     //То должны вычитать 1, но т.к. начинаем мы не с 0 курса, а с первого то прибавляем 1.
                     //Итого получается, что мы не вычитаем и не прибавляем
                     int course = (zeroTime + diff).Year;
-                    if (course < 6)
+                    if (course <= 6)
                     {
-                        user.Course = course;
+                        if (user.Group.Substring(0, 1) == "1" && course < 6) //Если ПБ
+                            user.Course = course;
+
+                        if (user.Group.Substring(0, 1) == "2") //Если ТБ
+                        {
+                            user.Course = course;
+                        }
+                        if (user.Group.Substring(0, 1) == "0" && course < 5) //Если платно
+                        {
+                            user.Course = course;
+                        }
                         dbContext.SaveChanges();
                     }
                 }
@@ -48,7 +57,6 @@ namespace FireTest.Controllers
             if (string.IsNullOrEmpty(user.Name) ||
                 string.IsNullOrEmpty(user.Family) ||
                 string.IsNullOrEmpty(user.SubName) ||
-                string.IsNullOrEmpty(user.Group) ||
                 user.Course == 0 ||
                 user.Year == 0)
                 return true;
@@ -68,9 +76,16 @@ namespace FireTest.Controllers
                     ViewBag.New = false;
                     ViewBag.Name = user.Name;
                     ViewBag.Avatar = "/Images/Avatars/" + user.Avatar;
-                    var result = UpdateCourseAndGroup(user.Id);
-                    if (!result.Succeeded)
-                        ViewBag.Name = "Ошибка";
+                    ViewBag.Battles = user.BattleCount;
+                    ViewBag.BattlesWin = user.BattleWinCount;
+                    ViewBag.Correct = user.CorrectAnswersCount * 100 / user.AnswersCount;
+                    var role = dbContext.Users.Find(User.Identity.GetUserId()).Roles.SingleOrDefault();
+                    if (dbContext.Roles.Find(role.RoleId).Name == "USER")
+                    {
+                        var result = UpdateCourseAndGroup(user.Id);
+                        if (!result.Succeeded)
+                            ViewBag.Name = "Ошибка";
+                    }
                     break;
             }
             return PartialView();
@@ -140,10 +155,12 @@ namespace FireTest.Controllers
 
             int numbertop = dbContext.Users
                     .Where(u => u.Rating > you.Rating)
+                    .Where(u => u.Group == you.Group)
                     .Select(u => u.Rating).OrderByDescending(u => u).Count();
             int numberbottom = dbContext.Users
                     .Where(u => u.Rating <= you.Rating)
                     .Where(u => u.Id != YouId)
+                    .Where(u => u.Group == you.Group)
                     .Select(u => u.Rating).OrderByDescending(u => u).Count();
 
             int taketop = 2;
@@ -182,6 +199,7 @@ namespace FireTest.Controllers
 
             var top = dbContext.Users
                     .Where(u => u.Rating > you.Rating)
+                    .Where(u => u.Group == you.Group)
                     .Select(u => new
                     {
                         Avatar = u.Avatar,
@@ -213,6 +231,7 @@ namespace FireTest.Controllers
 
             var bottom = dbContext.Users
                     .Where(u => u.Rating <= you.Rating)
+                    .Where(u => u.Group == you.Group)
                     .Where(u => u.Id != YouId)
                     .Select(u => new
                     {

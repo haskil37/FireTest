@@ -4,8 +4,9 @@
             <ul>
                 @if (ViewBag.New == false)
                 {
-                    <li>Статистика</li>
-                    <a href="#2"><li>Вызов</li></a>
+                    <li>Поединков: @ViewBag.Battles</li>
+                    <li>Побед: @ViewBag.BattlesWin</li>
+                    <li>Правильных ответов: @(ViewBag.Correct)%</li>
                     <a href="/Manage/Index"><li>Настройки</li></a>
                 }
                 @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))

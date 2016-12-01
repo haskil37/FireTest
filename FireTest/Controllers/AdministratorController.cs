@@ -33,29 +33,31 @@ namespace FireTest.Controllers
                 if (value[0] == "Administrator")
                 {
                     var userEdit = dbContext.Users.Find(value[1]);
+                    userEdit.Group = null;
                     if (value[2] == "true")
                     {
-                        var tt = userManager.RemoveFromRoles(userEdit.Id, "TEACHER");
-                        tt = userManager.RemoveFromRoles(userEdit.Id, "USER");
+                        var temp = userManager.RemoveFromRoles(userEdit.Id, "TEACHER");
+                        temp = userManager.RemoveFromRoles(userEdit.Id, "USER");
                         userManager.AddToRole(userEdit.Id, "ADMIN");
                     }
                     else
                     {
-                        var tt = userManager.RemoveFromRole(userEdit.Id, "ADMIN");
+                        var temp = userManager.RemoveFromRole(userEdit.Id, "ADMIN");
                         userManager.AddToRole(userEdit.Id, "USER");
                     }
                 }
                 else
                 {
                     var userEdit = dbContext.Users.Find(value[1]);
+                    userEdit.Group = null;
                     if (value[2] == "true")
                     {
-                       var tt = userManager.RemoveFromRoles(userEdit.Id, "USER");
+                       var temp = userManager.RemoveFromRoles(userEdit.Id, "USER");
                         userManager.AddToRole(userEdit.Id, "TEACHER");
                     }
                     else
                     {
-                        var tt = userManager.RemoveFromRoles(userEdit.Id, "TEACHER");
+                        var temp = userManager.RemoveFromRoles(userEdit.Id, "TEACHER");
                         userManager.AddToRole(userEdit.Id, "USER");
                     }
                 }                

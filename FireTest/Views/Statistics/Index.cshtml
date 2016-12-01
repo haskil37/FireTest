@@ -2,26 +2,21 @@
     ViewBag.Title = "Статистика";
 }
 @Styles.Render("~/Content/statistic")
-
-@using (Ajax.BeginForm("Index", new AjaxOptions
-{
-    HttpMethod = "Post",
-    InsertionMode = InsertionMode.Replace,
-    UpdateTargetId = "Statistic",
-}))
-{
-    <div class="row">
-        <div class="col-8">Выберите в выпадающем списке какая статистика Вас интересует</div>
-        <div class="col-4">
-            <select name="id" onchange="$(this.form).submit();">
-                <option value="0">Ответы на вопросы</option>
-                <option value="1">Поединки</option>
-            </select>
+<div id="Charts">
+    @using (Ajax.BeginForm("Index", new AjaxOptions
+    {
+        HttpMethod = "Post",
+        InsertionMode = InsertionMode.Replace,
+        UpdateTargetId = "Charts",
+    }))
+    {
+        <div class="row">
+            <div class="col-2">Группу</div>
+            <div class="col-10">
+                @Html.DropDownList("Groups", ViewBag.Groups as SelectList, new { @onchange = "$(this.form).submit();" })
+            </div>
         </div>
-    </div>
-}
-<div id="Statistic">
-    @{ Html.RenderAction("CountAnswers"); }
+    }
 </div>
 @section scripts
 {

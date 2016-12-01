@@ -246,7 +246,7 @@ namespace FireTest.Controllers
                 Family = user.Family,
                 Name = user.Name,
                 Battles = user.BattleCount,
-                Group = "ххх",
+                Group = user.Course + user.Group,
                 Rating = numbertop + 1,
                 CorrectAnswers = temp,
             });
@@ -260,7 +260,7 @@ namespace FireTest.Controllers
                 Family = otheruser.Family,
                 Name = otheruser.Name,
                 Battles = user.BattleCount,
-                Group = "ххх",
+                Group = user.Course + user.Group,
                 Rating = numbertop + 1,
                 CorrectAnswers = temp,
             });
@@ -969,6 +969,7 @@ namespace FireTest.Controllers
                     winner = dbContext.Users.Find(battle.SecondPlayer);
             }
             winner.BattleWinCount++;
+            winner.Rating += 1;
             dbContext.SaveChanges();
             var player = dbContext.Users.Find(battle.FirstPlayer);
             ViewBag.AvatarFirst = "/Images/Avatars/" + player.Avatar;

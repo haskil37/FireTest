@@ -288,6 +288,7 @@ namespace FireTest.Controllers
 
             ApplicationUser userBusy = dbContext.Users.Find(User.Identity.GetUserId()); //Закончили тест - делаем юзера свободным
             userBusy.Busy = false;
+            userBusy.Rating += (right.Count() * 100 / (right.Count() + wrong.Count())) / 2.0 + right.Count() / 2.0;
             dbContext.SaveChanges();
             ViewBag.Avatar = "/Images/Avatars/" + userBusy.Avatar;
 

@@ -615,7 +615,7 @@ input[type=range]:focus::-ms-fill-upper {
     -webkit-transition-delay: 0s;
 }
 #avatar .content:hover {
-    height: 123px;
+    height: auto;
     z-index: 3;
     -webkit-transition-delay: 0s;
     border-bottom: none;
