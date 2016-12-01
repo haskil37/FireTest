@@ -54,16 +54,14 @@
                     @Html.ValidationMessageFor(m => m.Year, "", new { @class = "text-danger" })
                 </div>
             </div>
-            if (ViewBag.Faculty != null)
+            if (!string.IsNullOrEmpty(@ViewBag.FinalGroup))
             {
                 <div class="row">
                     <div class="col-4">Факультет</div>
                     <div class="col-8">
                         @Html.DropDownList("Faculty", ViewBag.Faculty as SelectList)
-
                     </div>
                 </div>
-
                 <div class="row">
                     <div class="col-4">Учебная группа</div>
                     <div class="col-8">

@@ -33,7 +33,7 @@ namespace FireTest.Controllers
                 if (value[0] == "Administrator")
                 {
                     var userEdit = dbContext.Users.Find(value[1]);
-                    userEdit.Group = null;
+                    userEdit.Group = "0";
                     if (value[2] == "true")
                     {
                         var temp = userManager.RemoveFromRoles(userEdit.Id, "TEACHER");
@@ -49,7 +49,7 @@ namespace FireTest.Controllers
                 else
                 {
                     var userEdit = dbContext.Users.Find(value[1]);
-                    userEdit.Group = null;
+                    userEdit.Group = "0";
                     if (value[2] == "true")
                     {
                        var temp = userManager.RemoveFromRoles(userEdit.Id, "USER");

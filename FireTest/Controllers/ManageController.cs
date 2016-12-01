@@ -73,8 +73,10 @@ namespace FireTest.Controllers
             ViewBag.Avatar = "/Images/Avatars/" + user.Avatar;
             List<bool> selected = new List<bool>() { false, false, false };
             string group = "";
-            if (!string.IsNullOrEmpty(user.Group))
+            if (!string.IsNullOrEmpty(user.Group) && user.Group != "0" && user.Year != 0)
             {
+                if (user.Group.Length < 3)
+                    user.Group = user.Course + "00";
                 user.Group = user.Group.Remove(0, 1);
                 List<bool> selectedGroup = new List<bool>();
                 switch (user.Group.Substring(0, 1))
@@ -228,14 +230,15 @@ namespace FireTest.Controllers
                         }
                         break;
                 }
-                var facultyList = new[]{
+                ViewBag.FinalGroup = user.Course + "" + user.Group;
+            }
+            var facultyList = new[]{
                      new SelectListItem{ Value="1",Text="Факультет пожарной безопасности", Selected=selected[1]},
                      new SelectListItem{ Value="2",Text="Факультет техносферной безопасности", Selected=selected[2]},
                      new SelectListItem{ Value="0",Text="Факультет платных образовательных услуг", Selected=selected[0]},
                  };
-                ViewBag.Faculty = facultyList.ToList();
-                ViewBag.FinalGroup = user.Course + "" + user.Group;
-            }
+            ViewBag.Faculty = facultyList.ToList();
+
             ViewBag.Course = user.Course;
             var model = new IndexViewModel
             {
