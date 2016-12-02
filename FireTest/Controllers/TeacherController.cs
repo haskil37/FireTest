@@ -22,7 +22,6 @@ namespace FireTest.Controllers
         public ActionResult Index()
         {
             var tests = dbContext.TeacherTests.ToList().Where(u => u.TeacherId == User.Identity.GetUserId()).Where(u => !string.IsNullOrEmpty(u.NameTest));
-
             return View(tests);
         }
         [ChildActionOnly]
@@ -759,9 +758,10 @@ namespace FireTest.Controllers
             }
             return RedirectToAction("NewQuestion", new { Message = "Вопрос был успешно добавлен" });
         }
-        public ActionResult EditQuestionSelect()
+        public ActionResult EditQuestionSelect(string message)
         {
             Session.Clear();
+            ViewBag.DeleteQualifications = message;
             return View();
         }
         public PartialViewResult EditQuestionSelectAjax(string currentFilter, string searchString, int? page, string NameTest, int? Subjects, string Tags)
@@ -829,7 +829,8 @@ namespace FireTest.Controllers
                 .Where(u => u.IdSubject == sub)
                 .Select(u => new {
                     Id = u.Id,
-                    Text = u.QuestionText
+                    Text = u.QuestionText,
+                    Qualification = u.IdQualification
                 }).ToList();
             if (Tags != "Все разделы" && Tags != "Без раздела")
             {
@@ -838,7 +839,8 @@ namespace FireTest.Controllers
                     .Where(u => u.Tag == Tags)
                     .Select(u => new {
                         Id = u.Id,
-                        Text = u.QuestionText
+                        Text = u.QuestionText,
+                        Qualification = u.IdQualification
                     }).ToList();
             }
             if (Tags == "Без раздела")
@@ -848,24 +850,31 @@ namespace FireTest.Controllers
                     .Where(u => string.IsNullOrEmpty(u.Tag))
                     .Select(u => new {
                         Id = u.Id,
-                        Text = u.QuestionText
+                        Text = u.QuestionText,
+                        Qualification = u.IdQualification
                     }).ToList();
             }
 
-            List<SubjectAccess> model = new List<SubjectAccess>(); //Использую это т.к. надо точно такие же поля
+            List<SubjectsAndQualification> model = new List<SubjectsAndQualification>();
             foreach (var item in tempQuestions)
             {
-                SubjectAccess subject = new SubjectAccess();
+                SubjectsAndQualification subject = new SubjectsAndQualification();
                 if (!String.IsNullOrEmpty(searchString) && item.Text.ToLower().Contains(searchString.ToLower()))
                 {
                     subject.Id = item.Id;
                     subject.Name = item.Text;
+                    subject.Qualification = item.Qualification;
+                    if (item.Qualification != 0)
+                        subject.QualificationName = dbContext.Qualifications.Find(item.Qualification).Name;
                     model.Add(subject);
                 }
                 if (String.IsNullOrEmpty(searchString))
                 {
                     subject.Id = item.Id;
                     subject.Name = item.Text;
+                    subject.Qualification = item.Qualification;
+                    if (item.Qualification != 0)
+                        subject.QualificationName = dbContext.Qualifications.Find(item.Qualification).Name;
                     model.Add(subject);
                 }
             }
@@ -874,6 +883,9 @@ namespace FireTest.Controllers
             int pageSize = 10;
             int pageNumber = (page ?? 1);
             ViewBag.page = pageNumber;
+
+            if (dbContext.TeachersAccess.Where(u => u.TeacherId == userId).Select(u => u.TeacherQualifications).SingleOrDefault())
+                ViewBag.Access = true;
 
             return PartialView(model.ToPagedList(pageNumber, pageSize));
         }
@@ -1257,8 +1269,234 @@ namespace FireTest.Controllers
             dbContext.SaveChanges();
             return RedirectToAction("EditQuestion", new { id, Message = "Вопрос был успешно изменен" });
         }
+        public ActionResult DeleteQuestionSelect()
+        {
+            Session.Clear();
+            return View();
+        }
+        public PartialViewResult DeleteQuestionSelectAjax(string currentFilter, string searchString, int? page, string NameTest, int? Subjects, string Tags)
+        {
+            string userId = User.Identity.GetUserId();
+            if (Session["Subjects"] != null && Session["Tags"] != null)
+                if ((int)Session["Subjects"] != Subjects || (string)Session["Tags"] != Tags)
+                    page = 1;
+            Session["Subjects"] = Subjects;
+            Session["Tags"] = Tags;
+            if (!string.IsNullOrEmpty(searchString))
+                page = 1;
+            else
+                searchString = currentFilter;
+            ViewBag.CurrentFilter = searchString;
+
+            string temp = dbContext.TeachersAccess.Where(u => u.TeacherId == userId).Select(u => u.TeacherSubjects).SingleOrDefault();
+            List<string> userSubjects = new List<string>(); //Берем в массив ид предметов у которых у нас доступ
+            if (!string.IsNullOrEmpty(temp))
+                userSubjects = temp.Split('|').ToList();
+
+            var tempSubjects = dbContext.Subjects.Where(u => userSubjects.Contains(u.Id.ToString())).Select(u => new
+            {
+                Id = u.Id,
+                Name = u.Name
+            }); //Записываем предметы в список
+            var selectList = tempSubjects //Добавляем выпадающий список из разрешенных предметов
+                    .Select(u => new SelectListItem()
+                    {
+                        Text = u.Name,
+                        Value = u.Id.ToString(),
+                        Selected = u.Id == Subjects
+                    }).ToList();
+            ViewBag.Subjects = selectList;
+
+            List<string> tempTags;
+
+            int sub; //Если выбран предмет то используем его, если нет, то выбираем первый в списке разрешенных
+            if (Subjects != null)
+                sub = Subjects.Value;
+            else
+            {
+                userSubjects.Sort();
+                sub = Convert.ToInt32(userSubjects[0]);
+            }
+
+            tempTags = dbContext.Questions
+                .Where(u => u.IdSubject == sub)
+                .Select(u => u.Tag).Distinct().ToList(); //Берем все разделы
+            if (tempTags.Count == 0)
+                tempTags.Add("Все разделы");
+            else
+                tempTags[0] = "Все разделы";
+            tempTags.Add("Без раздела");
+            selectList = tempTags //Выпадающий список разделов
+                .Select(u => new SelectListItem()
+                {
+                    Value = u,
+                    Text = u,
+                    Selected = u == Tags
+                }).ToList();
+            ViewBag.Tags = selectList;
+
+            var tempQuestions = dbContext.Questions //Берем все вопросы дисциплины
+                .Where(u => u.IdSubject == sub)
+                .Select(u => new {
+                    Id = u.Id,
+                    Text = u.QuestionText
+                }).ToList();
+            if (Tags != "Все разделы" && Tags != "Без раздела")
+            {
+                tempQuestions = dbContext.Questions //Берем все вопросы дисциплины нужного раздела
+                    .Where(u => u.IdSubject == sub)
+                    .Where(u => u.Tag == Tags)
+                    .Select(u => new {
+                        Id = u.Id,
+                        Text = u.QuestionText
+                    }).ToList();
+            }
+            if (Tags == "Без раздела")
+            {
+                tempQuestions = dbContext.Questions //Берем все вопросы дисциплины без раздела
+                    .Where(u => u.IdSubject == sub)
+                    .Where(u => string.IsNullOrEmpty(u.Tag))
+                    .Select(u => new {
+                        Id = u.Id,
+                        Text = u.QuestionText
+                    }).ToList();
+            }
+
+            List<SubjectAccess> model = new List<SubjectAccess>(); //Использую это т.к. надо точно такие же поля
+            foreach (var item in tempQuestions)
+            {
+                SubjectAccess subject = new SubjectAccess();
+                if (!String.IsNullOrEmpty(searchString) && item.Text.ToLower().Contains(searchString.ToLower()))
+                {
+                    subject.Id = item.Id;
+                    subject.Name = item.Text;
+                    model.Add(subject);
+                }
+                if (String.IsNullOrEmpty(searchString))
+                {
+                    subject.Id = item.Id;
+                    subject.Name = item.Text;
+                    model.Add(subject);
+                }
+            }
+
+            model = model.OrderBy(u => u.Name).ToList();
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+            ViewBag.page = pageNumber;
+
+            return PartialView(model.ToPagedList(pageNumber, pageSize));
+        }
+        public ActionResult DeleteQuestion(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Question question = dbContext.Questions.Find(id);
+            if (question == null)
+            {
+                return HttpNotFound();
+            }
+            return View(question);
+        }
+        [HttpPost, ActionName("DeleteQuestion")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteQuestionConfirmed(int id)
+        {
+            Question question = dbContext.Questions.Find(id);
+            dbContext.Questions.Remove(question);
+            List<Answer> answers = dbContext.Answers.Where(u => u.IdQuestion == id).ToList();
+            foreach(Answer item in answers)
+                dbContext.Answers.Remove(item);
+            dbContext.SaveChanges();
+            return RedirectToAction("Index");
+        }
+        public ActionResult QuestionQualification(int id)
+        {
+            Question question = dbContext.Questions.Find(id);
+            if (question == null)
+                return RedirectToAction("EditQuestionSelect");
+            ViewBag.Question = question.QuestionText;
+            ViewBag.Del = true;
+            if (question.IdQualification != 0)
+                ViewBag.Qualification = dbContext.Qualifications.Find(question.IdQualification).Name;
+            else
+            {
+                ViewBag.Del = false;
+                var selectList = dbContext.Qualifications
+                        .Select(u => new SelectListItem()
+                        {
+                            Text = u.Name,
+                            Value = u.Id.ToString(),
+                        }).ToList();
+                ViewBag.QualificationsList = selectList;
+            }
+            return View();
+        }
+        [HttpPost]
+        public ActionResult QuestionQualification(int id, int? QualificationsList)
+        {
+            var question = dbContext.Questions.Find(id);
+            if (question == null)
+                return RedirectToAction("EditQuestionSelect");
+            if (QualificationsList == null)
+            {
+                question.IdQualification = 0;
+                dbContext.SaveChanges();
+                return RedirectToAction("EditQuestionSelect", new { message = "Вопрос был успешно убран из квалификации" });
+            }
+            question.IdQualification = QualificationsList.Value;
+            dbContext.SaveChanges();
+            return RedirectToAction("EditQuestionSelect", new { message = "Вопрос был успешно добавлен в квалификацию" });
+        }
         public ActionResult CreateExam()
         {
+            string userId = User.Identity.GetUserId();
+
+            ViewBag.Test = dbContext.TeacherTests
+                .Where(u => u.TeacherId == userId)
+                .Select(u => new SelectListItem()
+                {
+                    Text = u.NameTest,
+                    Value = u.Id.ToString(),
+                }).ToList(); 
+
+            ViewBag.Group = dbContext.Users
+                .Select(u => new SelectListItem()
+                {
+                    Text = u.Group,
+                    Value = u.Group,
+                })
+                .Distinct().ToList();
+            return View(new ExaminationViewModel() { Date = DateTime.Now });
+        }
+        [HttpPost]
+        public ActionResult CreateExam(ExaminationViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                string userId = User.Identity.GetUserId();
+
+                ViewBag.Test = dbContext.TeacherTests
+                    .Where(u => u.TeacherId == userId)
+                    .Select(u => new SelectListItem()
+                    {
+                        Text = u.NameTest,
+                        Value = u.Id.ToString(),
+                    }).ToList();
+
+                ViewBag.Group = dbContext.Users
+                    .Select(u => new SelectListItem()
+                    {
+                        Text = u.Group,
+                        Value = u.Group,
+                    })
+                    .Distinct().ToList();
+
+                return View(model);
+            }
+
             return View();
         }
         protected override void Dispose(bool disposing)

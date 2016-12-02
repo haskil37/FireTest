@@ -32,6 +32,10 @@ namespace FireTest
                         "~/Scripts/jquery.form.min.js",
                         "~/Scripts/jquery.Jcrop.min.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/datepicker").Include(
+                        "~/Scripts/bootstrap-datepicker.min.js",
+                        "~/Scripts/locales/bootstrap-datepicker.ru.min.js"));
+
             bundles.Add(new ScriptBundle("~/bundles/statistic").Include(
                         "~/Scripts/Chart.min.js"));
 
@@ -49,6 +53,7 @@ namespace FireTest
 
             bundles.Add(new StyleBundle("~/Content/administrator").Include(
                       "~/Content/PagedList.css",
+                      "~/Content/bootstrap-datepicker3.css",
                       "~/Content/administrator.css"));
 
             bundles.Add(new StyleBundle("~/Content/statistic").Include(

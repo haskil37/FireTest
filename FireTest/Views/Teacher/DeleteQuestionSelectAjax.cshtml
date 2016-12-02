@@ -1,6 +1,6 @@
-﻿@model PagedList.IPagedList<FireTest.Models.SubjectsAndQualification>
+﻿@model PagedList.IPagedList<FireTest.Models.SubjectAccess>
 @using PagedList.Mvc;
-@using (Ajax.BeginForm("EditQuestionSelectAjax", new AjaxOptions
+@using (Ajax.BeginForm("DeleteQuestionSelectAjax", new AjaxOptions
 {
     HttpMethod = "Get",
     InsertionMode = InsertionMode.Replace,
@@ -30,11 +30,6 @@
                 </th>
                 <th>
                 </th>
-                @if (ViewBag.Access == true)
-                {
-                    <th>
-                    </th>
-                }
             </tr>
 
             @foreach (var item in Model)
@@ -44,38 +39,19 @@
                         @item.Name
                     </td>
                     <td class="center" width="15%">
-                        <a href="EditQuestion/@item.Id">Редактировать</a>
+                        <a href="DeleteQuestion/@item.Id">Удалить</a>
                     </td>
-                    @if (ViewBag.Access == true)
-                    {
-                        if (item.Qualification != 0)
-                        {
-                            <td class="center" width="15%">
-                                Квалификация: @item.QualificationName
-                                <hr />
-                                <a href="QuestionQualification/@item.Id">Убрать</a>
-                            </td>
-                        }
-                        else
-                        {
-                            <td class="center" width="15%">
-                                Квалификация: нет
-                                <hr />
-                                <a href="QuestionQualification/@item.Id">Добавить</a>
-                            </td>
-                        }
-                    }
                 </tr>
             }
         </table>
     </div>
     <div>
         Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
-        @Html.PagedListPager(Model, page => Url.Action("EditQuestionSelectAjax",
+        @Html.PagedListPager(Model, page => Url.Action("DeleteQuestionSelectAjax",
             new { page, currentFilter = ViewBag.CurrentFilter, Tags = Session["Tags"], Subjects = Session["Subjects"] }),
             PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "Questions" }))
     </div>
-<script>
+    <script>
     (function ($) {
         $.fn.setCursorToTextEnd = function () {
             var $initialVal = this.val();
@@ -87,5 +63,5 @@
     $('#SearchString').keyup(function () {
         $(this.form).submit();
     });
-</script>
+    </script>
 }

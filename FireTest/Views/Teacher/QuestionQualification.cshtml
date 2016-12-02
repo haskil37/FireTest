@@ -1,0 +1,45 @@
+﻿@if (ViewBag.Del == true)
+{
+    {
+        ViewBag.Title = "Убрать вопрос из квалификации";
+    }
+    <div class="row">
+        <h3>Действительно хотите убрать вопрос:</h3>
+        <div class="textback">@ViewBag.Question</div>
+        <h3>из квалификации: "@ViewBag.Qualification"?</h3>
+    </div>
+    using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <div class="row center">
+            <input type="submit" value="Убрать" class="button" />
+        </div>
+            <div class="row center">
+                @Html.ActionLink("Назад", "EditQuestionSelect", "Teacher", null, new { @class = "button-Cancel" })
+            </div>
+    }
+}
+else
+{
+    {
+        ViewBag.Title = "Добавить вопрос в квалификацию";
+    }
+    <div class="row">
+        <h3>Выберите квалификацию, в которую добавить вопрос:</h3>
+        <div class="textback">@ViewBag.Question</div>
+    </div>
+    using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <div class="row">
+            @Html.DropDownList("QualificationsList", ViewBag.QualificationsList as SelectList)
+        </div>
+        <div class="row center">
+            <input type="submit" value="Добавить" class="button" />
+        </div>
+        <div class="row center">
+            @Html.ActionLink("Назад", "EditQuestionSelect", "Teacher", null, new { @class = "button-Cancel" })
+        </div>
+    }
+
+}

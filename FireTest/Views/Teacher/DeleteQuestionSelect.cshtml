@@ -1,10 +1,9 @@
 ﻿@{
-    ViewBag.Title = "Редактирование вопроса";
+    ViewBag.Title = "Удаление вопроса";
 }
 @Styles.Render("~/Content/administrator")
-<div class="text-success">@ViewBag.DeleteQualifications</div>
 <div id="Questions">
-    @{ Html.RenderAction("EditQuestionSelectAjax", new { Page = 1 }); }
+    @{ Html.RenderAction("DeleteQuestionSelectAjax", new { Page = 1 }); }
 </div>
 @section scripts
 {

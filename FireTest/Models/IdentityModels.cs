@@ -77,6 +77,13 @@ namespace FireTest.Models
         public string Name { get; set; }
         public bool Access { get; set; }
     }
+    public class SubjectsAndQualification
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public int Qualification { get; set; }
+        public string QualificationName { get; set; }
+    }
     public class DepartmentsAndSubjects
     {
         public List<Department> Department { get; set; }
@@ -267,8 +274,22 @@ namespace FireTest.Models
         public string Name { get; set; }
         public int Group { get; set; }
         public System.DateTime Date { get; set; }
-        public string classroom { get; set; }
-        public string annotations { get; set; }
+        public string Classroom { get; set; }
+        public string Annotations { get; set; }
+    }
+    public class ExaminationViewModel
+    {
+        [Required(ErrorMessage = "Вы должны указать название экзамена")]
+        [Display(Name = "Название экзамена")]
+        public string Name { get; set; }
+        [Required(ErrorMessage = "Вы должны выбрать дату экзамена")]
+        [Display(Name = "Дата экзамена")]
+        [DataType(DataType.Date)]
+        public System.DateTime Date { get; set; }
+        [Display(Name = "Аудитория")]
+        public string Classroom { get; set; }
+        [Display(Name = "Комментарий")]
+        public string Annotations { get; set; }
     }
     #endregion
 
