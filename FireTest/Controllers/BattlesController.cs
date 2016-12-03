@@ -3,7 +3,6 @@ using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace FireTest.Controllers
@@ -186,17 +185,19 @@ namespace FireTest.Controllers
         {
             string userId = User.Identity.GetUserId();
             ApplicationUser user = dbContext.Users.Find(userId);
-            if(user==null)
+            if (user == null)
                 return PartialView(false);
+
+            ViewBag.UpdateCalendar = user.Update;
 
             user.LastActivity = DateTime.Now;
             dbContext.SaveChanges();
 
-            bool invited = dbContext.Users.Find(userId).Invited;        
+            bool invited = user.Invited;        
             if (invited == false)
                 return PartialView(false);
 
-            int battleId = dbContext.Users.Find(userId).IdBattleInvite;
+            int battleId = user.IdBattleInvite;
             var battle = dbContext.Battles
                  .Where(u => u.Id == battleId)
                  .Where(u => u.SecondPlayer == userId)

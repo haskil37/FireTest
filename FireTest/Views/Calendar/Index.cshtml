@@ -1,0 +1,23 @@
+﻿@{
+    ViewBag.Title = "Календарь событий";
+}
+@Styles.Render("~/Content/calendar")
+<div id='calendar'></div>
+@section scripts
+{
+    @Scripts.Render("~/bundles/calendar")
+    <script>
+		$('#calendar').fullCalendar({
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'month'
+			},
+            locale:"ru",
+			navLinks: true,
+			editable: false,
+			eventLimit: true,
+			events: [@Html.Raw(ViewBag.Dates)]
+		});
+    </script>
+}

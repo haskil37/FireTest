@@ -1,0 +1,36 @@
+﻿@model FireTest.Models.Examination
+@{
+    ViewBag.Title = "Подробности экзамена";
+}
+<div class="row" id="Tests">
+    <table>
+        <tr>
+            <td><b>Название:</b></td>
+            <td>@Model.Name</td>
+        </tr>
+        <tr>
+            <td><b>Дата:</b></td>
+            <td>@String.Format("{0:dd.MM.yyyy}", Model.Date)</td>
+        </tr>
+        <tr>
+            <td><b>Группа:</b></td>
+            <td>@Model.Group</td>
+        </tr>
+        <tr>
+            <td><b>Название теста:</b></td>
+            <td>@ViewBag.NameTest</td>
+        </tr>
+        <tr>
+            <td><b>Аудитория:</b></td>
+            <td>@Model.Classroom</td>
+        </tr>
+        <tr>
+            <td><b>Аннотация:</b></td>
+            <td>@Model.Annotations</td>
+        </tr>
+    </table>
+    <p>
+        @Html.ActionLink("Редактировать", "Edit", new { id = Model.Id }, new { @class = "button-Cancel" }) |
+        @Html.ActionLink("На главную", "Index", null, new { @class = "button-Cancel" })
+    </p>
+</div>

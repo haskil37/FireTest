@@ -9,7 +9,7 @@
     <div class="row" id="Tests">
         <table>
             <tr>
-                <th>
+                <th width="60%">
                     Созданные тестирования:
                 </th>
                 <th>
@@ -19,7 +19,7 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td width="50%">
+                    <td>
                         @Html.DisplayFor(modelItem => item.NameTest)
                     </td>
                     <td>
@@ -44,9 +44,9 @@
     <div class="row">
         <br />
         <br />
-        <a href="NewQuestion" class="button">Создать новый вопрос</a>
-        <a href="EditQuestionSelect" class="button">Отредактировать вопрос</a>
-        <a href="DeleteQuestionSelect" class="button">Удалить вопрос</a>
+        <div class="col-3 button"><a href="NewQuestion">Создать новый вопрос</a></div>
+        <div class="col-3 button"><a href="EditQuestionSelect">Отредактировать вопрос</a></div> 
+        <div class="col-3 button"><a href="DeleteQuestionSelect">Удалить вопрос</a></div>
         <br />
         <br />
     </div>

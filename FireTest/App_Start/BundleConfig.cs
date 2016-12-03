@@ -36,6 +36,11 @@ namespace FireTest
                         "~/Scripts/bootstrap-datepicker.min.js",
                         "~/Scripts/locales/bootstrap-datepicker.ru.min.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/calendar").Include(
+                        "~/Scripts/moment.min.js",
+                        "~/Scripts/fullcalendar.min.js",
+                        "~/Scripts/locale/ru.js"));
+
             bundles.Add(new ScriptBundle("~/bundles/statistic").Include(
                         "~/Scripts/Chart.min.js"));
 
@@ -61,6 +66,10 @@ namespace FireTest
 
             bundles.Add(new StyleBundle("~/Content/login").Include(
                       "~/Content/login.css"));
+
+            bundles.Add(new StyleBundle("~/Content/calendar").Include(
+                     "~/Content/fullcalendar.min.css",
+                     "~/Content/calendar.css"));            
         }
     }
 }

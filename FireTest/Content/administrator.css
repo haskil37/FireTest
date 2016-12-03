@@ -245,6 +245,7 @@ input.datepicker {
     border-radius: 0;
     outline-color: rgb(255, 115, 0);
     width: 100%;
+    cursor: pointer;
 }
 .datepicker table {
     border: 0;

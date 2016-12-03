@@ -8,6 +8,19 @@
         LoadingElementId = "loadingIndicator",
     }))
     {
-        <input type="submit" class="button_invite" value="Вызывают" />
+        <label class="button_invite"><input type="submit" /></label>
+        <style>
+            .battlesWidth{
+                width: 150px!important;
+            }
+        </style>
     }
+}
+@if (ViewBag.UpdateCalendar == true)
+{
+    <style>
+        .updateCalendar {
+            visibility: visible !important;
+        }
+    </style>
 }

@@ -214,19 +214,39 @@ h3 {
     position: absolute;
     margin-right: -200px;
 }
+.battlesWidth{
+    width:100%;
+}
 .button_invite{
     position: absolute;
-    right: 10px;
-    top: 80px;
-    background-color: rgba(255, 115, 0, 0.7);
-    padding: 5px;
-    border-radius: 5px;
-    border: none;
+    right: 50px;
+    top: 75px;
     cursor: pointer;
-    color: rgb(196, 189, 151);
+    color: rgb(255, 115, 0);
+}
+.button_invite:before{
+    font-family: 'Glyphicons Halflings';
+    content: "\e104";
+    font-size: 30px;
 }
 .button_invite:hover{
-    background-color: rgba(114, 191, 230, 0.7);
+    color: rgb(114, 191, 230);
+}
+.button_invite input{
+    display: none;
+    opacity: 0;
+}
+.updateCalendar{
+    position: absolute;
+    right: 0;
+    top: 117px;
+    visibility: hidden;
+}
+.updateCalendar:before{
+    font-family: 'Glyphicons Halflings';
+    content: "\e123";
+    font-size: 16px;
+    color: rgb(255, 115, 0);
 }
 .headline {
     border-bottom: 2px dashed;
@@ -1058,7 +1078,14 @@ li.sortable-placeholder {
         padding-left: 300px;
     }
     .button_invite{
-        font-size: 18px;
+        right: 100px;
+    }
+    .updateCalendar{
+        right: 30px;
+        top: 120px;
+    }
+    .updateCalendar:before{
+        font-size: 30px;
     }
 }
 @media(max-width:1310px) {

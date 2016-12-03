@@ -13,7 +13,7 @@
         <div class="row">
             @Html.LabelFor(m => m.Name, new { @class = "col-4" })
             <div class="col-8">
-                @Html.TextAreaFor(m => m.Name, 5, 20, null)
+                @Html.TextBoxFor(m => m.Name, new { @class = "input" })
                 @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -32,14 +32,14 @@
         <div class="row">
             @Html.LabelFor(m => m.Date, new { @class = "col-4" })
             <div class="col-8">
-                @Html.TextBoxFor(m => m.Date, new { @class = "datepicker", placeholder = "Укажите дату экзамена" })
+                @Html.TextBoxFor(m => m.Date, "{0:dd.MM.yyyy}", new { @class = "datepicker", placeholder = "Укажите дату экзамена"})
                 @Html.ValidationMessageFor(m => m.Date, "", new { @class = "text-danger" })
             </div>
         </div>
         <div class="row">
             @Html.LabelFor(m => m.Classroom, new { @class = "col-4" })
             <div class="col-8">
-                @Html.TextAreaFor(m => m.Classroom, 5, 20, null)
+                @Html.TextBoxFor(m => m.Classroom, new { @class = "input" })
             </div>
         </div>
         <div class="row">
@@ -57,12 +57,9 @@
 {
     @Scripts.Render("~/bundles/datepicker")
     <script>
-
-        $(function () {
-            $('.datepicker').datepicker({
-                format: "dd.mm.yyyy",
-                language: "ru",
-            });
+        $('.datepicker').datepicker({
+            format: "dd.mm.yyyy",
+            language: "ru",
         });
     </script>
 }

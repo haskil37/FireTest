@@ -1472,12 +1472,12 @@ namespace FireTest.Controllers
             return View(new ExaminationViewModel() { Date = DateTime.Now });
         }
         [HttpPost]
-        public ActionResult CreateExam(ExaminationViewModel model)
+        public ActionResult CreateExam(ExaminationViewModel model, string Group, int Test)
         {
+            string userId = User.Identity.GetUserId();
+
             if (!ModelState.IsValid)
             {
-                string userId = User.Identity.GetUserId();
-
                 ViewBag.Test = dbContext.TeacherTests
                     .Where(u => u.TeacherId == userId)
                     .Select(u => new SelectListItem()
@@ -1496,8 +1496,120 @@ namespace FireTest.Controllers
 
                 return View(model);
             }
+            Examination exam = new Examination();
+            exam.Name = model.Name;
+            exam.Annotations = model.Annotations;
+            exam.Classroom = model.Classroom;
+            exam.Group = Group;
+            exam.IdTest = Test;
+            exam.TeacherId = userId;
+            exam.Date = model.Date;
+            dbContext.Examinations.Add(exam);
+            dbContext.SaveChanges();
+            return RedirectToAction("EditExams", new { id = exam.Id, message = "Экзамен успешно создан" });
+        }
+        public ActionResult EditExams(int? id, string message)
+        {
+            if (id == null)
+                return RedirectToAction("Index");
 
-            return View();
+            string userId = User.Identity.GetUserId();
+            ExaminationViewModel model = new ExaminationViewModel();
+            Examination exam = dbContext.Examinations.Find(id);
+            model.Annotations = exam.Annotations;
+            model.Classroom = exam.Classroom;
+            model.Date = exam.Date;
+            model.Name = exam.Name;
+            ViewBag.Test = dbContext.TeacherTests
+                .Where(u => u.TeacherId == userId)
+                .Select(u => new SelectListItem()
+                {
+                    Text = u.NameTest,
+                    Value = u.Id.ToString(),
+                    Selected = u.Id == exam.IdTest
+                }).ToList();
+
+            ViewBag.Group = dbContext.Users
+                .Select(u => new SelectListItem()
+                {
+                    Text = u.Group,
+                    Value = u.Group,
+                    Selected = u.Group == exam.Group
+                })
+                .Distinct().ToList();
+            ViewBag.Id = exam.Id;
+            ViewBag.Message = message;
+            return View(model);
+        }
+        [HttpPost]
+        public ActionResult EditExams(ExaminationViewModel model, string Group, int Test, int id)
+        {
+            string userId = User.Identity.GetUserId();
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Test = dbContext.TeacherTests
+                    .Where(u => u.TeacherId == userId)
+                    .Select(u => new SelectListItem()
+                    {
+                        Text = u.NameTest,
+                        Value = u.Id.ToString(),
+                    }).ToList();
+
+                ViewBag.Group = dbContext.Users
+                    .Select(u => new SelectListItem()
+                    {
+                        Text = u.Group,
+                        Value = u.Group,
+                    })
+                    .Distinct().ToList();
+
+                return View(model);
+            }
+            Examination exam = dbContext.Examinations.Find(id);
+            exam.Name = model.Name;
+            exam.Annotations = model.Annotations;
+            exam.Classroom = model.Classroom;
+            exam.Group = Group;
+            exam.IdTest = Test;
+            exam.TeacherId = userId;
+            exam.Date = model.Date;
+            dbContext.SaveChanges();
+            return RedirectToAction("EditExams", new { message = "Изменения сохранены" });
+        }
+        public ActionResult DeleteExams(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Examination exam = dbContext.Examinations.Find(id);
+            if (exam == null)
+            {
+                return HttpNotFound();
+            }
+            return View(exam);
+        }
+        [HttpPost, ActionName("DeleteExams")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteExamsConfirmed(int id)
+        {
+            Examination exam = dbContext.Examinations.Find(id);
+            dbContext.Examinations.Remove(exam);
+            dbContext.SaveChanges();
+            return RedirectToAction("Index");
+        }
+        public ActionResult DetailsExams(int? id)
+        {
+            if (id == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            Examination exams = dbContext.Examinations.Find(id);
+            if (exams == null)
+                return HttpNotFound();
+
+            ViewBag.NameTest = dbContext.TeacherTests.Find(exams.IdTest).NameTest;
+
+            return View(exams);
         }
         protected override void Dispose(bool disposing)
         {

@@ -5,10 +5,10 @@
     <div class="row" id="Tests">
         <table>
             <tr>
-                <th>
+                <th width="50%">
                     Запланированные тестирования:
                 </th>
-                <th width="10%"></th>
+                <th width="10%">Дата</th>
                 <th>
                 </th>
             </tr>
@@ -19,12 +19,12 @@
                         @Html.DisplayFor(modelItem => item.Name)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Date)
+                        @String.Format("{0:dd.MM.yyyy}", item.Date)
                     </td>
                     <td>
-                        @Html.ActionLink("Редактировать", "EditExams", new { id = item.Id }, new { @class = "battle-buttonCancel" }) |
-                        @Html.ActionLink("Подробности", "DetailsExams", new { id = item.Id }, new { @class = "battle-buttonCancel" }) |
-                        @Html.ActionLink("Удалить", "DeleteExams", new { id = item.Id }, new { @class = "battle-buttonCancel" })
+                        @Html.ActionLink("Редактировать", "EditExams", new { id = item.Id }) |
+                        @Html.ActionLink("Подробности", "DetailsExams", new { id = item.Id }) |
+                        @Html.ActionLink("Удалить", "DeleteExams", new { id = item.Id })
                     </td>
                 </tr>
             }

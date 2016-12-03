@@ -29,7 +29,7 @@ namespace FireTest.Models
         public bool Busy { get; set; }
         public int IdBattleInvite { get; set; }
         public System.DateTime LastActivity { get; set; }
-
+        public bool Update { get; set; }
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
             // Обратите внимание, что authenticationType должен совпадать с типом, определенным в CookieAuthenticationOptions.AuthenticationType
@@ -272,7 +272,7 @@ namespace FireTest.Models
         public string TeacherId { get; set; }
         public int IdTest { get; set; }
         public string Name { get; set; }
-        public int Group { get; set; }
+        public string Group { get; set; }
         public System.DateTime Date { get; set; }
         public string Classroom { get; set; }
         public string Annotations { get; set; }

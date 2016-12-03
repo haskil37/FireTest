@@ -1,0 +1,70 @@
+﻿@model FireTest.Models.ExaminationViewModel
+@{
+    ViewBag.Title = "Создание тестирования";
+}
+@Styles.Render("~/Content/administrator")
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.Hidden("Id", (int)ViewBag.Id)
+    <div class="row">
+        <p class="text-success">@ViewBag.Message</p>
+        <div class="row center textback"><h3>Запланировать тестирование</h3></div>
+        <br />
+        <div class="row">
+            @Html.LabelFor(m => m.Name, new { @class = "col-4" })
+            <div class="col-8">
+                @Html.TextBoxFor(m => m.Name, new { @class = "input" })
+                @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-4">Группа</div>
+            <div class="col-8">
+                @Html.DropDownList("Group", ViewBag.Group as SelectList)
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-4">Тест</div>
+            <div class="col-8">
+                @Html.DropDownList("Test", ViewBag.Test as SelectList)
+            </div>
+        </div>
+        <div class="row">
+            @Html.LabelFor(m => m.Date, new { @class = "col-4" })
+            <div class="col-8">
+                @Html.TextBoxFor(m => m.Date, "{0:dd.MM.yyyy}", new { @class = "datepicker", placeholder = "Укажите дату экзамена" })
+                @Html.ValidationMessageFor(m => m.Date, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="row">
+            @Html.LabelFor(m => m.Classroom, new { @class = "col-4" })
+            <div class="col-8">
+                @Html.TextBoxFor(m => m.Classroom, new { @class = "input" })
+            </div>
+        </div>
+        <div class="row">
+            @Html.LabelFor(m => m.Annotations, new { @class = "col-4" })
+            <div class="col-8">
+                @Html.TextAreaFor(m => m.Annotations, 5, 20, null)
+            </div>
+        </div>
+        <div class="row center">
+            <input type="submit" value="Сохранить" class="button" />
+        </div>
+        <div class="row center">
+            @Html.ActionLink("На главную", "Index", null, new { @class = "button-Cancel" })
+        </div>
+    </div>
+}
+@section scripts
+{
+    @Scripts.Render("~/bundles/datepicker")
+    <script>
+        $('.datepicker').datepicker({
+            format: "dd.mm.yyyy",
+            language: "ru",
+        });
+    </script>
+}
