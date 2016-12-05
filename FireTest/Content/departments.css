@@ -90,10 +90,12 @@
     vertical-align: middle;
     width: 65px;
     padding-left: 10px;
+    visibility: visible;
 }
 .rightD {
     display: table-cell;
     vertical-align: middle;
+    font-size: 16px;
 }
 #departments .content {
     position: absolute;
@@ -133,4 +135,34 @@
 #departments .content li {
     padding-left: 10px;
     line-height: 30px;
+}
+@media(max-width:1400px) {
+    .rightD {
+        font-size: 20px;
+    }
+}
+@media(max-width:1000px) {
+    .leftD{
+        visibility: collapse;
+        width: 0;
+        float: left;
+    }
+    .rightD {
+        font-size: 14px;
+    }
+}
+@media(max-width:730px) {
+    .rightD {
+        font-size: 14px;
+    }
+}
+@media(max-width:678px) {
+    .rightD {
+        font-size: 12px;
+    }
+}
+@media(max-width:414px) {
+    .rightD {
+        font-size: 10px;
+    }
 }

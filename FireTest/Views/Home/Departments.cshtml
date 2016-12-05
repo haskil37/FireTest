@@ -8,12 +8,10 @@
                     @foreach (var itemS in Model.Subject)
                     {
                         if (itemS.IdDepartment == itemD.Id)
-                        {
-                            <li>
-                                <a href="@Url.Action("Index", "Disciplines", new { id = itemS.Id })">
-                                    @itemS.Name
-                                </a>
-                            </li>
+                        {                            
+                            <a href="@Url.Action("Index", "Disciplines", new { id = itemS.Id })">
+                                <li> @itemS.Name</li>
+                            </a>                            
                         }
                     }
                 </ol>
