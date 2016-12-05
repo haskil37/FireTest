@@ -867,32 +867,39 @@ li.sortable-placeholder {
 
 /*Loading Indicator*/
 #loadingIndicator {
-    padding: 20px;
-    background: rgba(0, 0, 0, 0.7);
-    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.7);
-    position: absolute;
-    right: 0;
-    left: 0;
-    top: 0;
-    bottom: 0;
+    background: rgb(0, 0, 0);
+    box-shadow: 0px 0px 20px 20px rgba(0, 0, 0, 0.7);
     z-index: 9999;
+    width: 400px;
+    height: 190px;
+    margin: 0 auto;
 }
 
 #loadingIndicator .container{
-  margin:80px auto;
-  padding-top: 50px; 
-  width: 60px;
-  height: 60px;
-  position:relative;
-  transform-origin:center bottom;
-  animation-name: flicker;
-  animation-duration:3ms;
-  animation-delay:200ms;
-  animation-timing-function: ease-in;
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
-}
+    padding-top: 120px;
+    width: 60px;
+    height: 60px;
+    margin-left: 50px;
+    position: relative;
+    transform-origin: center bottom;
+    animation-name: flicker;
+    animation-duration: 3ms;
+    animation-delay: 200ms;
+    animation-timing-function: ease-in;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    float: left;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin-left: 100px;
 
+}
+#loadingIndicator h3{
+    line-height: 300px;
+    font-size: 30px;
+    margin-left: 100px;
+}
 #loadingIndicator .flame{
   bottom:0;
   position:absolute;

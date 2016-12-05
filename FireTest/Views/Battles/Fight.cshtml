@@ -24,15 +24,17 @@
     </div>
 </div>
 <div class="row" id="FightQuestionsRoW"></div>
-<div id="loadingIndicator" class="load" style="display:none;">
-    <div class="spinner">
-        <div class="bounce1"></div>
-        <div class="bounce2"></div>
-        <div class="bounce3"></div>
+<div id="loadingIndicator" style="display:none;">
+    <div class="container">
+        <div class="red flame"></div>
+        <div class="orange flame"></div>
+        <div class="yellow flame"></div>
+        <div class="white flame"></div>
+        <div class="blue circle"></div>
+        <div class="black circle"></div>
     </div>
-    <h3 class="h4-battle">Загрузка следующего вопроса.</h3>
+    <h3 class="center">Загрузка</h3>
 </div>
-
 @using (Ajax.BeginForm("FightQuestions", new { id = ViewBag.Id }, new AjaxOptions
 {
     HttpMethod = "POST",
