@@ -1,17 +1,20 @@
-﻿<script>
+﻿<div class="row">
+    <div class="textback">Соотношение правильных ответов у группы @ViewBag.TitleChart</div>
+</div>
+<script>
     var config = {
         type: 'pie',
         data: {
             datasets: [{
-                data: [@ViewBag.BattlesLose, @ViewBag.BattlesWin],
+                data: [@ViewBag.Answers, @ViewBag.AnswersCorrect],
                 backgroundColor: [
                     "#ff7300",
                     "#70bee6",
                 ],
             }],
             labels: [
-                "Поражения",
-                "Победы",
+                "Неправильные ответы",
+                "Правильные ответы",
             ]
         },
         options: {
@@ -27,6 +30,6 @@
     var ctx = document.getElementById("chart");
     var myPieChart = new Chart(ctx, config);
 </script>
-<div class="row">
+<div class="row centerChart">
     <canvas id="chart" />
 </div>

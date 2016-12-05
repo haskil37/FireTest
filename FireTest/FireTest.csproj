@@ -31334,7 +31334,6 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Manage\ChangePassword.cshtml" />
-    <Content Include="Views\Manage\Index.cshtml" />
     <Content Include="Views\Manage\SetPassword.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Account\DisplayEmail.cshtml" />
@@ -31345,7 +31344,6 @@
     <Content Include="Views\Account\ResetPassword.cshtml" />
     <Content Include="Views\Home\Load.cshtml" />
     <Content Include="Views\Home\UserInfo.cshtml" />
-    <Content Include="Views\Manage\Edit.cshtml" />
     <Content Include="Views\Qualification\Index.cshtml" />
     <Content Include="Views\Qualification\QualificationTest.cshtml" />
     <Content Include="Views\Qualification\QualificationTestQuestions.cshtml" />
@@ -31408,6 +31406,11 @@
     <Content Include="Views\Teacher\DeleteExams.cshtml" />
     <Content Include="Views\Teacher\DetailsExams.cshtml" />
     <Content Include="Views\Calendar\Index.cshtml" />
+    <Content Include="Views\Manage\Index.cshtml" />
+    <Content Include="Views\Statistics\GroupBattles.cshtml" />
+    <Content Include="Views\Statistics\GroupAnswers.cshtml" />
+    <Content Include="Views\Statistics\SelectDateRange.cshtml" />
+    <Content Include="Views\Statistics\MonthDateRange.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

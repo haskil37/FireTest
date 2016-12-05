@@ -14,7 +14,7 @@ namespace FireTest.Controllers
     public class HomeController : Controller
     {
         ApplicationDbContext dbContext = new ApplicationDbContext();
-        private IdentityResult UpdateCourseAndGroup(string userID)
+        private IdentityResult UpdateCourse(string userID)
         {
             try
             {
@@ -30,19 +30,26 @@ namespace FireTest.Controllers
                     int course = (zeroTime + diff).Year;
                     if (course <= 6)
                     {
-                        if (user.Group.Substring(0, 1) == "1" && course < 6) //Если ПБ
-                            user.Course = course;
-
+                        if (user.Group.Substring(0, 1) == "1") //Если ПБ
+                        {
+                            if (course < 6)
+                                user.Course = course;
+                            else
+                                user.Course = 100;
+                        }
                         if (user.Group.Substring(0, 1) == "2") //Если ТБ
-                        {
                             user.Course = course;
-                        }
-                        if (user.Group.Substring(0, 1) == "0" && course < 5) //Если платно
+                        if (user.Group.Substring(0, 1) == "0") //Если платно
                         {
-                            user.Course = course;
+                            if (course < 5)
+                                user.Course = course;
+                            else
+                                user.Course = 100;
                         }
-                        dbContext.SaveChanges();
                     }
+                    else
+                        user.Course = 100;
+                    dbContext.SaveChanges();
                 }
             }
             catch (Exception exception)
@@ -78,11 +85,14 @@ namespace FireTest.Controllers
                     ViewBag.Avatar = "/Images/Avatars/" + user.Avatar;
                     ViewBag.Battles = user.BattleCount;
                     ViewBag.BattlesWin = user.BattleWinCount;
-                    ViewBag.Correct = user.CorrectAnswersCount * 100 / user.AnswersCount;
+                    if (user.AnswersCount != 0)
+                        ViewBag.Correct = user.CorrectAnswersCount * 100 / user.AnswersCount;
+                    else
+                        ViewBag.Correct = 0;
                     var role = dbContext.Users.Find(User.Identity.GetUserId()).Roles.SingleOrDefault();
                     if (dbContext.Roles.Find(role.RoleId).Name == "USER")
                     {
-                        var result = UpdateCourseAndGroup(user.Id);
+                        var result = UpdateCourse(user.Id);
                         if (!result.Succeeded)
                             ViewBag.Name = "Ошибка";
                     }
@@ -100,6 +110,8 @@ namespace FireTest.Controllers
                 default:
                     string userId = User.Identity.GetUserId();
                     ApplicationUser user = dbContext.Users.Find(userId);
+                    if (user == null)
+                        return RedirectToAction("Login", "Account");
                     user.Busy = false;
                     dbContext.SaveChanges();
                     ViewBag.Images = new SIC().SelectImagesCache(SIC.type.quote);

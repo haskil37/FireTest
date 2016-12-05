@@ -1,4 +1,7 @@
-﻿<script>
+﻿<div class="row">
+    <div class="textback">Соотношение побед и поражений в схватках у группы @ViewBag.TitleChart</div>
+</div>
+<script>
     var config = {
         type: 'pie',
         data: {
@@ -27,6 +30,6 @@
     var ctx = document.getElementById("chart");
     var myPieChart = new Chart(ctx, config);
 </script>
-<div class="row">
+<div class="row centerChart">
     <canvas id="chart" />
 </div>

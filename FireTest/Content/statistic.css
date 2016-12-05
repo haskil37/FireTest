@@ -25,3 +25,6 @@
     display: table-cell;
     text-align: left;
 }
+.centerChart{
+    margin: 0 auto;
+}

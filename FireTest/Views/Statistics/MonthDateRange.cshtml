@@ -1,0 +1,74 @@
+﻿<div class="row">
+    <div class="col-4">Выберите вид статистики</div>
+    <div class="col-8">
+        <select name="DateRange" onchange="$(this.form).submit();">
+            <option value="1">Месяц</option>
+            <option value="2">Квартал</option>
+            <option value="3">Семестр</option>
+        </select>
+    </div>
+</div>
+<div class="row">
+    <div class="textback">Соотношение правильных ответов у группы @ViewBag.TitleChart</div>
+</div>
+<script>
+    var options = {
+        responsive: true,
+        legend: {
+            display: false
+        },
+        tooltips: {
+            enabled: false
+        },
+        scaleFontColor: 'red',
+        scales: {
+            xAxes: [{
+                gridLines: {
+                    display: false,
+                },
+                ticks: {
+                    fontColor: "rgb(255, 115, 0)",
+                },
+            }],
+            yAxes: [{
+                gridLines: {
+                    color: "rgb(196, 189, 151)",
+                    zeroLineColor: "rgb(196, 189, 151)"
+                },
+                ticks: {
+                    fontColor: "rgb(255, 115, 0)",
+                    stepSize: 1
+                },
+            }],
+        }
+    };
+    var data = {
+        labels: [@Html.Raw(ViewBag.osX)],
+        datasets: [
+            {
+                label: " ",
+                fill: false,
+                lineTension: 0.1,
+                borderColor: "rgb(255, 115, 0)",
+                borderCapStyle: 'butt',
+                borderDash: [],
+                borderDashOffset: 0.0,
+                borderJoinStyle: 'miter',
+                pointBorderColor: "rgb(196, 189, 151)",
+                pointBackgroundColor: "rgb(196, 189, 151)",
+                pointBorderWidth: 1,
+                pointRadius: 1,
+                pointHitRadius: 10,
+                data: [@ViewBag.osY]
+            }
+        ]
+    };
+    var ctxLine = document.getElementById("lineChart").getContext("2d");
+    var myLineChart = Chart.Line(ctxLine, {
+        data: data,
+        options: options
+    });
+</script>
+<div class="row centerChart">
+    <canvas id="lineChart" />
+</div>

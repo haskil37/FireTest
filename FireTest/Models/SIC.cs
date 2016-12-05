@@ -63,7 +63,7 @@ namespace FireTest.Models
                 Where(x => extensions.Contains(Path.GetExtension(x)));
             return absolutePaths.Select(
                 x => virtualPath.Replace("~", "") +
-                x.Replace(physicalPath, ""));
+                x.Replace(physicalPath, "").Replace('\\', '/'));
         }
     }
 }

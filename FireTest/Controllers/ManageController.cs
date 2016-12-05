@@ -71,166 +71,59 @@ namespace FireTest.Controllers
             if (user.Year != 0)
                 year = user.Year.ToString();
             ViewBag.Avatar = "/Images/Avatars/" + user.Avatar;
+            var role = dbContext.Users.Find(User.Identity.GetUserId()).Roles.SingleOrDefault();
+
+            IndexViewModel model = new IndexViewModel();
             List<bool> selected = new List<bool>() { false, false, false };
-            string group = "";
-            if (!string.IsNullOrEmpty(user.Group) && user.Group != "0" && user.Year != 0)
+
+            if (dbContext.Roles.Find(role.RoleId).Name == "USER" && !string.IsNullOrEmpty(user.Group))
             {
-                if (user.Group.Length < 3)
-                    user.Group = user.Course + "00";
-                user.Group = user.Group.Remove(0, 1);
-                List<bool> selectedGroup = new List<bool>();
                 switch (user.Group.Substring(0, 1))
                 {
+                    case "0":
+                        selected[0] = true;
+                        break;
                     case "1":
                         selected[1] = true;
-                        selectedGroup = new List<bool>() { false, false, false, false };
-                        group = user.Group.Substring(user.Group.Length - 1);
-                        switch (group)
-                        {
-                            case "1":
-                                selectedGroup[0] = true;
-                                break;
-                            case "2":
-                                selectedGroup[1] = true;
-                                break;
-                            case "3":
-                                selectedGroup[2] = true;
-                                break;
-                            case "4":
-                                selectedGroup[3] = true;
-                                break;
-                        }
-                        var groupList1 = new[]{
-                             new SelectListItem{ Value="1",Text="1 учебная группа", Selected=selectedGroup[0]},
-                             new SelectListItem{ Value="2",Text="2 учебная группа", Selected=selectedGroup[1]},
-                             new SelectListItem{ Value="3",Text="3 учебная группа", Selected=selectedGroup[2]},
-                             new SelectListItem{ Value="4",Text="4 учебная группа", Selected=selectedGroup[3]},
-                        };
-                        ViewBag.Group = groupList1.ToList();
                         break;
                     case "2":
                         selected[2] = true;
-                        if (user.Course == 1)
-                        {
-                            selectedGroup = new List<bool>() { false, false, false };
-                            group = user.Group.Substring(user.Group.Length - 1);
-                            switch (group)
-                            {
-                                case "1":
-                                    selectedGroup[0] = true;
-                                    break;
-                                case "2":
-                                    selectedGroup[1] = true;
-                                    break;
-                                case "3":
-                                    selectedGroup[2] = true;
-                                    break;
-                            }
-                            var groupList2 = new[]{
-                             new SelectListItem{ Value="1",Text="1 учебная группа", Selected=selectedGroup[0]},
-                             new SelectListItem{ Value="2",Text="2 учебная группа", Selected=selectedGroup[1]},
-                             new SelectListItem{ Value="3",Text="3 учебная группа", Selected=selectedGroup[2]},
-                            };
-                            ViewBag.Group = groupList2.ToList();
-                        }
-                        else if (user.Course < 5)
-                        {
-                            selectedGroup = new List<bool>() { false, false, false, false };
-                            group = user.Group.Substring(user.Group.Length - 1);
-                            switch (group)
-                            {
-                                case "1":
-                                    selectedGroup[0] = true;
-                                    break;
-                                case "2":
-                                    selectedGroup[1] = true;
-                                    break;
-                                case "3":
-                                    selectedGroup[2] = true;
-                                    break;
-                                case "4":
-                                    selectedGroup[3] = true;
-                                    break;
-                            }
-                            var groupList2 = new[]{
-                             new SelectListItem{ Value="1",Text="1 учебная группа", Selected=selectedGroup[0]},
-                             new SelectListItem{ Value="2",Text="2 учебная группа", Selected=selectedGroup[1]},
-                             new SelectListItem{ Value="3",Text="3 учебная группа", Selected=selectedGroup[2]},
-                             new SelectListItem{ Value="4",Text="4 учебная группа", Selected=selectedGroup[3]},
-                            };
-                            ViewBag.Group = groupList2.ToList();
-                        }
-                        else
-                        {
-                            user.Course++;
-                            selectedGroup = new List<bool>() { false, false };
-                            group = user.Group.Substring(user.Group.Length - 1);
-                            switch (group)
-                            {
-                                case "1":
-                                    selectedGroup[0] = true;
-                                    break;
-                                case "2":
-                                    selectedGroup[1] = true;
-                                    break;
-                            }
-                            var groupList2 = new[]{
-                             new SelectListItem{ Value="1",Text="1 учебная группа", Selected=selectedGroup[0]},
-                             new SelectListItem{ Value="2",Text="2 учебная группа", Selected=selectedGroup[1]},
-                            };
-                            ViewBag.Group = groupList2.ToList();
-                        }
-                        break;
-                    default:
-                        selected[0] = true;
-                        if (user.Course == 1)
-                        {
-                            selectedGroup = new List<bool>() { false, false };
-                            group = user.Group.Substring(user.Group.Length - 1);
-                            switch (group)
-                            {
-                                case "2":
-                                    selectedGroup[0] = true;
-                                    break;
-                                case "4":
-                                    selectedGroup[1] = true;
-                                    break;
-                            }
-                            var groupList3 = new[]{
-                             new SelectListItem{ Value="2",Text="2 учебная группа", Selected=selectedGroup[0]},
-                             new SelectListItem{ Value="4",Text="4 учебная группа", Selected=selectedGroup[1]},
-                            };
-                            ViewBag.Group = groupList3.ToList();
-                        }
-                        else if (user.Course == 4)
-                        {
-                            var groupList3 = new[]{
-                             new SelectListItem{ Value="2",Text="2 учебная группа", Selected=true}
-                            };
-                            ViewBag.Group = groupList3.ToList();
-                        }
-                        else
-                        {
-                            selectedGroup = new List<bool>() { false, false };
-                            group = user.Group.Substring(user.Group.Length - 1);
-                            switch (group)
-                            {
-                                case "1":
-                                    selectedGroup[0] = true;
-                                    break;
-                                case "2":
-                                    selectedGroup[1] = true;
-                                    break;
-                            }
-                            var groupList3 = new[]{
-                             new SelectListItem{ Value="2-1",Text="2-1 учебная группа", Selected=selectedGroup[0]},
-                             new SelectListItem{ Value="2-2",Text="2-2 учебная группа", Selected=selectedGroup[1]},
-                            };
-                            ViewBag.Group = groupList3.ToList();
-                        }
                         break;
                 }
-                ViewBag.FinalGroup = user.Course + "" + user.Group;
+                if (!string.IsNullOrEmpty(user.Group))
+                {
+                    if (user.Course != 100)
+                    {
+                        if (user.Group.Substring(0, 1) == "2" && user.Course > 4)
+                            ViewBag.FinalGroup = (user.Course + 1) + user.Group;
+                        else
+                            ViewBag.FinalGroup = user.Course + user.Group;
+                    }
+                    else
+                        ViewBag.FinalGroup = "Выпускник";
+                }
+                model = new IndexViewModel
+                {
+                    Name = user.Name,
+                    SubName = user.SubName,
+                    Family = user.Family,
+                    Year = year,
+                    Group = user.Group.Remove(0, 1)
+                };
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(user.Group))
+                {
+                    model = new IndexViewModel
+                    {
+                        Name = user.Name,
+                        SubName = user.SubName,
+                        Family = user.Family,
+                        Year = year,
+                    };
+                    ViewBag.FinalGroup = "Преподаватель";
+                }
             }
             var facultyList = new[]{
                      new SelectListItem{ Value="1",Text="Факультет пожарной безопасности", Selected=selected[1]},
@@ -239,39 +132,96 @@ namespace FireTest.Controllers
                  };
             ViewBag.Faculty = facultyList.ToList();
 
-            ViewBag.Course = user.Course;
-            var model = new IndexViewModel
-            {
-                Name = user.Name,
-                SubName = user.SubName,
-                Family = user.Family,
-                Year = year,
-            };
-
             return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Index(IndexViewModel model, string Faculty, string Group)
+        public async Task<ActionResult> Index(IndexViewModel model, string Faculty)
         {
             if (!ModelState.IsValid)
             {
                 var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
                 ViewBag.Avatar = "/Images/Avatars/" + user.Avatar;
-                ViewBag.Course = user.Course;
+                List<bool> selected = new List<bool>() { false, false, false };
+                switch (user.Group.Substring(0, 1))
+                {
+                    case "0":
+                        selected[0] = true;
+                        break;
+                    case "1":
+                        selected[1] = true;
+                        break;
+                    case "2":
+                        selected[2] = true;
+                        break;
+                }
+                var facultyList = new[]{
+                     new SelectListItem{ Value="1",Text="Факультет пожарной безопасности", Selected=selected[1]},
+                     new SelectListItem{ Value="2",Text="Факультет техносферной безопасности", Selected=selected[2]},
+                     new SelectListItem{ Value="0",Text="Факультет платных образовательных услуг", Selected=selected[0]},
+                 };
+                ViewBag.Faculty = facultyList.ToList();
                 return View(model);
             }
-
-            var result = await UpdateUserAsync(User.Identity.GetUserId(), model, Faculty + Group);
+            string userId = User.Identity.GetUserId();
+            var result = await UpdateUserAsync(userId, model, Faculty);
             if (result.Succeeded)
             {
+                var update = UpdateCourse(userId);
+                if (!update.Succeeded)
+                    return RedirectToAction("Index");
                 return RedirectToAction("Index", new { Message = ManageMessageId.ChangeSuccess });
             }
             AddErrors(result); 
             return View(model);
         }
-        private async Task<IdentityResult> UpdateUserAsync(string userId, IndexViewModel model, string Group)
+        private IdentityResult UpdateCourse(string userID)
+        {
+            try
+            {
+                ApplicationUser user = dbContext.Users.Find(userID);
+                DateTime entrance = DateTime.Parse("1 Sep " + user.Year);
+                TimeSpan diff = DateTime.Now.Subtract(entrance);
+                DateTime zeroTime = new DateTime(1, 1, 1);
+                if (diff.Days > 0)
+                {
+                    //Григорианский календарь начинается с 1. 
+                    //То должны вычитать 1, но т.к. начинаем мы не с 0 курса, а с первого то прибавляем 1.
+                    //Итого получается, что мы не вычитаем и не прибавляем
+                    int course = (zeroTime + diff).Year;
+                    if (course <= 6)
+                    {
+                        if (user.Group.Substring(0, 1) == "1") //Если ПБ
+                        {
+                            if (course < 6)
+                                user.Course = course;
+                            else
+                                user.Course = 100;
+                        }
+                        if (user.Group.Substring(0, 1) == "2") //Если ТБ
+                            user.Course = course;
+                        if (user.Group.Substring(0, 1) == "0") //Если платно
+                        {
+                            if (course < 5)
+                                user.Course = course;
+                            else
+                                user.Course = 100;
+                        }
+                    }
+                    else
+                        user.Course = 100;
+                    dbContext.SaveChanges();
+                }
+            }
+            catch (Exception exception)
+            {
+                return IdentityResult.Failed(exception.Message);
+            }
+            return IdentityResult.Success;
+        }
+
+        private async Task<IdentityResult> UpdateUserAsync(string userId, IndexViewModel model, string Faculty)
         {
             try
             {
@@ -279,7 +229,7 @@ namespace FireTest.Controllers
                 user.Name = model.Name;
                 user.SubName = model.SubName;
                 user.Family = model.Family;
-                user.Group = user.Course + Group;
+                user.Group = Faculty + model.Group;
                 user.Year = Convert.ToInt32(model.Year);
                 DateTime entrance = DateTime.Parse("1 Sep " + user.Year);
                 TimeSpan diff = DateTime.Now.Subtract(entrance);

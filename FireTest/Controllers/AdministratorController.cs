@@ -33,12 +33,12 @@ namespace FireTest.Controllers
                 if (value[0] == "Administrator")
                 {
                     var userEdit = dbContext.Users.Find(value[1]);
-                    userEdit.Group = "0";
                     if (value[2] == "true")
                     {
                         var temp = userManager.RemoveFromRoles(userEdit.Id, "TEACHER");
                         temp = userManager.RemoveFromRoles(userEdit.Id, "USER");
                         userManager.AddToRole(userEdit.Id, "ADMIN");
+                        userEdit.Course = 100;
                     }
                     else
                     {
@@ -49,18 +49,19 @@ namespace FireTest.Controllers
                 else
                 {
                     var userEdit = dbContext.Users.Find(value[1]);
-                    userEdit.Group = "0";
                     if (value[2] == "true")
                     {
                        var temp = userManager.RemoveFromRoles(userEdit.Id, "USER");
                         userManager.AddToRole(userEdit.Id, "TEACHER");
+                        userEdit.Course = 100;
                     }
                     else
                     {
                         var temp = userManager.RemoveFromRoles(userEdit.Id, "TEACHER");
                         userManager.AddToRole(userEdit.Id, "USER");
                     }
-                }                
+                }
+                dbContext.SaveChanges();         
                 page = Page;
             }
             

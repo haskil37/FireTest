@@ -54,7 +54,7 @@
                     @Html.ValidationMessageFor(m => m.Year, "", new { @class = "text-danger" })
                 </div>
             </div>
-            if (!string.IsNullOrEmpty(@ViewBag.FinalGroup))
+            if (ViewBag.FinalGroup != "Преподаватель")
             {
                 <div class="row">
                     <div class="col-4">Факультет</div>
@@ -63,11 +63,16 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-4">Учебная группа</div>
+                    @Html.LabelFor(m => m.Group, new { @class = "col-4" })
                     <div class="col-8">
-                        @Html.DropDownList("Group", ViewBag.Group as SelectList)
+                        @Html.TextBoxFor(m => m.Group)
+                        <span class="pen"></span>
+                        @Html.ValidationMessageFor(m => m.Group, "", new { @class = "text-danger" })
                     </div>
                 </div>
+            }
+            if (!string.IsNullOrEmpty(@ViewBag.FinalGroup))
+            {
                 <div class="row">
                     <label class="col-4">Группа</label>
                     <div class="col-8">
@@ -88,7 +93,7 @@
 @section scripts
 {
     <script>
-        $('#Faculty').on('change', function() {
+        @*$('#Faculty').on('change', function() {
             $("#Group").empty();
             if(this.value == 1){
                 $("#Group").append(new Option("1 учебная группа", "1"));
@@ -121,7 +126,7 @@
                     $("#Group").append(new Option("2-2 учебная группа", "2-2"));
                 }
             }
-        })
+        })*@
         $("#Year").focusout(function (e) {
             var year = $("#Year").val();
             if (year <= 1966) {
