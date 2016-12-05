@@ -105,7 +105,7 @@ namespace FireTest.Controllers
         [HttpPost]
         public PartialViewResult Index(string Groups, int Statistics, int? DateRange)
         {
-            if (DateRange == null)
+            if (DateRange == null || Statistics != 2)
             {
                 switch (Statistics)
                 {
@@ -160,26 +160,73 @@ namespace FireTest.Controllers
                     .Where(u => u.Course != 100)
                     .Where(u => u.Course + u.Group == Groups)
                     .Select(u => u.Id).ToList();
-                //За месяц
-                string osX = "";
-                int[] osY = new int[30];
-                for (int i = 1; i <= 30; i++)
+                int range = 0;
+                switch (DateRange)
                 {
-                    osX += i + ",";
-                    osY[i - 1] = 0;
+                    case 1:
+                        range = 1;
+                        ViewBag.Range = "за послений месяц";
+                        break;
+                    case 2:
+                        range = 3;
+                        ViewBag.Range = "за последние 3 месяца";
+                        break;
+                    case 3:
+                        range = 6;
+                        ViewBag.Range = "за последние 6 месяцев";
+                        break;
+                }
+
+                var today = DateTime.Today;
+                var beforeMonth = new DateTime(today.Year, today.Month - range, today.Day);
+
+                List<DateTime> allDates = new List<DateTime>();
+                for (DateTime date = beforeMonth; date <= today; date = date.AddDays(1))
+                    allDates.Add(date);
+                string osX = "";
+                List<int> osYD = new List<int>();
+                List<int> osYQ = new List<int>();
+                foreach (var item in allDates)
+                {
+                    osX += item.Day + "." + item.Month + ",";
+                    osYD.Add(0);
+                    osYQ.Add(0);
                 }
                 osX = osX.Substring(0, osX.Length - 1);
                 foreach (var item in users) //Квалификации
                 {
-                    var allSelfyQualifications = dbContext.SelfyTestQualifications.Where(u => u.IdUser == item).Select(u => u.TimeStart).ToList();
+                    var allSelfyQualifications = dbContext.SelfyTestQualifications.
+                        Where(u => u.IdUser == item).
+                        Where(u => u.TimeStart >= beforeMonth).
+                        Where(u => u.TimeStart <= today).Select(u => u.TimeStart).ToList();
                     foreach (var date in allSelfyQualifications)
-                        if (date.Month == 11)
-                            osY[date.Day] += 1;
+                    {
+                        var tempDate = new DateTime(today.Year, date.Month, date.Day);
+                        var index = allDates.IndexOf(tempDate);
+                        osYD[index] += 1;
+                    }
+                    var allSelfyDisciplines = dbContext.SelfyTestDisciplines.
+                        Where(u => u.IdUser == item).
+                        Where(u => u.TimeStart >= beforeMonth).
+                        Where(u => u.TimeStart <= today).Select(u => u.TimeStart).ToList();
+                    foreach (var date in allSelfyDisciplines)
+                    {
+                        var tempDate = new DateTime(today.Year, date.Month, date.Day);
+                        var index = allDates.IndexOf(tempDate);
+                        osYQ[index] += 1;
+                    }
+
                 }
-                ViewBag.osX = osX;
-                ViewBag.osY = "";
-                foreach (var item in osY)
-                    ViewBag.osY += item + ",";
+                ViewBag.osXD = osX;
+                ViewBag.osYD = "";
+                foreach (var item in osYD)
+                    ViewBag.osYD += item + ",";
+
+                ViewBag.osXQ = osX;
+                ViewBag.osYQ = "";
+                foreach (var item in osYQ)
+                    ViewBag.osYQ += item + ",";
+
                 return PartialView("MonthDateRange");
             }
             return PartialView();

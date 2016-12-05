@@ -2,14 +2,12 @@
     <div class="col-4">Выберите вид статистики</div>
     <div class="col-8">
         <select name="DateRange" onchange="$(this.form).submit();">
-            <option value="1">Месяц</option>
-            <option value="2">Квартал</option>
-            <option value="3">Семестр</option>
+            <option>Выберите период</option>
+            <option value="1">За послений месяц</option>
+            <option value="2">За последние 3 месяца</option>
+            <option value="3">За последние 6 месяцев</option>
         </select>
     </div>
-</div>
-<div class="row">
-    <div class="textback">Соотношение правильных ответов у группы @ViewBag.TitleChart</div>
 </div>
 <script>
     var options = {
@@ -20,7 +18,6 @@
         tooltips: {
             enabled: false
         },
-        scaleFontColor: 'red',
         scales: {
             xAxes: [{
                 gridLines: {
@@ -42,8 +39,8 @@
             }],
         }
     };
-    var data = {
-        labels: [@Html.Raw(ViewBag.osX)],
+    var dataQ = {
+        labels: [@Html.Raw(ViewBag.osXQ)],
         datasets: [
             {
                 label: " ",
@@ -59,16 +56,51 @@
                 pointBorderWidth: 1,
                 pointRadius: 1,
                 pointHitRadius: 10,
-                data: [@ViewBag.osY]
+                data: [@ViewBag.osYQ]
             }
         ]
     };
-    var ctxLine = document.getElementById("lineChart").getContext("2d");
-    var myLineChart = Chart.Line(ctxLine, {
-        data: data,
+    var dataD = {
+        labels: [@Html.Raw(ViewBag.osXD)],
+        datasets: [
+            {
+                label: " ",
+                fill: false,
+                lineTension: 0.1,
+                borderColor: "rgb(255, 115, 0)",
+                borderCapStyle: 'butt',
+                borderDash: [],
+                borderDashOffset: 0.0,
+                borderJoinStyle: 'miter',
+                pointBorderColor: "rgb(196, 189, 151)",
+                pointBackgroundColor: "rgb(196, 189, 151)",
+                pointBorderWidth: 1,
+                pointRadius: 1,
+                pointHitRadius: 10,
+                data: [@ViewBag.osYD]
+            }
+        ]
+    };
+    var ctxLineQ = document.getElementById("lineChartQ").getContext("2d");
+    var myLineChartQ = Chart.Line(ctxLineQ, {
+        data: dataQ,
+        options: options
+    });
+    var ctxLineD = document.getElementById("lineChartD").getContext("2d");
+    var myLineChartD = Chart.Line(ctxLineD, {
+        data: dataD,
         options: options
     });
 </script>
+<div class="row">
+    <div class="textback">Сколько человек из @ViewBag.TitleChart группы проходили тесты по квалификациям @ViewBag.Range</div>
+</div>
 <div class="row centerChart">
-    <canvas id="lineChart" />
+    <canvas id="lineChartQ" />
+</div>
+<div class="row">
+    <div class="textback">Сколько человек из @ViewBag.TitleChart группы проходили тесты по отдельным дисциплинам @ViewBag.Range</div>
+</div>
+<div class="row centerChart">
+    <canvas id="lineChartD" />
 </div>

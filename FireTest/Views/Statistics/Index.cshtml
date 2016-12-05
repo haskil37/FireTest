@@ -33,8 +33,13 @@
     <script>
         var ctx = document.getElementById("chart");
         var myPieChart = new Chart(ctx, config);
-        var ctxLine = document.getElementById("lineChart");
-        var myLineChart = Chart.Line(ctxLine, {
+        var ctxLineQ = document.getElementById("lineChartQ").getContext("2d");
+        var myLineChartQ = Chart.Line(ctxLineQ, {
+            data: data,
+            options: options
+        });
+        var ctxLineD = document.getElementById("lineChartD").getContext("2d");
+        var myLineChartD = Chart.Line(ctxLineD, {
             data: data,
             options: options
         });
