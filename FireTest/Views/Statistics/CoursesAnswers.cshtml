@@ -1,0 +1,35 @@
+﻿<div class="row">
+    <div class="textback">Соотношение правильных ответов у курса @ViewBag.TitleChart</div>
+</div>
+<script>
+    var config = {
+        type: 'pie',
+        data: {
+            datasets: [{
+                data: [@ViewBag.Answers, @ViewBag.AnswersCorrect],
+                backgroundColor: [
+                    "#ff7300",
+                    "#70bee6",
+                ],
+            }],
+            labels: [
+                "Неправильные ответы",
+                "Правильные ответы",
+            ]
+        },
+        options: {
+            responsive: true,
+            legend: {
+                labels: {
+                    fontSize: 20,
+                    fontColor: "#c4bd97"
+                }
+            },
+        }
+    };
+    var ctx = document.getElementById("chart");
+    var myPieChart = new Chart(ctx, config);
+</script>
+<div class="row centerChart">
+    <canvas id="chart" />
+</div>

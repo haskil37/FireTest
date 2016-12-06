@@ -1,0 +1,48 @@
+﻿@{
+    ViewBag.Title = "Статистика";
+}
+@Styles.Render("~/Content/statistic")
+@using (Ajax.BeginForm("Courses", new AjaxOptions
+{
+    HttpMethod = "Post",
+    InsertionMode = InsertionMode.Replace,
+    UpdateTargetId = "Charts",
+}))
+{
+    <div class="row">
+        <div class="col-4">Выберите группу</div>
+        <div class="col-8">
+            @Html.DropDownList("Courses", ViewBag.Courses as SelectList, new { @onchange = "$(this.form).submit();" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">Выберите вид статистики</div>
+        <div class="col-8">
+            <select name="Statistics" onchange="$(this.form).submit();">
+                <option disabled selected> -- Выберите вид статистики -- </option>
+                <option value="0">Поединки</option>
+                <option value="1">Правильные ответы</option>
+                <option value="2">Количество самоподготовки</option>
+            </select>
+        </div>
+    </div>
+    <div id="Charts"></div>
+}
+@section scripts
+{
+    @Scripts.Render("~/bundles/statistic")
+    <script>
+        var ctx = document.getElementById("chart");
+        var myPieChart = new Chart(ctx, config);
+        var ctxLineQ = document.getElementById("lineChartQ").getContext("2d");
+        var myLineChartQ = Chart.Line(ctxLineQ, {
+            data: data,
+            options: options
+        });
+        var ctxLineD = document.getElementById("lineChartD").getContext("2d");
+        var myLineChartD = Chart.Line(ctxLineD, {
+            data: data,
+            options: options
+        });
+    </script>
+}

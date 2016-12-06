@@ -31393,7 +31393,7 @@
     <Content Include="Views\Teacher\EditQuestionSelect.cshtml" />
     <Content Include="Views\Teacher\EditQuestionSelectAjax.cshtml" />
     <Content Include="Views\Teacher\EditQuestion.cshtml" />
-    <Content Include="Views\Statistics\Index.cshtml" />
+    <Content Include="Views\Statistics\Groups.cshtml" />
     <Content Include="Views\Statistics\CountBattles.cshtml" />
     <Content Include="Views\Statistics\CountAnswers.cshtml" />
     <Content Include="Views\Statistics\UserStatistics.cshtml" />
@@ -31407,10 +31407,16 @@
     <Content Include="Views\Teacher\DetailsExams.cshtml" />
     <Content Include="Views\Calendar\Index.cshtml" />
     <Content Include="Views\Manage\Index.cshtml" />
-    <Content Include="Views\Statistics\GroupBattles.cshtml" />
-    <Content Include="Views\Statistics\GroupAnswers.cshtml" />
-    <Content Include="Views\Statistics\SelectDateRange.cshtml" />
-    <Content Include="Views\Statistics\MonthDateRange.cshtml" />
+    <Content Include="Views\Statistics\GroupsBattles.cshtml" />
+    <Content Include="Views\Statistics\GroupsAnswers.cshtml" />
+    <Content Include="Views\Statistics\SelectDateRangeGroups.cshtml" />
+    <Content Include="Views\Statistics\MonthDateRangeGroups.cshtml" />
+    <Content Include="Views\Statistics\Index.cshtml" />
+    <Content Include="Views\Statistics\SelectDateRangeCourses.cshtml" />
+    <Content Include="Views\Statistics\MonthDateRangeCourses.cshtml" />
+    <Content Include="Views\Statistics\Courses.cshtml" />
+    <Content Include="Views\Statistics\CoursesAnswers.cshtml" />
+    <Content Include="Views\Statistics\CoursesBattles.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

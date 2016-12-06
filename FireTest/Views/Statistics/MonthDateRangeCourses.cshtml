@@ -1,12 +1,7 @@
 ﻿<div class="row">
-    <div class="col-4">Выберите вид статистики</div>
+    <div class="col-4">Выберите период</div>
     <div class="col-8">
-        <select name="DateRange" onchange="$(this.form).submit();">
-            <option>Выберите период</option>
-            <option value="1">За послений месяц</option>
-            <option value="2">За последние 3 месяца</option>
-            <option value="3">За последние 6 месяцев</option>
-        </select>
+        @Html.DropDownList("DateRange", ViewBag.DateRange as SelectList, new { @onchange = "$(this.form).submit();" })
     </div>
 </div>
 <script>
@@ -93,13 +88,13 @@
     });
 </script>
 <div class="row">
-    <div class="textback">Сколько человек из @ViewBag.TitleChart группы проходили тесты по квалификациям @ViewBag.Range</div>
+    <div class="textback">Сколько человек из @ViewBag.TitleChart курса проходили тесты по квалификациям @ViewBag.Range</div>
 </div>
 <div class="row centerChart">
     <canvas id="lineChartQ" />
 </div>
 <div class="row">
-    <div class="textback">Сколько человек из @ViewBag.TitleChart группы проходили тесты по отдельным дисциплинам @ViewBag.Range</div>
+    <div class="textback">Сколько человек из @ViewBag.TitleChart курса проходили тесты по отдельным дисциплинам @ViewBag.Range</div>
 </div>
 <div class="row centerChart">
     <canvas id="lineChartD" />
