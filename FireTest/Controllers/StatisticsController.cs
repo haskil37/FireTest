@@ -1,5 +1,6 @@
 ﻿using FireTest.Models;
 using Microsoft.AspNet.Identity;
+using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,13 +23,12 @@ namespace FireTest.Controllers
             var groups = dbContext.Users.Where(u => u.Course != 100).Select(u => u.Course + u.Group).Distinct().ToList();
             if (groups == null)
                 RedirectToAction("Index", "Home");
-            var selectList = groups //Выпадающий список групп
+            ViewBag.Groups = groups //Выпадающий список групп
                 .Select(u => new SelectListItem()
                 {
                     Value = u,
                     Text = u,
                 }).ToList();
-            ViewBag.Groups = selectList;
             return View();
         }
         [HttpPost]
@@ -177,13 +177,12 @@ namespace FireTest.Controllers
             var courses = dbContext.Users.Where(u => u.Course != 100).Select(u => u.Course + u.Group.Substring(0, 1)).Distinct().ToList();
             if (courses == null)
                 RedirectToAction("Index", "Home");
-            var selectList = courses //Выпадающий список групп
+            ViewBag.Courses = courses //Выпадающий список курсов
                 .Select(u => new SelectListItem()
                 {
                     Value = u,
                     Text = u,
                 }).ToList();
-            ViewBag.Courses = selectList;
             return View();
         }
         [HttpPost]
@@ -402,6 +401,70 @@ namespace FireTest.Controllers
                 ViewBag.AnswersCorrect = 100;
             }
             return PartialView();
+        }
+
+        public ActionResult Users()
+        {
+            Session.Clear();
+            return View();
+        }
+        public PartialViewResult UsersAjax(string currentFilter, string searchString, int? page, string Group)
+        {
+            if (Session["Group"] != null)
+                if ((string)Session["Group"] != Group)
+                    page = 1;
+            Session["Group"] = Group;
+            if (!string.IsNullOrEmpty(searchString))
+                page = 1;
+            else
+                searchString = currentFilter;
+            ViewBag.CurrentFilter = searchString;
+
+            var groups = dbContext.Users.Where(u => u.Course != 100).Select(u => u.Course + u.Group).Distinct().ToList();
+            if (groups == null)
+                RedirectToAction("Index", "Home");
+            ViewBag.Group = groups //Выпадающий список групп
+                .Select(u => new SelectListItem()
+                {
+                    Value = u,
+                    Text = u,
+                    Selected = u == Group
+                }).ToList();
+
+            List<UsersForAdmin> model = new List<UsersForAdmin>(); //т.к. нам надо только имя и ид
+            var users = dbContext.Users.Where(u => u.Course != 100).Where(u => u.Course + u.Group == Group).
+                Select(u => new {
+                    Id = u.Id,
+                    Name = u.Family + " " + u.Name + " " + u.SubName,
+                }).ToList();
+
+            foreach (var item in users)
+            {
+                UsersForAdmin user = new UsersForAdmin();
+                if (!String.IsNullOrEmpty(searchString) && item.Name.ToLower().Contains(searchString.ToLower()))
+                {
+                    user.Id = item.Id;
+                    user.Name = item.Name;
+                    model.Add(user);
+                }
+                if (String.IsNullOrEmpty(searchString))
+                {
+                    user.Id = item.Id;
+                    user.Name = item.Name;
+                    model.Add(user);
+                }
+            }
+
+            model = model.OrderBy(u => u.Name).ToList();
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+            ViewBag.page = pageNumber;
+
+            return PartialView(model.ToPagedList(pageNumber, pageSize));
+        }
+        public ActionResult UsersStatistics(string id)
+        {
+            return View();
         }
     }
 }

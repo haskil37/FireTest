@@ -1,0 +1,15 @@
+﻿@{
+    ViewBag.Title = "Статистика";
+}
+@Styles.Render("~/Content/administrator")
+<div id="Users">
+    @{ Html.RenderAction("UsersAjax", new { Page = 1 }); }
+</div>
+@section scripts
+{
+    <script>
+    $('#SearchString').keyup(function () {
+        $(this.form).submit();
+    });
+    </script>
+}

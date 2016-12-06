@@ -31417,6 +31417,8 @@
     <Content Include="Views\Statistics\Courses.cshtml" />
     <Content Include="Views\Statistics\CoursesAnswers.cshtml" />
     <Content Include="Views\Statistics\CoursesBattles.cshtml" />
+    <Content Include="Views\Statistics\Users.cshtml" />
+    <Content Include="Views\Statistics\UsersAjax.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
