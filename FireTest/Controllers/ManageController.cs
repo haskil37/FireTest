@@ -226,11 +226,11 @@ namespace FireTest.Controllers
             try
             {
                 ApplicationUser user = dbContext.Users.Find(userId);
-                user.Name = model.Name;
-                user.SubName = model.SubName;
-                user.Family = model.Family;
-                user.Group = Faculty + model.Group;
-                user.Year = Convert.ToInt32(model.Year);
+                user.Name = model.Name.Trim();
+                user.SubName = model.SubName.Trim();
+                user.Family = model.Family.Trim();
+                user.Group = Faculty + model.Group.Trim();
+                user.Year = Convert.ToInt32(model.Year.Trim());
                 DateTime entrance = DateTime.Parse("1 Sep " + user.Year);
                 TimeSpan diff = DateTime.Now.Subtract(entrance);
                 DateTime zeroTime = new DateTime(1, 1, 1);
