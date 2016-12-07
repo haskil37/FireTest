@@ -188,6 +188,7 @@ namespace FireTest.Controllers
         [HttpPost]
         public PartialViewResult Courses(string Courses, int Statistics, int? DateRange)
         {
+            ViewBag.TitleChart = Courses;
             if (DateRange == null || Statistics != 2)
             {
                 switch (Statistics)
@@ -209,7 +210,6 @@ namespace FireTest.Controllers
                             winCount += item.BattleWinCount;
                         }
 
-                        ViewBag.TitleChart = Courses;
                         ViewBag.BattlesLose = count - winCount;
                         ViewBag.BattlesWin = winCount;
                         return PartialView("CoursesBattles");
@@ -229,7 +229,6 @@ namespace FireTest.Controllers
                             answers += item.AnswersCount;
                             correctAnswers += item.CorrectAnswersCount;
                         }
-                        ViewBag.TitleChart = Courses;
                         ViewBag.Answers = answers - correctAnswers;
                         ViewBag.AnswersCorrect = correctAnswers;
                         return PartialView("CoursesAnswers");
@@ -284,27 +283,29 @@ namespace FireTest.Controllers
                 osX = osX.Substring(0, osX.Length - 1);
                 foreach (var item in users) //Квалификации
                 {
-                    var allSelfyQualifications = dbContext.SelfyTestQualifications.
+                    var temp = dbContext.SelfyTestQualifications.
                         Where(u => u.IdUser == item).
                         Where(u => u.TimeStart >= beforeMonth).
                         Where(u => u.TimeStart <= today).Select(u => u.TimeStart).ToList();
+                    var allSelfyQualifications = temp.Select(u => u.ToString("dd.MM.yyyy")).Distinct().ToList();
                     foreach (var date in allSelfyQualifications)
                     {
-                        var tempDate = new DateTime(today.Year, date.Month, date.Day);
-                        var index = allDates.IndexOf(tempDate);
-                        osYD[index] += 1;
-                    }
-                    var allSelfyDisciplines = dbContext.SelfyTestDisciplines.
-                        Where(u => u.IdUser == item).
-                        Where(u => u.TimeStart >= beforeMonth).
-                        Where(u => u.TimeStart <= today).Select(u => u.TimeStart).ToList();
-                    foreach (var date in allSelfyDisciplines)
-                    {
-                        var tempDate = new DateTime(today.Year, date.Month, date.Day);
+                        var tempDate = new DateTime(today.Year, DateTime.Parse(date).Month, DateTime.Parse(date).Day);
                         var index = allDates.IndexOf(tempDate);
                         osYQ[index] += 1;
                     }
+                    temp = dbContext.SelfyTestDisciplines.
+                        Where(u => u.IdUser == item).
+                        Where(u => u.TimeStart >= beforeMonth).
+                        Where(u => u.TimeStart <= today).Select(u => u.TimeStart).ToList();
+                    var allSelfyDisciplines = temp.Select(u => u.ToString("dd.MM.yyyy")).Distinct().ToList();
 
+                    foreach (var date in allSelfyDisciplines)
+                    {
+                        var tempDate = new DateTime(today.Year, DateTime.Parse(date).Month, DateTime.Parse(date).Day);
+                        var index = allDates.IndexOf(tempDate);
+                        osYD[index] += 1;
+                    }
                 }
                 ViewBag.osXD = osX;
                 ViewBag.osYD = "";
@@ -318,7 +319,7 @@ namespace FireTest.Controllers
 
                 ViewBag.DateRange = new[]{
                  new SelectListItem{ Text=" -- Выберите период -- ", Disabled=true},
-                 new SelectListItem{ Value="1",Text="За послений месяц", Selected=selected[0]},
+                 new SelectListItem{ Value="1",Text="За последний месяц", Selected=selected[0]},
                  new SelectListItem{ Value="2",Text="За последние 3 месяца", Selected=selected[1]},
                  new SelectListItem{ Value="3",Text="За последние 6 месяцев", Selected=selected[2]},
                 }.ToList();
@@ -430,6 +431,10 @@ namespace FireTest.Controllers
                     Text = u,
                     Selected = u == Group
                 }).ToList();
+            if (string.IsNullOrEmpty(Group))
+                ViewBag.Group.Insert(0, new SelectListItem { Text = " -- Выберите группу -- ", Selected = true, Disabled = true });
+            else
+                ViewBag.Group.Insert(0, new SelectListItem { Text = " -- Выберите группу -- ", Disabled = true });
 
             List<UsersForAdmin> model = new List<UsersForAdmin>(); //т.к. нам надо только имя и ид
             var users = dbContext.Users.Where(u => u.Course != 100).Where(u => u.Course + u.Group == Group).
@@ -464,7 +469,122 @@ namespace FireTest.Controllers
         }
         public ActionResult UsersStatistics(string id)
         {
+            var user = dbContext.Users.Find(id);
+            if (user == null)
+                RedirectToAction("Index", "Home");
+            ViewBag.Id = user.Id;
+
+            Decliner decliner = new Decliner();
+            string[] declineText = decliner.Decline(user.Family, user.Name, user.SubName, 4);//Меняем падеж
+            ViewBag.Name = declineText[0] + " " + declineText[1] + " " + declineText[2];
             return View();
+        }
+        [HttpPost]
+        public PartialViewResult UsersStatistics(string Id, int Statistics, int? DateRange)
+        {
+            Decliner decliner = new Decliner();
+            var user = dbContext.Users.Find(Id);
+            string[] declineText = decliner.Decline(user.Family, user.Name, user.SubName, 4);//Меняем падеж
+            ViewBag.TitleChart = declineText[1];
+
+            if (DateRange == null || Statistics != 2)
+            {
+                switch (Statistics)
+                {
+                    case 0:
+                        ViewBag.BattlesLose = user.BattleCount - user.BattleWinCount;
+                        ViewBag.BattlesWin = user.BattleWinCount;
+                        return PartialView("UserBattles");
+                    case 1:
+                        ViewBag.BattlesLose = user.AnswersCount - user.CorrectAnswersCount;
+                        ViewBag.BattlesWin = user.CorrectAnswersCount;
+                        return PartialView("UserAnswers");
+                    case 2:
+                        return PartialView("SelectDateRangeUser");
+                }
+            }
+            else
+            {
+                int range = 0;
+                List<bool> selected = new List<bool>() { false, false, false };
+
+                switch (DateRange)
+                {
+                    case 1:
+                        range = 1;
+                        selected[0] = true;
+                        ViewBag.Range = "за последний месяц";
+                        break;
+                    case 2:
+                        range = 3;
+                        selected[1] = true;
+                        ViewBag.Range = "за последние 3 месяца";
+                        break;
+                    case 3:
+                        range = 6;
+                        selected[2] = true;
+                        ViewBag.Range = "за последние 6 месяцев";
+                        break;
+                }
+
+                var today = DateTime.Today;
+                var beforeMonth = new DateTime(today.Year, today.Month - range, today.Day);
+
+                List<DateTime> allDates = new List<DateTime>();
+                for (DateTime date = beforeMonth; date <= today; date = date.AddDays(1))
+                    allDates.Add(date);
+                string osX = "";
+                List<int> osYD = new List<int>();
+                List<int> osYQ = new List<int>();
+                foreach (var item in allDates)
+                {
+                    osX += item.Day + "." + item.Month + ",";
+                    osYD.Add(0);
+                    osYQ.Add(0);
+                }
+                osX = osX.Substring(0, osX.Length - 1);
+
+                var allSelfyQualifications = dbContext.SelfyTestQualifications.
+                    Where(u => u.IdUser == user.Id).
+                    Where(u => u.TimeStart >= beforeMonth).
+                    Where(u => u.TimeStart <= today).Select(u => u.TimeStart).ToList();
+                foreach (var date in allSelfyQualifications)
+                {
+                    var tempDate = new DateTime(today.Year, date.Month, date.Day);
+                    var index = allDates.IndexOf(tempDate);
+                    osYQ[index] += 1;
+                }
+                var allSelfyDisciplines = dbContext.SelfyTestDisciplines.
+                    Where(u => u.IdUser == user.Id).
+                    Where(u => u.TimeStart >= beforeMonth).
+                    Where(u => u.TimeStart <= today).Select(u => u.TimeStart).ToList();
+                foreach (var date in allSelfyDisciplines)
+                {
+                    var tempDate = new DateTime(today.Year, date.Month, date.Day);
+                    var index = allDates.IndexOf(tempDate);
+                    osYD[index] += 1;
+                }                
+                ViewBag.osXD = osX;
+                ViewBag.osYD = "";
+                foreach (var item in osYD)
+                    ViewBag.osYD += item + ",";
+
+                ViewBag.osXQ = osX;
+                ViewBag.osYQ = "";
+                foreach (var item in osYQ)
+                    ViewBag.osYQ += item + ",";
+
+                ViewBag.DateRange = new[]{
+                 new SelectListItem{ Text=" -- Выберите период -- ", Disabled=true},
+                 new SelectListItem{ Value="1",Text="За последний месяц", Selected=selected[0]},
+                 new SelectListItem{ Value="2",Text="За последние 3 месяца", Selected=selected[1]},
+                 new SelectListItem{ Value="3",Text="За последние 6 месяцев", Selected=selected[2]},
+                }.ToList();
+                ViewBag.TitleChart = user.Name;
+
+                return PartialView("MonthDateRangeUser");
+            }
+            return PartialView();
         }
     }
 }

@@ -31419,6 +31419,11 @@
     <Content Include="Views\Statistics\CoursesBattles.cshtml" />
     <Content Include="Views\Statistics\Users.cshtml" />
     <Content Include="Views\Statistics\UsersAjax.cshtml" />
+    <Content Include="Views\Statistics\UsersStatistics.cshtml" />
+    <Content Include="Views\Statistics\UserBattles.cshtml" />
+    <Content Include="Views\Statistics\UserAnswers.cshtml" />
+    <Content Include="Views\Statistics\SelectDateRangeUser.cshtml" />
+    <Content Include="Views\Statistics\MonthDateRangeUser.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,0 +1,101 @@
+﻿<div class="row">
+    <div class="col-4">Выберите период</div>
+    <div class="col-8">
+        @Html.DropDownList("DateRange", ViewBag.DateRange as SelectList, new { @onchange = "$(this.form).submit();" })
+    </div>
+</div>
+<script>
+    var options = {
+        responsive: true,
+        legend: {
+            display: false
+        },
+        tooltips: {
+            enabled: false
+        },
+        scales: {
+            xAxes: [{
+                gridLines: {
+                    display: false,
+                },
+                ticks: {
+                    fontColor: "rgb(255, 115, 0)",
+                },
+            }],
+            yAxes: [{
+                gridLines: {
+                    color: "rgb(196, 189, 151)",
+                    zeroLineColor: "rgb(196, 189, 151)"
+                },
+                ticks: {
+                    fontColor: "rgb(255, 115, 0)",
+                    stepSize: 1
+                },
+            }],
+        }
+    };
+    var dataQ = {
+        labels: [@Html.Raw(ViewBag.osXQ)],
+        datasets: [
+            {
+                label: " ",
+                fill: false,
+                lineTension: 0.1,
+                borderColor: "rgb(255, 115, 0)",
+                borderCapStyle: 'butt',
+                borderDash: [],
+                borderDashOffset: 0.0,
+                borderJoinStyle: 'miter',
+                pointBorderColor: "rgb(196, 189, 151)",
+                pointBackgroundColor: "rgb(196, 189, 151)",
+                pointBorderWidth: 1,
+                pointRadius: 1,
+                pointHitRadius: 10,
+                data: [@ViewBag.osYQ]
+            }
+        ]
+    };
+    var dataD = {
+        labels: [@Html.Raw(ViewBag.osXD)],
+        datasets: [
+            {
+                label: " ",
+                fill: false,
+                lineTension: 0.1,
+                borderColor: "rgb(255, 115, 0)",
+                borderCapStyle: 'butt',
+                borderDash: [],
+                borderDashOffset: 0.0,
+                borderJoinStyle: 'miter',
+                pointBorderColor: "rgb(196, 189, 151)",
+                pointBackgroundColor: "rgb(196, 189, 151)",
+                pointBorderWidth: 1,
+                pointRadius: 1,
+                pointHitRadius: 10,
+                data: [@ViewBag.osYD]
+            }
+        ]
+    };
+    var ctxLineQ = document.getElementById("lineChartQ").getContext("2d");
+    var myLineChartQ = Chart.Line(ctxLineQ, {
+        data: dataQ,
+        options: options
+    });
+    var ctxLineD = document.getElementById("lineChartD").getContext("2d");
+    var myLineChartD = Chart.Line(ctxLineD, {
+        data: dataD,
+        options: options
+    });
+</script>
+<div class="row">
+    <div class="textback">Сколько раз @ViewBag.TitleChart проходил тесты по квалификациям @ViewBag.Range</div>
+</div>
+<div class="row centerChart">
+    <canvas id="lineChartQ" />
+</div>
+<div class="row">
+    <div class="textback">Сколько раз @ViewBag.TitleChart проходил тесты по отдельным дисциплинам @ViewBag.Range</div>
+</div>
+<div class="row centerChart">
+    <canvas id="lineChartD" />
+</div>
