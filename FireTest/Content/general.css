@@ -598,7 +598,6 @@ input[type=range]:focus::-ms-fill-upper {
     margin: 20px 10px 0 0;
     height: 60px;
     position: relative;
-    cursor: pointer;
 }
 #avatar .parent {
     width: 100%;
@@ -611,6 +610,7 @@ input[type=range]:focus::-ms-fill-upper {
     text-align: center;
     word-wrap: break-word;
     overflow: hidden;
+    cursor: pointer;
 }
 #avatar .parent img {
     width: 50px;
@@ -649,9 +649,10 @@ input[type=range]:focus::-ms-fill-upper {
 #avatar .content ul a {
     text-decoration: none;
 }
-#avatar .content li:hover {
+#avatar .content a li:hover {
     background: rgb(255, 115, 0);
     color: white;
+    cursor: pointer;
 }
 #avatar .content li {
     list-style: none;
