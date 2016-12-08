@@ -17,7 +17,81 @@ namespace FireTest.Controllers
         {
             return View();
         }
+        public PartialViewResult UserStatistics()
+        {
+            string userId = User.Identity.GetUserId();
+            ApplicationUser user = dbContext.Users.Find(userId);
+            ViewBag.BattlesLose = user.BattleCount - user.BattleWinCount;
+            ViewBag.BattlesWin = user.BattleWinCount;
+            ViewBag.Answers = user.AnswersCount - user.CorrectAnswersCount;
+            ViewBag.AnswersCorrect = user.CorrectAnswersCount;
+            if (user.BattleCount == 0)
+            {
+                ViewBag.BattlesWin = 100;
+                ViewBag.BattlesLose = 100;
+            }
+            if (user.AnswersCount == 0)
+            {
+                ViewBag.Answers = 100;
+                ViewBag.AnswersCorrect = 100;
+            }
+            List<int> RightQ = new List<int>();
+            for (int i = 1; i <= 5; i++) //От количества квалификаций
+            {
+                List<string> tempAllRightOrWrong = dbContext.SelfyTestQualifications
+                    .Where(u => u.IdUser == userId)
+                    .Where(u => u.End == true)
+                    .Where(u => u.IdQualification == i)
+                    .Select(u => u.RightOrWrong).ToList();
+                List<string> tempRoW = new List<string>();
+                foreach (string item in tempAllRightOrWrong)
+                {
+                    var temp = item.Split('|').ToList();
+                    foreach (string item2 in temp)
+                        tempRoW.Add(item2);
+                }
+                int right = tempRoW.Where(u => u != "0").Count();
+                if (tempRoW.Count() != 0)
+                    RightQ.Add(right * 100 / tempRoW.Count());
+                else
+                    RightQ.Add(0);
+            }
+            ViewBag.QualificationRight = RightQ;
 
+            return PartialView();
+        }
+        public PartialViewResult CountBattles(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+                userId = User.Identity.GetUserId();
+            ApplicationUser user = dbContext.Users.Find(userId);
+
+            ViewBag.TitleChart = "Поединки";
+            ViewBag.BattlesLose = user.BattleCount - user.BattleWinCount;
+            ViewBag.BattlesWin = user.BattleWinCount;
+            if (user.BattleCount == 0)
+            {
+                ViewBag.BattlesWin = 100;
+                ViewBag.BattlesLose = 100;
+            }
+            return PartialView();
+        }
+        public PartialViewResult CountAnswers(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+                userId = User.Identity.GetUserId();
+            ApplicationUser user = dbContext.Users.Find(userId);
+
+            ViewBag.TitleChart = "Ответы на вопросы";
+            ViewBag.Answers = user.AnswersCount - user.CorrectAnswersCount;
+            ViewBag.AnswersCorrect = user.CorrectAnswersCount;
+            if (user.AnswersCount == 0)
+            {
+                ViewBag.Answers = 100;
+                ViewBag.AnswersCorrect = 100;
+            }
+            return PartialView();
+        }
         public ActionResult Groups()
         {
             var groups = dbContext.Users.Where(u => u.Course != 100).Select(u => u.Course + u.Group).Distinct().ToList();
@@ -98,7 +172,7 @@ namespace FireTest.Controllers
                     case 1:
                         range = 1;
                         selected[0] = true;
-                        ViewBag.Range = "за послений месяц";
+                        ViewBag.Range = "за последний месяц";
                         break;
                     case 2:
                         range = 3;
@@ -111,11 +185,11 @@ namespace FireTest.Controllers
                         ViewBag.Range = "за последние 6 месяцев";
                         break;
                 }
-                var today = DateTime.Today;
+                var today = DateTime.Today.AddDays(1);
                 var beforeMonth = new DateTime(today.Year, today.Month - range, today.Day);
 
                 List<DateTime> allDates = new List<DateTime>();
-                for (DateTime date = beforeMonth; date <= today; date = date.AddDays(1))
+                for (DateTime date = beforeMonth; date < today; date = date.AddDays(1))
                     allDates.Add(date);
                 string osX = "";
                 List<int> osYD = new List<int>();
@@ -127,29 +201,31 @@ namespace FireTest.Controllers
                     osYQ.Add(0);
                 }
                 osX = osX.Substring(0, osX.Length - 1);
-                foreach (var item in users) //Квалификации
+                foreach (var item in users)
                 {
-                    var allSelfyQualifications = dbContext.SelfyTestQualifications.
+                    var temp = dbContext.SelfyTestQualifications.
                         Where(u => u.IdUser == item).
                         Where(u => u.TimeStart >= beforeMonth).
-                        Where(u => u.TimeStart <= today).Select(u => u.TimeStart).ToList();
+                        Where(u => u.TimeStart < today).Select(u => u.TimeStart).ToList();
+                    var allSelfyQualifications = temp.Select(u => u.ToString("dd.MM.yyyy")).Distinct().ToList();
                     foreach (var date in allSelfyQualifications)
                     {
-                        var tempDate = new DateTime(today.Year, date.Month, date.Day);
-                        var index = allDates.IndexOf(tempDate);
-                        osYD[index] += 1;
-                    }
-                    var allSelfyDisciplines = dbContext.SelfyTestDisciplines.
-                        Where(u => u.IdUser == item).
-                        Where(u => u.TimeStart >= beforeMonth).
-                        Where(u => u.TimeStart <= today).Select(u => u.TimeStart).ToList();
-                    foreach (var date in allSelfyDisciplines)
-                    {
-                        var tempDate = new DateTime(today.Year, date.Month, date.Day);
+                        var tempDate = new DateTime(today.Year, DateTime.Parse(date).Month, DateTime.Parse(date).Day);
                         var index = allDates.IndexOf(tempDate);
                         osYQ[index] += 1;
                     }
+                    temp = dbContext.SelfyTestDisciplines.
+                        Where(u => u.IdUser == item).
+                        Where(u => u.TimeStart >= beforeMonth).
+                        Where(u => u.TimeStart < today).Select(u => u.TimeStart).ToList();
+                    var allSelfyDisciplines = temp.Select(u => u.ToString("dd.MM.yyyy")).Distinct().ToList();
 
+                    foreach (var date in allSelfyDisciplines)
+                    {
+                        var tempDate = new DateTime(today.Year, DateTime.Parse(date).Month, DateTime.Parse(date).Day);
+                        var index = allDates.IndexOf(tempDate);
+                        osYD[index] += 1;
+                    }
                 }
                 ViewBag.osXD = osX;
                 ViewBag.osYD = "";
@@ -163,7 +239,7 @@ namespace FireTest.Controllers
 
                 ViewBag.DateRange = new[]{
                  new SelectListItem{ Text=" -- Выберите период -- ", Disabled=true},
-                 new SelectListItem{ Value="1",Text="За послений месяц", Selected=selected[0]},
+                 new SelectListItem{ Value="1",Text="За последний месяц", Selected=selected[0]},
                  new SelectListItem{ Value="2",Text="За последние 3 месяца", Selected=selected[1]},
                  new SelectListItem{ Value="3",Text="За последние 6 месяцев", Selected=selected[2]},
                 }.ToList();
@@ -251,7 +327,7 @@ namespace FireTest.Controllers
                     case 1:
                         range = 1;
                         selected[0] = true;
-                        ViewBag.Range = "за послений месяц";
+                        ViewBag.Range = "за последний месяц";
                         break;
                     case 2:
                         range = 3;
@@ -265,11 +341,11 @@ namespace FireTest.Controllers
                         break;
                 }
 
-                var today = DateTime.Today;
+                var today = DateTime.Today.AddDays(1);
                 var beforeMonth = new DateTime(today.Year, today.Month - range, today.Day);
 
                 List<DateTime> allDates = new List<DateTime>();
-                for (DateTime date = beforeMonth; date <= today; date = date.AddDays(1))
+                for (DateTime date = beforeMonth; date < today; date = date.AddDays(1))
                     allDates.Add(date);
                 string osX = "";
                 List<int> osYD = new List<int>();
@@ -281,12 +357,12 @@ namespace FireTest.Controllers
                     osYQ.Add(0);
                 }
                 osX = osX.Substring(0, osX.Length - 1);
-                foreach (var item in users) //Квалификации
+                foreach (var item in users)
                 {
                     var temp = dbContext.SelfyTestQualifications.
                         Where(u => u.IdUser == item).
                         Where(u => u.TimeStart >= beforeMonth).
-                        Where(u => u.TimeStart <= today).Select(u => u.TimeStart).ToList();
+                        Where(u => u.TimeStart < today).Select(u => u.TimeStart).ToList();
                     var allSelfyQualifications = temp.Select(u => u.ToString("dd.MM.yyyy")).Distinct().ToList();
                     foreach (var date in allSelfyQualifications)
                     {
@@ -297,7 +373,7 @@ namespace FireTest.Controllers
                     temp = dbContext.SelfyTestDisciplines.
                         Where(u => u.IdUser == item).
                         Where(u => u.TimeStart >= beforeMonth).
-                        Where(u => u.TimeStart <= today).Select(u => u.TimeStart).ToList();
+                        Where(u => u.TimeStart < today).Select(u => u.TimeStart).ToList();
                     var allSelfyDisciplines = temp.Select(u => u.ToString("dd.MM.yyyy")).Distinct().ToList();
 
                     foreach (var date in allSelfyDisciplines)
@@ -328,82 +404,6 @@ namespace FireTest.Controllers
             }
             return PartialView();
         }
-        public PartialViewResult UserStatistics()
-        {
-            string userId = User.Identity.GetUserId();
-            ApplicationUser user = dbContext.Users.Find(userId);
-            ViewBag.BattlesLose = user.BattleCount - user.BattleWinCount;
-            ViewBag.BattlesWin = user.BattleWinCount;
-            ViewBag.Answers = user.AnswersCount - user.CorrectAnswersCount;
-            ViewBag.AnswersCorrect = user.CorrectAnswersCount;
-            if (user.BattleCount == 0)
-            {
-                ViewBag.BattlesWin = 100;
-                ViewBag.BattlesLose = 100;
-            }
-            if (user.AnswersCount == 0)
-            {
-                ViewBag.Answers = 100;
-                ViewBag.AnswersCorrect = 100;
-            }
-            List<int> RightQ = new List<int>();
-            for (int i = 1; i <= 5; i++) //От количества квалификаций
-            {
-                List<string> tempAllRightOrWrong = dbContext.SelfyTestQualifications
-                    .Where(u => u.IdUser == userId)
-                    .Where(u => u.End == true)
-                    .Where(u => u.IdQualification == i)
-                    .Select(u => u.RightOrWrong).ToList();
-                List<string> tempRoW = new List<string>();
-                foreach (string item in tempAllRightOrWrong)
-                {
-                    var temp = item.Split('|').ToList();
-                    foreach (string item2 in temp)
-                        tempRoW.Add(item2);
-                }
-                int right = tempRoW.Where(u => u != "0").Count();
-                if (tempRoW.Count() != 0)
-                    RightQ.Add(right * 100 / tempRoW.Count());
-                else
-                    RightQ.Add(0);
-            }
-            ViewBag.QualificationRight = RightQ;
-
-            return PartialView();
-        }
-        public PartialViewResult CountBattles(string userId)
-        {
-            if (string.IsNullOrEmpty(userId))
-                userId = User.Identity.GetUserId();
-            ApplicationUser user = dbContext.Users.Find(userId);
-
-            ViewBag.TitleChart = "Поединки";
-            ViewBag.BattlesLose = user.BattleCount - user.BattleWinCount;
-            ViewBag.BattlesWin = user.BattleWinCount;
-            if (user.BattleCount == 0)
-            {
-                ViewBag.BattlesWin = 100;
-                ViewBag.BattlesLose = 100;
-            }
-            return PartialView();
-        }
-        public PartialViewResult CountAnswers(string userId)
-        {
-            if (string.IsNullOrEmpty(userId))
-                userId = User.Identity.GetUserId();
-            ApplicationUser user = dbContext.Users.Find(userId);
-
-            ViewBag.TitleChart = "Ответы на вопросы";
-            ViewBag.Answers = user.AnswersCount - user.CorrectAnswersCount;
-            ViewBag.AnswersCorrect = user.CorrectAnswersCount;
-            if (user.AnswersCount == 0)
-            {
-                ViewBag.Answers = 100;
-                ViewBag.AnswersCorrect = 100;
-            }
-            return PartialView();
-        }
-
         public ActionResult Users()
         {
             Session.Clear();
@@ -527,11 +527,11 @@ namespace FireTest.Controllers
                         break;
                 }
 
-                var today = DateTime.Today;
+                var today = DateTime.Today.AddDays(1);
                 var beforeMonth = new DateTime(today.Year, today.Month - range, today.Day);
 
                 List<DateTime> allDates = new List<DateTime>();
-                for (DateTime date = beforeMonth; date <= today; date = date.AddDays(1))
+                for (DateTime date = beforeMonth; date < today; date = date.AddDays(1))
                     allDates.Add(date);
                 string osX = "";
                 List<int> osYD = new List<int>();
@@ -547,7 +547,7 @@ namespace FireTest.Controllers
                 var allSelfyQualifications = dbContext.SelfyTestQualifications.
                     Where(u => u.IdUser == user.Id).
                     Where(u => u.TimeStart >= beforeMonth).
-                    Where(u => u.TimeStart <= today).Select(u => u.TimeStart).ToList();
+                    Where(u => u.TimeStart < today).Select(u => u.TimeStart).ToList();
                 foreach (var date in allSelfyQualifications)
                 {
                     var tempDate = new DateTime(today.Year, date.Month, date.Day);
@@ -557,7 +557,7 @@ namespace FireTest.Controllers
                 var allSelfyDisciplines = dbContext.SelfyTestDisciplines.
                     Where(u => u.IdUser == user.Id).
                     Where(u => u.TimeStart >= beforeMonth).
-                    Where(u => u.TimeStart <= today).Select(u => u.TimeStart).ToList();
+                    Where(u => u.TimeStart < today).Select(u => u.TimeStart).ToList();
                 foreach (var date in allSelfyDisciplines)
                 {
                     var tempDate = new DateTime(today.Year, date.Month, date.Day);
@@ -591,71 +591,74 @@ namespace FireTest.Controllers
             var groups = dbContext.Users.Where(u => u.Course != 100).Select(u => u.Course + u.Group).Distinct().ToList();
             if (groups == null)
                 RedirectToAction("Index", "Home");
-            ViewBag.Groups = groups //Выпадающий список групп
+            ViewBag.Group1 = groups //Выпадающий список групп
                 .Select(u => new SelectListItem()
                 {
                     Value = u,
                     Text = u,
                 }).ToList();
+            ViewBag.Group2 = ViewBag.Group1;
             return View();
         }
         [HttpPost]
         public PartialViewResult CompareGroups(string Group1, string Group2, int Statistics, int? DateRange)
         {
+            ViewBag.Group1 = Group1;
+            ViewBag.Group2 = Group2;
             if (DateRange == null || Statistics != 2)
             {
                 switch (Statistics)
                 {
-                    case 0:
-                        var users = dbContext.Users
-                            .Where(u => u.Course != 100)
-                            .Where(u => u.Course + u.Group == Group1)
-                            .Select(u => new
-                            {
-                                BattleCount = u.BattleCount,
-                                BattleWinCount = u.BattleWinCount
-                            }).ToList();
-                        int count = 0;
-                        int winCount = 0;
-                        foreach (var item in users)
-                        {
-                            count += item.BattleCount;
-                            winCount += item.BattleWinCount;
-                        }
-
-                        ViewBag.TitleChart = Group1;
-                        ViewBag.BattlesLose = count - winCount;
-                        ViewBag.BattlesWin = winCount;
-                        return PartialView("GroupsBattles");
                     case 1:
+                        var users1 = dbContext.Users
+                           .Where(u => u.Course != 100)
+                           .Where(u => u.Course + u.Group == Group1)
+                           .Select(u => new
+                           {
+                               AnswersCount = u.AnswersCount,
+                               CorrectAnswersCount = u.CorrectAnswersCount
+                           }).ToList();
                         var users2 = dbContext.Users
-                            .Where(u => u.Course != 100)
-                            .Where(u => u.Course + u.Group == Groups)
-                            .Select(u => new
-                            {
-                                AnswersCount = u.AnswersCount,
-                                CorrectAnswersCount = u.CorrectAnswersCount
-                            }).ToList();
+                           .Where(u => u.Course != 100)
+                           .Where(u => u.Course + u.Group == Group2)
+                           .Select(u => new
+                           {
+                               AnswersCount = u.AnswersCount,
+                               CorrectAnswersCount = u.CorrectAnswersCount
+                           }).ToList();
+
                         int answers = 0;
                         int correctAnswers = 0;
+                        foreach (var item in users1)
+                        {
+                            answers += item.AnswersCount;
+                            correctAnswers += item.CorrectAnswersCount;
+                        }
+                        ViewBag.Answers1 = answers - correctAnswers;
+                        ViewBag.AnswersCorrect1 = correctAnswers;
+                        answers = 0;
+                        correctAnswers = 0;
                         foreach (var item in users2)
                         {
                             answers += item.AnswersCount;
                             correctAnswers += item.CorrectAnswersCount;
                         }
-                        ViewBag.TitleChart = Groups;
-                        ViewBag.Answers = answers - correctAnswers;
-                        ViewBag.AnswersCorrect = correctAnswers;
-                        return PartialView("GroupsAnswers");
+                        ViewBag.Answers2 = answers - correctAnswers;
+                        ViewBag.AnswersCorrect2 = correctAnswers;
+                        return PartialView("CompareGroupsAnswers");
                     case 2:
                         return PartialView("SelectDateRangeGroups");
                 }
             }
             else
             {
-                var users = dbContext.Users
+                var users1 = dbContext.Users
                     .Where(u => u.Course != 100)
-                    .Where(u => u.Course + u.Group == Groups)
+                    .Where(u => u.Course + u.Group == Group1)
+                    .Select(u => u.Id).ToList();
+                var users2 = dbContext.Users
+                    .Where(u => u.Course != 100)
+                    .Where(u => u.Course + u.Group == Group2)
                     .Select(u => u.Id).ToList();
                 int range = 0;
 
@@ -666,7 +669,7 @@ namespace FireTest.Controllers
                     case 1:
                         range = 1;
                         selected[0] = true;
-                        ViewBag.Range = "за послений месяц";
+                        ViewBag.Range = "за последний месяц";
                         break;
                     case 2:
                         range = 3;
@@ -679,11 +682,11 @@ namespace FireTest.Controllers
                         ViewBag.Range = "за последние 6 месяцев";
                         break;
                 }
-                var today = DateTime.Today;
+                var today = DateTime.Today.AddDays(1);
                 var beforeMonth = new DateTime(today.Year, today.Month - range, today.Day);
 
                 List<DateTime> allDates = new List<DateTime>();
-                for (DateTime date = beforeMonth; date <= today; date = date.AddDays(1))
+                for (DateTime date = beforeMonth; date < today; date = date.AddDays(1))
                     allDates.Add(date);
                 string osX = "";
                 List<int> osYD = new List<int>();
@@ -695,51 +698,291 @@ namespace FireTest.Controllers
                     osYQ.Add(0);
                 }
                 osX = osX.Substring(0, osX.Length - 1);
-                foreach (var item in users) //Квалификации
+                foreach (var item in users1)
                 {
-                    var allSelfyQualifications = dbContext.SelfyTestQualifications.
+                    var temp = dbContext.SelfyTestQualifications.
                         Where(u => u.IdUser == item).
                         Where(u => u.TimeStart >= beforeMonth).
-                        Where(u => u.TimeStart <= today).Select(u => u.TimeStart).ToList();
+                        Where(u => u.TimeStart < today).Select(u => u.TimeStart).ToList();
+                    var allSelfyQualifications = temp.Select(u => u.ToString("dd.MM.yyyy")).Distinct().ToList();
                     foreach (var date in allSelfyQualifications)
                     {
-                        var tempDate = new DateTime(today.Year, date.Month, date.Day);
-                        var index = allDates.IndexOf(tempDate);
-                        osYD[index] += 1;
-                    }
-                    var allSelfyDisciplines = dbContext.SelfyTestDisciplines.
-                        Where(u => u.IdUser == item).
-                        Where(u => u.TimeStart >= beforeMonth).
-                        Where(u => u.TimeStart <= today).Select(u => u.TimeStart).ToList();
-                    foreach (var date in allSelfyDisciplines)
-                    {
-                        var tempDate = new DateTime(today.Year, date.Month, date.Day);
+                        var tempDate = new DateTime(today.Year, DateTime.Parse(date).Month, DateTime.Parse(date).Day);
                         var index = allDates.IndexOf(tempDate);
                         osYQ[index] += 1;
                     }
+                    temp = dbContext.SelfyTestDisciplines.
+                        Where(u => u.IdUser == item).
+                        Where(u => u.TimeStart >= beforeMonth).
+                        Where(u => u.TimeStart < today).Select(u => u.TimeStart).ToList();
+                    var allSelfyDisciplines = temp.Select(u => u.ToString("dd.MM.yyyy")).Distinct().ToList();
 
+                    foreach (var date in allSelfyDisciplines)
+                    {
+                        var tempDate = new DateTime(today.Year, DateTime.Parse(date).Month, DateTime.Parse(date).Day);
+                        var index = allDates.IndexOf(tempDate);
+                        osYD[index] += 1;
+                    }
                 }
                 ViewBag.osXD = osX;
-                ViewBag.osYD = "";
+                ViewBag.osYD1 = "";
                 foreach (var item in osYD)
-                    ViewBag.osYD += item + ",";
+                    ViewBag.osYD1 += item + ",";
 
                 ViewBag.osXQ = osX;
-                ViewBag.osYQ = "";
+                ViewBag.osYQ1 = "";
                 foreach (var item in osYQ)
-                    ViewBag.osYQ += item + ",";
+                    ViewBag.osYQ1 += item + ",";                
 
+                osYD = new List<int>();
+                osYQ = new List<int>();
+                foreach (var item in allDates)
+                {
+                    osYD.Add(0);
+                    osYQ.Add(0);
+                }
+                foreach (var item in users2)
+                {
+                    var temp = dbContext.SelfyTestQualifications.
+                        Where(u => u.IdUser == item).
+                        Where(u => u.TimeStart >= beforeMonth).
+                        Where(u => u.TimeStart < today).Select(u => u.TimeStart).ToList();
+                    var allSelfyQualifications = temp.Select(u => u.ToString("dd.MM.yyyy")).Distinct().ToList();
+                    foreach (var date in allSelfyQualifications)
+                    {
+                        var tempDate = new DateTime(today.Year, DateTime.Parse(date).Month, DateTime.Parse(date).Day);
+                        var index = allDates.IndexOf(tempDate);
+                        osYQ[index] += 1;
+                    }
+                    temp = dbContext.SelfyTestDisciplines.
+                        Where(u => u.IdUser == item).
+                        Where(u => u.TimeStart >= beforeMonth).
+                        Where(u => u.TimeStart < today).Select(u => u.TimeStart).ToList();
+                    var allSelfyDisciplines = temp.Select(u => u.ToString("dd.MM.yyyy")).Distinct().ToList();
+
+                    foreach (var date in allSelfyDisciplines)
+                    {
+                        var tempDate = new DateTime(today.Year, DateTime.Parse(date).Month, DateTime.Parse(date).Day);
+                        var index = allDates.IndexOf(tempDate);
+                        osYD[index] += 1;
+                    }
+                }
+                ViewBag.osYD2 = "";
+                foreach (var item in osYD)
+                    ViewBag.osYD2 += item + ",";
+
+                ViewBag.osYQ2 = "";
+                foreach (var item in osYQ)
+                    ViewBag.osYQ2 += item + ",";
                 ViewBag.DateRange = new[]{
                  new SelectListItem{ Text=" -- Выберите период -- ", Disabled=true},
-                 new SelectListItem{ Value="1",Text="За послений месяц", Selected=selected[0]},
+                 new SelectListItem{ Value="1",Text="За последний месяц", Selected=selected[0]},
                  new SelectListItem{ Value="2",Text="За последние 3 месяца", Selected=selected[1]},
                  new SelectListItem{ Value="3",Text="За последние 6 месяцев", Selected=selected[2]},
                 }.ToList();
 
-                return PartialView("MonthDateRangeGroups");
+                return PartialView("CompareGroupsRange");
             }
             return PartialView();
         }
+        public ActionResult CompareCourses()
+        {
+            var courses = dbContext.Users.Where(u => u.Course != 100).Select(u => u.Course + u.Group.Substring(0, 1)).Distinct().ToList();
+            if (courses == null)
+                RedirectToAction("Index", "Home");
+            ViewBag.Course1 = courses //Выпадающий список курсов
+                .Select(u => new SelectListItem()
+                {
+                    Value = u,
+                    Text = u,
+                }).ToList();
+            ViewBag.Course2 = ViewBag.Course1;
+            return View();
+        }
+        [HttpPost]
+        public PartialViewResult CompareCourses(string Course1, string Course2, int Statistics, int? DateRange)
+        {
+            ViewBag.Course1 = Course1;
+            ViewBag.Course2 = Course2;
+            if (DateRange == null || Statistics != 2)
+            {
+                switch (Statistics)
+                {
+                    case 1:
+                        var users1 = dbContext.Users
+                           .Where(u => u.Course != 100)
+                           .Where(u => u.Course + u.Group.Substring(0, 1) == Course1)
+                           .Select(u => new
+                           {
+                               AnswersCount = u.AnswersCount,
+                               CorrectAnswersCount = u.CorrectAnswersCount
+                           }).ToList();
+                        var users2 = dbContext.Users
+                           .Where(u => u.Course != 100)
+                           .Where(u => u.Course + u.Group.Substring(0, 1) == Course2)
+                           .Select(u => new
+                           {
+                               AnswersCount = u.AnswersCount,
+                               CorrectAnswersCount = u.CorrectAnswersCount
+                           }).ToList();
 
+                        int answers = 0;
+                        int correctAnswers = 0;
+                        foreach (var item in users1)
+                        {
+                            answers += item.AnswersCount;
+                            correctAnswers += item.CorrectAnswersCount;
+                        }
+                        ViewBag.Answers1 = answers - correctAnswers;
+                        ViewBag.AnswersCorrect1 = correctAnswers;
+                        answers = 0;
+                        correctAnswers = 0;
+                        foreach (var item in users2)
+                        {
+                            answers += item.AnswersCount;
+                            correctAnswers += item.CorrectAnswersCount;
+                        }
+                        ViewBag.Answers2 = answers - correctAnswers;
+                        ViewBag.AnswersCorrect2 = correctAnswers;
+                        return PartialView("CompareCoursesAnswers");
+                    case 2:
+                        return PartialView("SelectDateRangeCourses");
+                }
+            }
+            else
+            {
+                var users1 = dbContext.Users
+                    .Where(u => u.Course != 100)
+                    .Where(u => u.Course + u.Group.Substring(0, 1) == Course1)
+                    .Select(u => u.Id).ToList();
+                var users2 = dbContext.Users
+                    .Where(u => u.Course != 100)
+                    .Where(u => u.Course + u.Group.Substring(0, 1) == Course2)
+                    .Select(u => u.Id).ToList();
+                int range = 0;
+
+                List<bool> selected = new List<bool>() { false, false, false };
+
+                switch (DateRange)
+                {
+                    case 1:
+                        range = 1;
+                        selected[0] = true;
+                        ViewBag.Range = "за последний месяц";
+                        break;
+                    case 2:
+                        range = 3;
+                        selected[1] = true;
+                        ViewBag.Range = "за последние 3 месяца";
+                        break;
+                    case 3:
+                        range = 6;
+                        selected[2] = true;
+                        ViewBag.Range = "за последние 6 месяцев";
+                        break;
+                }
+                var today = DateTime.Today.AddDays(1);
+                var beforeMonth = new DateTime(today.Year, today.Month - range, today.Day);
+
+                List<DateTime> allDates = new List<DateTime>();
+                for (DateTime date = beforeMonth; date < today; date = date.AddDays(1))
+                    allDates.Add(date);
+                string osX = "";
+                List<int> osYD = new List<int>();
+                List<int> osYQ = new List<int>();
+                foreach (var item in allDates)
+                {
+                    osX += item.Day + "." + item.Month + ",";
+                    osYD.Add(0);
+                    osYQ.Add(0);
+                }
+                osX = osX.Substring(0, osX.Length - 1);
+                foreach (var item in users1)
+                {
+                    var temp = dbContext.SelfyTestQualifications.
+                        Where(u => u.IdUser == item).
+                        Where(u => u.TimeStart >= beforeMonth).
+                        Where(u => u.TimeStart < today).Select(u => u.TimeStart).ToList();
+                    var allSelfyQualifications = temp.Select(u => u.ToString("dd.MM.yyyy")).Distinct().ToList();
+                    foreach (var date in allSelfyQualifications)
+                    {
+                        var tempDate = new DateTime(today.Year, DateTime.Parse(date).Month, DateTime.Parse(date).Day);
+                        var index = allDates.IndexOf(tempDate);
+                        osYQ[index] += 1;
+                    }
+                    temp = dbContext.SelfyTestDisciplines.
+                        Where(u => u.IdUser == item).
+                        Where(u => u.TimeStart >= beforeMonth).
+                        Where(u => u.TimeStart < today).Select(u => u.TimeStart).ToList();
+                    var allSelfyDisciplines = temp.Select(u => u.ToString("dd.MM.yyyy")).Distinct().ToList();
+
+                    foreach (var date in allSelfyDisciplines)
+                    {
+                        var tempDate = new DateTime(today.Year, DateTime.Parse(date).Month, DateTime.Parse(date).Day);
+                        var index = allDates.IndexOf(tempDate);
+                        osYD[index] += 1;
+                    }
+                }
+                ViewBag.osXD = osX;
+                ViewBag.osYD1 = "";
+                foreach (var item in osYD)
+                    ViewBag.osYD1 += item + ",";
+
+                ViewBag.osXQ = osX;
+                ViewBag.osYQ1 = "";
+                foreach (var item in osYQ)
+                    ViewBag.osYQ1 += item + ",";
+
+                osYD = new List<int>();
+                osYQ = new List<int>();
+                foreach (var item in allDates)
+                {
+                    osYD.Add(0);
+                    osYQ.Add(0);
+                }
+                foreach (var item in users2)
+                {
+                    var temp = dbContext.SelfyTestQualifications.
+                        Where(u => u.IdUser == item).
+                        Where(u => u.TimeStart >= beforeMonth).
+                        Where(u => u.TimeStart < today).Select(u => u.TimeStart).ToList();
+                    var allSelfyQualifications = temp.Select(u => u.ToString("dd.MM.yyyy")).Distinct().ToList();
+                    foreach (var date in allSelfyQualifications)
+                    {
+                        var tempDate = new DateTime(today.Year, DateTime.Parse(date).Month, DateTime.Parse(date).Day);
+                        var index = allDates.IndexOf(tempDate);
+                        osYQ[index] += 1;
+                    }
+                    temp = dbContext.SelfyTestDisciplines.
+                        Where(u => u.IdUser == item).
+                        Where(u => u.TimeStart >= beforeMonth).
+                        Where(u => u.TimeStart < today).Select(u => u.TimeStart).ToList();
+                    var allSelfyDisciplines = temp.Select(u => u.ToString("dd.MM.yyyy")).Distinct().ToList();
+
+                    foreach (var date in allSelfyDisciplines)
+                    {
+                        var tempDate = new DateTime(today.Year, DateTime.Parse(date).Month, DateTime.Parse(date).Day);
+                        var index = allDates.IndexOf(tempDate);
+                        osYD[index] += 1;
+                    }
+                }
+                ViewBag.osYD2 = "";
+                foreach (var item in osYD)
+                    ViewBag.osYD2 += item + ",";
+
+                ViewBag.osYQ2 = "";
+                foreach (var item in osYQ)
+                    ViewBag.osYQ2 += item + ",";
+                ViewBag.DateRange = new[]{
+                 new SelectListItem{ Text=" -- Выберите период -- ", Disabled=true},
+                 new SelectListItem{ Value="1",Text="За последний месяц", Selected=selected[0]},
+                 new SelectListItem{ Value="2",Text="За последние 3 месяца", Selected=selected[1]},
+                 new SelectListItem{ Value="3",Text="За последние 6 месяцев", Selected=selected[2]},
+                }.ToList();
+
+                return PartialView("CompareCoursesRange");
+            }
+            return PartialView();
+        }
     }
 }

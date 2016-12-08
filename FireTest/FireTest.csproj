@@ -31424,6 +31424,12 @@
     <Content Include="Views\Statistics\UserAnswers.cshtml" />
     <Content Include="Views\Statistics\SelectDateRangeUser.cshtml" />
     <Content Include="Views\Statistics\MonthDateRangeUser.cshtml" />
+    <Content Include="Views\Statistics\CompareGroups.cshtml" />
+    <Content Include="Views\Statistics\CompareGroupsAnswers.cshtml" />
+    <Content Include="Views\Statistics\CompareGroupsRange.cshtml" />
+    <Content Include="Views\Statistics\CompareCourses.cshtml" />
+    <Content Include="Views\Statistics\CompareCoursesAnswers.cshtml" />
+    <Content Include="Views\Statistics\CompareCoursesRange.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

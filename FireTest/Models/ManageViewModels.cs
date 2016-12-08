@@ -21,7 +21,7 @@ namespace FireTest.Models
         [Display(Name = "Год поступления")]
         public string Year { get; set; }
         [Required]
-        [Display(Name = "Учебная группа")]
+        [Display(Name = "Учебная группа (без года обучения и факультета)")]
         public string Group { get; set; }
     }
 
