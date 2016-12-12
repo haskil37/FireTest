@@ -4,26 +4,64 @@
 }
 @Styles.Render("~/Content/administrator")
 <div class="row" id="Tests">
-    <table>
-        <tr>
-            <td><b>Название:</b></td>
-            <td>@Model.NameTest</td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                <b>
-                    Вопросы:
-                </b>
-            </td>
-        </tr>
-        @foreach (var item in Model.Questions)
-        {
+    <div class="row">
+        <div class="col-2"><b>Название:</b></div>
+        <div class="col-8">@Model.NameTest</div>
+    </div>
+    <div class="row">
+        <b>Критерии оценки:</b>
+    </div>
+    <div class="row">
+        <div class="col-1 right">
+            Для 5 - 
+        </div>
+        <div class="col-8">
+            &nbsp;больше @Model.Eval5%
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-1 right">
+           Для 4 -
+        </div>
+        <div class="col-8">
+            &nbsp;больше @Model.Eval4% и меньше @Model.Eval5%
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-1 right">
+            Для 3 - 
+        </div>
+        <div class="col-8">
+            &nbsp;больше @Model.Eval3% и меньше @Model.Eval4%
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-1 right">
+            Для 2 - 
+        </div>
+        <div class="col-8">
+            &nbsp;меньше @Model.Eval3%
+        </div>
+    </div>
+    @if (Model.Questions != null)
+    {
+        <table>
             <tr>
-                <td></td>
-                <td>@Html.DisplayFor(d => item.QuestionText)</td>
+                <td colspan="2">
+                    <b>
+                        Вопросы:
+                    </b>
+                </td>
             </tr>
-        }
-    </table>
+            @foreach (var item in Model.Questions)
+            {
+                <tr>
+                    <td></td>
+                    <td>@Html.DisplayFor(d => item.QuestionText)</td>
+                </tr>
+            }
+        </table>
+    }
     <p>
         @Html.ActionLink("Редактировать", "Edit", new { id = Model.Id }, new { @class = "button-Cancel" }) |
         @Html.ActionLink("На главную", "Index", null, new { @class = "button-Cancel" })

@@ -57,6 +57,7 @@
         <div class="row answers">
             @if (ViewBag.TypeQuestion == "standart")
             {
+                <div class="center textback noselect">@ViewBag.Multiple</div>
                 foreach (var item in Model.QuestionAnswers)
                 {
                     <fieldset class="standart">

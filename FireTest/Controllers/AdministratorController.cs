@@ -84,6 +84,7 @@ namespace FireTest.Controllers
             {
                 UsersForAdmin temp = new UsersForAdmin();
                 temp.Id = item.Id;
+                temp.Snils = item.Snils;
                 temp.Avatar = item.Avatar;
                 temp.Name = item.Family + " " + item.Name + " " + item.SubName;
                 temp.Teacher = userManager.IsInRole(item.Id, "TEACHER");

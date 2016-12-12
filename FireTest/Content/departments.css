@@ -91,6 +91,14 @@
     width: 65px;
     padding-left: 10px;
     visibility: visible;
+    -moz-transform: scale(.3);
+    -moz-transform-origin: left center;
+}
+@-moz-document url-prefix() {
+    .leftD {
+        display: block;
+        outline: none;
+    }
 }
 .rightD {
     display: table-cell;
@@ -129,7 +137,7 @@
     background: rgb(255, 115, 0);
     color: white;
 }
-#departments .content li:hover a{
+#departments .content li:hover a {
     color: white;
 }
 #departments .content li {
@@ -137,7 +145,7 @@
     line-height: 30px;
 }
 @media(max-width:1000px) {
-    .leftD{
+    .leftD {
         visibility: collapse;
         width: 0;
         float: left;

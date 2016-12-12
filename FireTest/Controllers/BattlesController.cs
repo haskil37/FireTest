@@ -1089,6 +1089,11 @@ namespace FireTest.Controllers
             List<Answers> Answers = new List<Answers>();
 
             ViewBag.TypeQuestion = "standart";
+            if (questionDB.IdCorrect[0] != '~' && questionDB.IdCorrect[0] != '#' && questionDB.IdCorrect.Split(',').Count() > 1)
+                ViewBag.Multiple = "Выберите несколько вариантов ответа";
+            else
+                ViewBag.Multiple = "Выберите один вариант ответа";
+
             if (questionDB.IdCorrect[0] == '~') //Если вопрос на последовательность
                 ViewBag.TypeQuestion = "sequence";
             if (questionDB.IdCorrect[0] == '#') //Если вопрос на соответствие

@@ -41,10 +41,17 @@ namespace FireTest.Controllers
             TeacherTestDetails testDetails = new TeacherTestDetails();
             testDetails.Id = teacherTest.Id;
             testDetails.NameTest = teacherTest.NameTest;
-            List<string> questions = teacherTest.Questions.Split('|').ToList();
-            testDetails.Questions = new List<Question>();
-            foreach (string item in questions)
-                testDetails.Questions.Add(dbContext.Questions.Find(Convert.ToInt32(item)));
+            testDetails.Eval5 = teacherTest.Eval5;
+            testDetails.Eval4 = teacherTest.Eval4;
+            testDetails.Eval3 = teacherTest.Eval3;
+
+            if (!string.IsNullOrEmpty(teacherTest.Questions))
+            {
+                List<string> questions = teacherTest.Questions.Split('|').ToList();
+                testDetails.Questions = new List<Question>();
+                foreach (string item in questions)
+                    testDetails.Questions.Add(dbContext.Questions.Find(Convert.ToInt32(item)));
+            }
             return View(testDetails);
         }
         public ActionResult Delete(int? id)
@@ -90,7 +97,7 @@ namespace FireTest.Controllers
             Session["Test"] = test.Id;
             return View();
         }
-        public PartialViewResult CreateTestAjax(string currentFilter, string searchString, int? page, string NameTest, int? Subjects, string Tags, int? submitButton)
+        public PartialViewResult CreateTestAjax(string currentFilter, string searchString, int? page, string NameTest, int? Subjects, string Tags, int? submitButton, List<int> Eval)
         {
             if (Session["Subjects"] != null && Session["Tags"] != null)
                 if ((int)Session["Subjects"] != Subjects || (string)Session["Tags"] != Tags)
@@ -111,6 +118,25 @@ namespace FireTest.Controllers
                     dbContext.SaveChanges();
                 }
             }
+            if (Eval != null)//Сохраняем оценки
+            {
+                if (Eval.Count() == 3)
+                {
+                    test.Eval5 = Eval[0];
+                    test.Eval4 = Eval[1];
+                    test.Eval3 = Eval[2];
+                }
+                else
+                {
+                    test.Eval5 = 0;
+                    test.Eval4 = 0;
+                    test.Eval3 = 0;
+                }
+                dbContext.SaveChanges();
+            }
+            ViewBag.Eval5 = test.Eval5;
+            ViewBag.Eval4 = test.Eval4;
+            ViewBag.Eval3 = test.Eval3;
 
             List<string> subjects = new List<string>();
             if (test != null && test.Questions != null)
@@ -268,7 +294,6 @@ namespace FireTest.Controllers
             int pageSize = 10;
             int pageNumber = (page ?? 1);
             ViewBag.page = pageNumber;
-
             return PartialView(model.ToPagedList(pageNumber, pageSize));
         }
         public ActionResult Edit(int? id)
@@ -286,16 +311,25 @@ namespace FireTest.Controllers
             TeacherTestDetails testDetails = new TeacherTestDetails();
             testDetails.Id = teacherTest.Id;
             testDetails.NameTest = teacherTest.NameTest;
-            List<string> questions = teacherTest.Questions.Split('|').ToList();
-            testDetails.Questions = new List<Question>();
-            foreach (string item in questions)
-                testDetails.Questions.Add(dbContext.Questions.Find(Convert.ToInt32(item)));
+            testDetails.Eval5 = teacherTest.Eval5;
+            testDetails.Eval4 = teacherTest.Eval4;
+            testDetails.Eval3 = teacherTest.Eval3;
+            if (!string.IsNullOrEmpty(teacherTest.Questions))
+            {
+                List<string> questions = teacherTest.Questions.Split('|').ToList();
+                testDetails.Questions = new List<Question>();
+                foreach (string item in questions)
+                    testDetails.Questions.Add(dbContext.Questions.Find(Convert.ToInt32(item)));
+            }
             Session["IdTest"] = id;
             return View(testDetails);
         }
-        public PartialViewResult EditOldAjax(string currentFilter, string searchString, int? page, string NameTest, int? submitButton)
+        public PartialViewResult EditOldAjax(string currentFilter, string searchString, int? page, string NameTest, int? submitButton, List<int> Eval)
         {
             string userId = User.Identity.GetUserId();
+            if (Session["IdTest"] == null)
+                return PartialView();
+
             int IdTest = (int)Session["IdTest"];
             TeacherTest test = dbContext.TeacherTests.Find(IdTest);
 
@@ -309,7 +343,29 @@ namespace FireTest.Controllers
             }
             TeacherTestDetails testDetails = new TeacherTestDetails();
             ViewBag.NameTest = test.NameTest;
-            List<int> questions = test.Questions.Split('|').Select(int.Parse).ToList();
+            if (Eval != null)//Сохраняем оценки
+            {
+                if (Eval.Count() == 3)
+                {
+                    test.Eval5 = Eval[0];
+                    test.Eval4 = Eval[1];
+                    test.Eval3 = Eval[2];
+                }
+                else
+                {
+                    test.Eval5 = 0;
+                    test.Eval4 = 0;
+                    test.Eval3 = 0;
+                }
+                dbContext.SaveChanges();
+            }
+            ViewBag.Eval5 = test.Eval5;
+            ViewBag.Eval4 = test.Eval4;
+            ViewBag.Eval3 = test.Eval3;
+            List<int> questions = new List<int>();
+            if (!string.IsNullOrEmpty(test.Questions))
+                questions = test.Questions.Split('|').Select(int.Parse).ToList();
+
             ViewBag.Submit = false;
             if (submitButton != null)
             {
@@ -367,6 +423,8 @@ namespace FireTest.Controllers
         public PartialViewResult EditNewAjax(string currentFilter, string searchString, int? page, int? Subjects, string Tags, int? submitButton)
         {
             string userId = User.Identity.GetUserId();
+            if (Session["IdTest"] == null)
+                return PartialView();
             int IdTest = (int)Session["IdTest"];
             if (Session["Subjects"] != null && Session["Tags"] != null)
                 if ((int)Session["Subjects"] != Subjects || (string)Session["Tags"] != Tags)
@@ -1473,7 +1531,7 @@ namespace FireTest.Controllers
             return View(new ExaminationViewModel() { Date = DateTime.Now });
         }
         [HttpPost]
-        public ActionResult CreateExam(ExaminationViewModel model, string Group, int Test)
+        public ActionResult CreateExam(ExaminationViewModel model, string Group, int Test, int Time)
         {
             string userId = User.Identity.GetUserId();
 
@@ -1506,6 +1564,7 @@ namespace FireTest.Controllers
             exam.IdTest = Test;
             exam.TeacherId = userId;
             exam.Date = model.Date;
+            exam.Time = Time;
             dbContext.Examinations.Add(exam);
             var allUsers = dbContext.Users.
                 Where(u => u.Course + u.Group == Group).
@@ -1530,6 +1589,8 @@ namespace FireTest.Controllers
             model.Classroom = exam.Classroom;
             model.Date = exam.Date;
             model.Name = exam.Name;
+            model.Time = exam.Time;
+
             ViewBag.Test = dbContext.TeacherTests
                 .Where(u => u.TeacherId == userId)
                 .Select(u => new SelectListItem()
@@ -1584,6 +1645,8 @@ namespace FireTest.Controllers
             exam.IdTest = Test;
             exam.TeacherId = userId;
             exam.Date = model.Date;
+            exam.Time = model.Time;
+
             dbContext.SaveChanges();
             var allUsers = dbContext.Users.
                 Where(u => u.Course + u.Group == Group).

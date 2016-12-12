@@ -32,6 +32,13 @@
             </div>
         </div>
         <div class="row">
+            @Html.LabelFor(m => m.Time, new { @class = "col-4" })
+            <div class="col-8">
+                @Html.TextBoxFor(m => m.Time, new { @class = "input" })
+                @Html.ValidationMessageFor(m => m.Time, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="row">
             @Html.LabelFor(m => m.Date, new { @class = "col-4" })
             <div class="col-8">
                 @Html.TextBoxFor(m => m.Date, "{0:dd.MM.yyyy}", new { @class = "datepicker", placeholder = "Укажите дату экзамена" })

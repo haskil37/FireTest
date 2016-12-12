@@ -28,6 +28,31 @@
         </div>
     </div>
     <div class="row">
+        <div class="center textback">Укажите минимальный процент для получения оценки</div>
+        <br />
+        <div class="col-1 right">
+            Для 5
+        </div>
+        <div class="col-2">
+            <input name="Eval" type="text" class="input" value="@ViewBag.Eval5">
+        </div>
+        <div class="col-1 right">
+            Для 4
+        </div>
+        <div class="col-2">
+            <input name="Eval" type="text" class="input" value="@ViewBag.Eval4">
+        </div>
+        <div class="col-1 right">
+            Для 3
+        </div>
+        <div class="col-2">
+            <input name="Eval" type="text" class="input" value="@ViewBag.Eval3">
+        </div>
+        <div class="col-3">
+            <button type="submit" class="saveEval">Сохранить % оценок</button>
+        </div>
+    </div>
+    <div class="row">
         <h3>Поиск<span class="search"></span><input id="SearchString" name="SearchString" type="text" value="@ViewBag.CurrentFilter"></h3>
     </div>
     <div class="row">

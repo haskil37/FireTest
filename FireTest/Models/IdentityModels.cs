@@ -54,6 +54,7 @@ namespace FireTest.Models
         public string Id { get; set; }
         public string Avatar { get; set; }
         public string Name { get; set; }
+        public string Snils { get; set; }
         public bool Teacher { get; set; }
         public bool Administrator { get; set; }
         public bool Qualification { get; set; }
@@ -258,12 +259,19 @@ namespace FireTest.Models
         public string TeacherId { get; set; }
         public string NameTest { get; set; }
         public string Questions { get; set; }
+        public int Eval5 { get; set; }
+        public int Eval4 { get; set; }
+        public int Eval3 { get; set; }
     }
     public class TeacherTestDetails
     {
         public int Id { get; set; }
         [Required]
         public string NameTest { get; set; }
+        public int Eval5 { get; set; }
+        public int Eval4 { get; set; }
+        public int Eval3 { get; set; }
+
         public List<Question> Questions { get; set; }
     }
     public class Examination
@@ -276,6 +284,7 @@ namespace FireTest.Models
         public System.DateTime Date { get; set; }
         public string Classroom { get; set; }
         public string Annotations { get; set; }
+        public int Time { get; set; }
     }
     public class ExaminationViewModel
     {
@@ -290,6 +299,9 @@ namespace FireTest.Models
         public string Classroom { get; set; }
         [Display(Name = "Комментарий")]
         public string Annotations { get; set; }
+        [Required(ErrorMessage = "Нужно указать время тестирования")]
+        [Display(Name = "Время тестирования, мин")]
+        public int Time { get; set; }
     }
     #endregion
 

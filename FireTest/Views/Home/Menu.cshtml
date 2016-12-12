@@ -24,7 +24,7 @@
     @if (ViewBag.Access == "TEACHER")
     {
         <li>
-            <a href="/Teacher/Index"><span class="sidebar-li home"></span>Главная</a>
+            <a href="/Home/Index"><span class="sidebar-li home"></span>Главная</a>
         </li>
         <li class="battlesWidth">
             <a href="/Battles/Index"><span class="sidebar-li time"></span>Поединок</a>
@@ -35,6 +35,9 @@
         </li>
         <li>
             <a href="/Statistics/Index"><span class="sidebar-li stats"></span>Статистика</a>
+        </li>
+        <li>
+            <a href="/Teacher/Index"><span class="sidebar-li teacher"></span>Преподавательская</a>
         </li>
     }
     @if (ViewBag.Access == "USER")

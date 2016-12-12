@@ -115,14 +115,6 @@ namespace FireTest.Controllers
                     user.Busy = false;
                     dbContext.SaveChanges();
                     ViewBag.Images = new SIC().SelectImagesCache(SIC.type.quote);
-                    var role = dbContext.Users.Find(userId).Roles.SingleOrDefault();
-                    switch(dbContext.Roles.Find(role.RoleId).Name)
-                    {
-                        case "TEACHER":
-                            return RedirectToAction("Index", "Teacher");
-                        default:
-                            break;
-                    }
                     return View();
             }
         }

@@ -16,6 +16,12 @@ textarea {
 .correct input[type='checkbox'] ~ label {
     font-size: 20px;
     cursor: pointer;
+    color: red;
+}
+.correct input[type='checkbox']:checked ~ label {
+    font-size: 20px;
+    cursor: pointer;
+    color: limegreen;
 }
 .correct input[type='checkbox'] ~ label:after {
     font-family: 'Glyphicons Halflings';
@@ -48,6 +54,13 @@ textarea {
     background: rgb(255, 115, 0);
     border: 0;
     cursor: pointer;
+}
+.saveEval {
+    float: right;
+    background: rgb(255, 115, 0);
+    border: 0;
+    cursor: pointer;
+    padding: 5px;
 }
 #Users a,
 #Questions a,
@@ -329,4 +342,10 @@ input.datepicker {
 .datepicker table tr td.old,
 .datepicker table tr td.new {
     color: #777777;
+}
+.snils{
+    font-size: 12px;
+}
+#Tests{
+    font-size: 18px;
 }
