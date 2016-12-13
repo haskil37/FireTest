@@ -213,6 +213,10 @@
     <Compile Include="Migrations\201612121122403_addEvaluation2.Designer.cs">
       <DependentUpon>201612121122403_addEvaluation2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201612130836549_Examination.cs" />
+    <Compile Include="Migrations\201612130836549_Examination.Designer.cs">
+      <DependentUpon>201612130836549_Examination.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Decliner.cs" />
@@ -31438,6 +31442,8 @@
     <Content Include="Views\Statistics\CompareCourses.cshtml" />
     <Content Include="Views\Statistics\CompareCoursesAnswers.cshtml" />
     <Content Include="Views\Statistics\CompareCoursesRange.cshtml" />
+    <Content Include="Views\Teacher\ExamAccess.cshtml" />
+    <Content Include="Views\Teacher\ExamAccessAjax.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -31470,6 +31476,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201612121122403_addEvaluation2.resx">
       <DependentUpon>201612121122403_addEvaluation2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201612130836549_Examination.resx">
+      <DependentUpon>201612130836549_Examination.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

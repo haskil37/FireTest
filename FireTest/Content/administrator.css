@@ -34,8 +34,23 @@ textarea {
 .correct input[type='checkbox'] ~ label:hover {
     color: rgb(255, 115, 0);
 }
-.button a {
+.mini-button {
+    color: rgb(196, 189, 151);
+    background-color: rgba(114, 191, 230, 0.7);
+    border: 0;
+    cursor: pointer;
+    padding: 5px;
+    margin: 20px;
+    border-radius: 10px;
+    outline: none;
+    font-size: 100%;
+    white-space: normal;
+    min-width: 200px;
     text-decoration: none;
+}
+.mini-button:hover {
+    background-color: rgba(255, 115, 0, 0.7);
+    color: white;
 }
 .substrate {
     background: rgba(0, 0, 0, 0.7);

@@ -62,16 +62,18 @@
     border-color: rgb(196, 189, 151);
 }
 .fc-content:hover {
-    overflow: visible;
-    width: auto;
-    word-wrap: break-word;
     cursor: pointer;
-    white-space: normal;
+}
+.tooltiptopicevent {
+    width: auto;
+    height: auto;
     background: rgba(0, 0, 0, 0.8);
-    margin:-3px;
-    padding: 3px;
-    border-radius: 5px;
+    position: absolute;
+    z-index: 10001;
+    padding: 10px;
+    line-height: 200%;
+    border-radius: 15px;
 }
 .fc-scroller {
-   overflow-y: hidden !important;
+    overflow-y: hidden !important;
 }

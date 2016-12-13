@@ -17,6 +17,10 @@
                 <tr>
                     <td>
                         @Html.DisplayFor(modelItem => item.Name)
+                        @if (item.Date == DateTime.Today)
+                        {
+                            @Html.ActionLink("Начать экзамен", "ExamAccess", new { id = item.Id }, new { @class = "mini-button" })
+                        }
                     </td>
                     <td>
                         @String.Format("{0:dd.MM.yyyy}", item.Date)

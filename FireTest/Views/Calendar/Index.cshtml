@@ -7,17 +7,45 @@
 {
     @Scripts.Render("~/bundles/calendar")
     <script>
-		$('#calendar').fullCalendar({
-			header: {
-				left: 'prev,next today',
-				center: 'title',
-				right: 'month'
-			},
-            locale:"ru",
-			navLinks: true,
-			editable: false,
-			eventLimit: true,
-			events: [@Html.Raw(ViewBag.Dates)]
-		});
+        $('#calendar').fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month'
+            },
+            locale: "ru",
+            navLinks: true,
+            editable: false,
+            eventLimit: true,
+            eventMouseover: function (data, event, view) {
+                tooltip = '<div class="tooltiptopicevent">' + data.title + '</div>';
+                $("body").append(tooltip);
+                $(this).mouseover(function (e) {
+                    $(this).css('z-index', 10000);
+                    $('.tooltiptopicevent').fadeIn('500');
+                    $('.tooltiptopicevent').fadeTo('10', 1.9);
+                }).mousemove(function (e) {
+                    $('.tooltiptopicevent').css('top', e.pageY + 10);
+                    $('.tooltiptopicevent').css('left', e.pageX + 20);
+                });
+            },
+            eventMouseout: function (data, event, view) {
+                $(this).css('z-index', 8);
+                $('.tooltiptopicevent').remove();
+            },
+            dayClick: function () {
+                tooltip.hide()
+            },
+            eventResizeStart: function () {
+                tooltip.hide()
+            },
+            eventDragStart: function () {
+                tooltip.hide()
+            },
+            viewDisplay: function () {
+                tooltip.hide()
+            },
+            events: [@Html.Raw(ViewBag.Dates)]
+        });        
     </script>
 }

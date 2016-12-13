@@ -8,9 +8,6 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using System.Drawing;
-using System.Drawing.Imaging;
-using static FireTest.Controllers.ManageController;
 using System.Security.Cryptography;
 
 namespace FireTest.Controllers
@@ -1566,6 +1563,7 @@ namespace FireTest.Controllers
             exam.Date = model.Date;
             exam.Time = Time;
             dbContext.Examinations.Add(exam);
+            dbContext.SaveChanges();
             var allUsers = dbContext.Users.
                 Where(u => u.Course + u.Group == Group).
                 Select(u => u.Id).ToList();
@@ -1574,6 +1572,9 @@ namespace FireTest.Controllers
                 var user = dbContext.Users.Find(item);
                 user.Update = true;
             }
+            TestQualificationAccess testQualificationAccess = new TestQualificationAccess();
+            testQualificationAccess.IdExamination = exam.Id;
+            dbContext.TestQualificationAccess.Add(testQualificationAccess);
             dbContext.SaveChanges();
             return RedirectToAction("EditExams", new { id = exam.Id, message = "Экзамен успешно создан" });
         }
@@ -1677,6 +1678,8 @@ namespace FireTest.Controllers
         public ActionResult DeleteExamsConfirmed(int id)
         {
             Examination exam = dbContext.Examinations.Find(id);
+            TestQualificationAccess testQualificationAccess = dbContext.TestQualificationAccess.Where(u => u.IdExamination == id).SingleOrDefault();
+            dbContext.TestQualificationAccess.Remove(testQualificationAccess);
             dbContext.Examinations.Remove(exam);
             dbContext.SaveChanges();
             return RedirectToAction("Index");
@@ -1693,6 +1696,97 @@ namespace FireTest.Controllers
 
             return View(exams);
         }
+
+        public ActionResult ExamAccess(int? id)
+        {
+            Session.Clear();
+            if (id == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            Session["IdTest"] = id;
+            return View();
+        }
+        public PartialViewResult ExamAccessAjax(string currentFilter, string searchString, int? page, string submitButton)
+        {
+            if (Session["IdTest"] == null)
+                return PartialView();
+            int id = (int)Session["IdTest"];
+
+            if (!string.IsNullOrEmpty(submitButton))
+            {
+                var exam = dbContext.TestQualificationAccess.Where(u => u.IdExamination == id).SingleOrDefault();
+                if (exam.IdUsers.Contains(submitButton))
+                {
+                    List<string> temp = exam.IdUsers.Split(',').ToList();
+                    temp.Remove(submitButton);
+                    string tempIdUsers = "";
+                    foreach (string item in temp)
+                        tempIdUsers += "," + item;
+                    if (temp.Count() != 0)
+                        tempIdUsers = tempIdUsers.Remove(0, 1);
+                    exam.IdUsers = tempIdUsers;
+                }
+                else
+                {
+                    if (string.IsNullOrEmpty(exam.IdUsers))
+                        exam.IdUsers = submitButton;
+                    else
+                        exam.IdUsers += "," + submitButton;
+                }
+                dbContext.SaveChanges();
+            }
+
+            if (searchString != null)
+                page = 1;
+            else
+                searchString = currentFilter;
+            ViewBag.CurrentFilter = searchString;
+
+            List<UsersForAdmin> model = new List<UsersForAdmin>();
+            string examGroup = dbContext.Examinations.Find(id).Group;
+            var users = dbContext.Users.Where(u => u.Course + u.Group == examGroup);
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                users = users.Where(u => u.Family.Contains(searchString)
+                                       || u.Name.Contains(searchString)
+                                       || u.SubName.Contains(searchString));
+            }
+            foreach (var item in users)
+            {
+                UsersForAdmin temp = new UsersForAdmin();
+                temp.Id = item.Id;
+                temp.Avatar = item.Avatar;
+                temp.Name = item.Family + " " + item.Name + " " + item.SubName;
+                model.Add(temp);
+            }
+            var tempAccess = dbContext.TestQualificationAccess.
+                Where(u => u.IdExamination == id).
+                Select(u => u.IdUsers).SingleOrDefault();
+            List<string> usersAccess = new List<string>();
+            if (tempAccess != null)
+                usersAccess = tempAccess.Split(',').ToList();
+
+            foreach (var item in model)
+            {
+                if (usersAccess.Contains(item.Id))
+                    item.Qualification = true;
+                else
+                    item.Qualification = false;
+            }
+
+            model = model.OrderBy(u => u.Name).ToList();
+
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+            if (model.ToPagedList(pageNumber, pageSize).PageCount < page)
+                pageNumber = model.ToPagedList(pageNumber, pageSize).PageCount;
+            if (pageNumber == 0)
+                pageNumber = 1;
+            ViewBag.Page = pageNumber;
+
+            return PartialView(model.ToPagedList(pageNumber, pageSize));
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

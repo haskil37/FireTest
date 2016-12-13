@@ -3,6 +3,12 @@
     ViewBag.Title = "Главная";
 }
 @Styles.Render("~/Content/statistic")
+@if (ViewBag.Exam != null)
+{
+    <div class="row">
+        <div class="ExamWarning">@Html.Raw(ViewBag.Exam.Replace("\n", "</br>"))</div>
+    </div>
+}
 <div class="spoiler">
     <span class="headline">Выберите вид тестирования по квалификации</span>
 </div>

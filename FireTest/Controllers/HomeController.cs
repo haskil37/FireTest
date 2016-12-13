@@ -114,6 +114,53 @@ namespace FireTest.Controllers
                         return RedirectToAction("Login", "Account");
                     user.Busy = false;
                     dbContext.SaveChanges();
+
+                    var exams = dbContext.Examinations.
+                        Where(u => u.Date == DateTime.Today).
+                        Where(u => u.Group == user.Course + user.Group).
+                        Select(u => new {
+                            Name = u.Name,
+                            Classroom = u.Classroom,
+                            Annotations = u.Annotations,
+                        }).ToList();
+                    string role = user.Roles.SingleOrDefault().RoleId;
+                    if (dbContext.Roles.Find(role).Name != "USER")
+                    {
+                        exams = dbContext.Examinations.
+                            Where(u => u.Date == DateTime.Today).
+                            Where(u => u.TeacherId == userId).
+                            Select(u => new {
+                                Name = u.Name,
+                                Classroom = u.Classroom,
+                                Annotations = u.Annotations,
+                            }).ToList();
+                    }
+                    if (exams.Count != 0)
+                    {
+                        string temp = "У Вас сегодня экзамен";
+                        if (exams.Count == 1)
+                        {
+                            foreach (var item in exams)
+                            {
+                                temp += ": \"" + item.Name + "\" в аудитории: " + item.Classroom;
+                                if (!string.IsNullOrEmpty(item.Annotations))
+                                    temp += " (" + item.Annotations + ")";
+                            }
+                        }
+                        else
+                        {
+                            temp += "ы:\n";
+                            foreach (var item in exams)
+                            {
+                                temp += "\"" + item.Name + "\" в аудитории: " + item.Classroom;
+                                if (!string.IsNullOrEmpty(item.Annotations))
+                                    temp += " (" + item.Annotations + ")\n";
+                                else
+                                    temp += "\n";
+                            }
+                        }
+                        ViewBag.Exam = temp;
+                    }
                     ViewBag.Images = new SIC().SelectImagesCache(SIC.type.quote);
                     return View();
             }

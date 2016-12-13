@@ -1,0 +1,29 @@
+﻿@{
+    ViewBag.Title = "Доступ к экзамену";
+}
+@Styles.Render("~/Content/administrator")
+@using (Ajax.BeginForm("ExamAccessAjax", new AjaxOptions
+{
+    HttpMethod = "Get",
+    InsertionMode = InsertionMode.Replace,
+    UpdateTargetId = "Users",
+}))
+{
+    <div class="row">
+        <div class="textback center"><h3>Выберите каким студентам открыть доступ к экзамену</h3></div>
+    </div>
+    <div class="row">
+        <h3>Поиск<span class="search"></span><input id="SearchString" name="SearchString" type="text"></h3>
+    </div>
+}
+<div id="Users">
+    @{ Html.RenderAction("ExamAccessAjax", new { Page = 1 }); }
+</div>
+@section scripts
+{
+    <script>
+    $('#SearchString').keyup(function () {
+        $(this.form).submit();
+    });
+    </script>
+}
