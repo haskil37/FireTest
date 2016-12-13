@@ -8,6 +8,13 @@
     <div class="row">
         <div class="ExamWarning">@Html.Raw(ViewBag.Exam.Replace("\n", "</br>"))</div>
     </div>
+    <div id="exam"></div>
+    @section scripts
+    {
+        <script>
+            ExamInterval = setInterval(function () { $('#exam').load('/Examination/Access', { type: 'POST' }); }, 3000);
+        </script>
+    }
 }
 <div class="spoiler">
     <span class="headline">Выберите вид тестирования по квалификации</span>

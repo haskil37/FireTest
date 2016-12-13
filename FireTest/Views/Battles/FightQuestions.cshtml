@@ -1,6 +1,12 @@
 ﻿@model FireTest.Models.Questions
 @if (ViewBag.Result == false)
 {
+    <div id="loadingIndicator">
+        <div class="container">
+            <div class="wheel"></div>
+        </div>
+        <h3 class="center">Загрузка</h3>
+    </div>
     <script type="text/javascript">
             window.location = '@Url.Action("BattleEnd", "Battles", new { id = ViewBag.Id })';
     </script>

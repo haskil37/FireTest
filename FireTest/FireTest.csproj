@@ -181,6 +181,7 @@
     <Compile Include="Controllers\BattlesController.cs" />
     <Compile Include="Controllers\CalendarController.cs" />
     <Compile Include="Controllers\DisciplinesController.cs" />
+    <Compile Include="Controllers\ExaminationController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\QualificationController.cs" />
@@ -31444,6 +31445,7 @@
     <Content Include="Views\Statistics\CompareCoursesRange.cshtml" />
     <Content Include="Views\Teacher\ExamAccess.cshtml" />
     <Content Include="Views\Teacher\ExamAccessAjax.cshtml" />
+    <Content Include="Views\Examination\Access.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

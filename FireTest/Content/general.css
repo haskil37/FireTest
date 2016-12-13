@@ -881,109 +881,54 @@ li.sortable-placeholder {
     box-shadow: 0px 0px 20px 20px rgba(0, 0, 0, 0.7);
     z-index: 9999;
     width: 400px;
-    height: 190px;
-    margin: 0 auto;
-}
-
-#loadingIndicator .container{
-    padding-top: 120px;
-    width: 60px;
-    height: 60px;
-    margin-left: 50px;
-    position: relative;
-    transform-origin: center bottom;
-    animation-name: flicker;
-    animation-duration: 3ms;
-    animation-delay: 200ms;
-    animation-timing-function: ease-in;
-    animation-iteration-count: infinite;
-    animation-direction: alternate;
-    float: left;
+    right: 45%;
+    right: -moz-calc(50% - 300px);
+    right: calc(50% - 300px);
+    top: 200px;
     position: absolute;
-    left: 0;
-    right: 0;
-    margin-left: 100px;
-
+}
+#loadingIndicator .container{
+	width: 100%;
+	height: 49px;
+	text-align: center;
+    padding-top: 15px;
 }
 #loadingIndicator h3{
-    line-height: 300px;
-    font-size: 30px;
-    margin-left: 100px;
+    padding: 15px;
 }
-#loadingIndicator .flame{
-  bottom:0;
-  position:absolute;
-  border-bottom-right-radius: 50%;
-  border-bottom-left-radius: 50%;
-  border-top-left-radius: 50%;
-  transform:rotate(-45deg) scale(1.5,1.5);
+.wheel {
+	width: 49px;
+	height: 49px;
+	margin: 0 auto;
+	border: 3px solid rgb(255, 115, 0);
+	border-radius: 50%;
+	border-left-color: transparent;
+	border-right-color: transparent;
+	animation: -spin 1400ms infinite linear;
+		-o-animation: -spin 1400ms infinite linear;
+		-ms-animation: -spin 1400ms infinite linear;
+		-webkit-animation: -spin 1400ms infinite linear;
+		-moz-animation: -spin 1400ms infinite linear;
 }
-
-#loadingIndicator .yellow{
-  left:15px; 
-  width: 30px;
-  height: 30px;
-  background:gold;
-  box-shadow: 0px 0px 9px 4px gold;
-}
-
-#loadingIndicator .orange{
-  left:10px; 
-  width: 40px;
-  height: 40px;
-  background:orange;
-  box-shadow: 0px 0px 9px 4px orange;
+@keyframes -spin {
+	100%{ transform: rotate(360deg); transform: rotate(360deg); }
 }
 
-#loadingIndicator .red{
-  left:5px;
-  width: 50px;
-  height: 50px;
-  background:OrangeRed;
-  box-shadow: 0px 0px 5px 4px OrangeRed;
+@-o-keyframes -spin {
+	100%{ -o-transform: rotate(360deg); transform: rotate(360deg); }
 }
 
-#loadingIndicator .white{
-  left:15px; 
-  bottom:-4px;
-  width: 30px;
-  height: 30px;
-  background:white;
-  box-shadow: 0px 0px 9px 4px white;
+@-ms-keyframes -spin {
+	100%{ -ms-transform: rotate(360deg); transform: rotate(360deg); }
 }
 
-#loadingIndicator .circle{
-  border-radius: 50%;
-  position:absolute;  
+@-webkit-keyframes -spin {
+	100%{ -webkit-transform: rotate(360deg); transform: rotate(360deg); }
 }
 
-#loadingIndicator .blue{
-  width: 10px;
-  height: 10px;
-  left:25px;
-  bottom:-25px; 
-  background: SlateBlue;
-  box-shadow: 0px 0px 15px 10px SlateBlue;
+@-moz-keyframes -spin {
+	100%{ -moz-transform: rotate(360deg); transform: rotate(360deg); }
 }
-
-#loadingIndicator .black{
-  width: 40px;
-  height: 40px;
-  left:10px;
-  bottom:-60px;  
-  background: black;
-  box-shadow: 0px 0px 15px 10px black;
-}
-
-@keyframes flicker{
-  0%   {transform: rotate(-1deg);}
-  20%  {transform: rotate(1deg);}
-  40%  {transform: rotate(-1deg);}
-  60%  {transform: rotate(1deg) scaleY(1.04);}
-  80%  {transform: rotate(-2deg) scaleY(0.92);}
-  100% {transform: rotate(1deg);}
-}
-
 
 /*Users*/
 #users .wrapper {
@@ -1117,6 +1062,9 @@ li.sortable-placeholder {
     .avatar{
         width: 150px;
     }
+    #loadingIndicator {
+        right: 20%;
+    }
 }
 @media(max-width:1024px) {
     #wrapper {
@@ -1224,6 +1172,9 @@ li.sortable-placeholder {
     }
     .button_invite{
         font-size: 14px;
+    }
+    #loadingIndicator {
+        right: 10%;
     }
 }
 @media(max-width:414px) {
