@@ -1714,7 +1714,7 @@ namespace FireTest.Controllers
             if (!string.IsNullOrEmpty(submitButton))
             {
                 var exam = dbContext.TestQualificationAccess.Where(u => u.IdExamination == id).SingleOrDefault();
-                if (exam.IdUsers.Contains(submitButton))
+                if (!string.IsNullOrEmpty(exam.IdUsers) && exam.IdUsers.Contains(submitButton))
                 {
                     List<string> temp = exam.IdUsers.Split(',').ToList();
                     temp.Remove(submitButton);

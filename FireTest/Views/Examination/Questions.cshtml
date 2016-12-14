@@ -1,0 +1,106 @@
+﻿@model FireTest.Models.Questions
+@if (ViewBag.ExaminationEnd == true)
+{
+    <div id="loadingIndicator">
+        <div class="container">
+            <div class="wheel"></div>
+        </div>
+        <h3 class="center">Загрузка</h3>
+    </div>
+    <script type="text/javascript">
+            window.location = '@Url.Action("End", "Examination", new { id = ViewBag.Id })';
+    </script>
+}
+else
+{
+    <div id="question">
+        <div class="row"><h3>Вопрос №@ViewBag.Number из @ViewBag.Count</h3></div>
+        <div class="row"><h3>@Model.QuestionText</h3></div>
+        @if (@Model.QuestionImage != null)
+        {
+            <div class="questionImage">
+                <img src="@Model.QuestionImage" />
+            </div>
+        }
+        <div class="row answers">
+            @if (ViewBag.TypeQuestion == "standart")
+            {
+                <div class="center textback noselect">@ViewBag.Multiple</div>
+                foreach (var item in Model.QuestionAnswers)
+                {
+                    <fieldset class="standart">
+                        <input id="@item.AnswerId" type="checkbox" name="AnswersIDs" value="@item.AnswerId" />
+                        <label for="@item.AnswerId">
+                            <span>
+                                @Html.DisplayFor(modelItem => item.AnswerText)
+                            </span>
+                        </label>
+                    </fieldset>
+                }
+            }
+            @if (ViewBag.TypeQuestion == "sequence")
+            {
+                <div class="center textback noselect">Зажмите левой кнопкой мыши строчку и перетащите</div>
+                <ul class="sortable">
+                    @foreach (var item in Model.QuestionAnswers)
+                    {
+                        <li>
+                            <fieldset class="sequence">
+                                <input id="@item.AnswerId" type="checkbox" name="AnswersIDs" value="@item.AnswerId" checked="checked" />
+                                <label for="@item.AnswerId">
+                                    <span>
+                                        @Html.DisplayFor(modelItem => item.AnswerText)
+                                    </span>
+                                </label>
+                            </fieldset>
+                        </li>
+                    }
+                </ul>
+            }
+            @if (ViewBag.TypeQuestion == "conformity")
+            {
+                int step = Model.QuestionAnswers.Count() / 2;
+                <div class="center textback noselect">Зажмите левой кнопкой мыши строчку из левого столбца и перетащите</div>
+                <div class="col-6">
+                    <ul class="sortable">
+                        @for (int i = 0; i < step; i++)
+                        {
+                            <li>
+                                <fieldset class="conformity">
+                                    <input id="@Model.QuestionAnswers[i].AnswerId" type="checkbox" name="AnswersIDs" value="@Model.QuestionAnswers[i].AnswerId" checked="checked" />
+                                    <label for="@Model.QuestionAnswers[i].AnswerId">
+                                        <span>
+                                            @Html.DisplayFor(modelItem => Model.QuestionAnswers[i].AnswerText)
+                                        </span>
+                                    </label>
+                                </fieldset>
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <div class="col-offset-6">
+                    <ul class="unsortable">
+                        @for (int i = step; i < step * 2; i++)
+                        {
+                            <li>
+                                <fieldset>
+                                    <input id="@Model.QuestionAnswers[i].AnswerId" type="checkbox" name="AnswersIDs" value="@Model.QuestionAnswers[i].AnswerId" checked="checked" />
+                                    <label for="@Model.QuestionAnswers[i].AnswerId" name="AnswersIDs">
+                                        <span>
+                                            @Html.DisplayFor(modelItem => Model.QuestionAnswers[i].AnswerText)
+                                        </span>
+                                    </label>
+                                </fieldset>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+        </div>
+    </div>
+    <input type="submit" class="button center" value="Ответить" id="Answer" />
+    <script>
+        MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'question']);
+        $('.sortable').sortable();
+    </script>
+}

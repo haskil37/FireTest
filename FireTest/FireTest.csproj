@@ -218,6 +218,10 @@
     <Compile Include="Migrations\201612130836549_Examination.Designer.cs">
       <DependentUpon>201612130836549_Examination.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201612141240328_addQtoExam.cs" />
+    <Compile Include="Migrations\201612141240328_addQtoExam.Designer.cs">
+      <DependentUpon>201612141240328_addQtoExam.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Decliner.cs" />
@@ -31446,6 +31450,9 @@
     <Content Include="Views\Teacher\ExamAccess.cshtml" />
     <Content Include="Views\Teacher\ExamAccessAjax.cshtml" />
     <Content Include="Views\Examination\Access.cshtml" />
+    <Content Include="Views\Examination\Index.cshtml" />
+    <Content Include="Views\Examination\End.cshtml" />
+    <Content Include="Views\Examination\Questions.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -31481,6 +31488,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201612130836549_Examination.resx">
       <DependentUpon>201612130836549_Examination.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201612141240328_addQtoExam.resx">
+      <DependentUpon>201612141240328_addQtoExam.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

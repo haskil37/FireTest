@@ -310,6 +310,7 @@ namespace FireTest.Models
         public int Id { get; set; }
         public int IdExamination { get; set; }
         public string IdUser { get; set; }
+        public string Questions { get; set; }
         public string Answers { get; set; }
         public string RightOrWrong { get; set; }
         public System.DateTime TimeStart { get; set; }

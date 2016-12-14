@@ -123,6 +123,7 @@ namespace FireTest.Controllers
                             Classroom = u.Classroom,
                             Annotations = u.Annotations,
                         }).ToList();
+                    ViewBag.User = "user";
                     string role = user.Roles.SingleOrDefault().RoleId;
                     if (dbContext.Roles.Find(role).Name != "USER")
                     {
@@ -134,6 +135,7 @@ namespace FireTest.Controllers
                                 Classroom = u.Classroom,
                                 Annotations = u.Annotations,
                             }).ToList();
+                        ViewBag.User = "nouser";
                     }
                     if (exams.Count != 0)
                     {
