@@ -2,7 +2,8 @@
 @{
     ViewBag.Title = "Экзамен - \"" + ViewBag.ExaminationName + "\"";
 }
-<div id="loadingIndicator" style="display:none;">
+<div class="row center">Осталось времени на экзамен: <span id="timeElapsed"></span></div>
+<div class="row" id="loadingIndicator" style="display:none;">
     <div class="container">
         <div class="wheel"></div>
     </div>
@@ -109,5 +110,48 @@
     <script>
         MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'question']);
         $('.sortable').sortable();
+        window.onload = start_timer();
+        var timer;
+        function start_timer() {
+            if (timer) clearInterval(timer);
+            mins = @ViewBag.TimeMin;
+            secs = @ViewBag.TimeSec;
+            tmins = '';
+            tsecs = '';
+            if(mins < 10)
+                tmins = '0' + mins;
+            else
+                tmins = mins;
+            if(secs < 10)
+                tsecs =  '0' + secs;
+            else
+                tsecs = secs;
+            text = tmins + ':' + tsecs;
+            document.getElementById('timeElapsed').innerHTML = text;
+            timer = setInterval(
+	            function () {
+	                secs--;
+	                if (secs < 0)
+	                {
+	                    secs = 60;
+	                    mins--;
+	                }
+	                if(mins < 10)
+	                    tmins = '0' + mins;
+	                else
+	                    tmins = mins;
+	                if(secs < 10)
+	                    tsecs =  '0' + secs;
+	                else
+	                    tsecs = secs;
+	                if(mins <= 0 && secs <= 0){
+	                    $("#Answer").click();
+	                    tmins = '0';
+	                    tsecs = '0';
+                    }	                    
+	                text = tmins + ':' + tsecs;	                    
+	                document.getElementById('timeElapsed').innerHTML = text;                    
+	            }, 1000);
+        };
     </script>
 }

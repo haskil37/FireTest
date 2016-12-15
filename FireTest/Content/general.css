@@ -174,6 +174,9 @@ h3 {
 .questionImage img{
     width:70%;
 }
+.snils{
+    font-size: 12px;
+}
 #wrapper {
     padding-left: 200px;
     -webkit-transition: all 0.5s ease;

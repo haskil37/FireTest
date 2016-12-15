@@ -89,6 +89,11 @@ namespace FireTest.Controllers
 
                 ViewBag.Count = examQuestions.Split('|').ToList().Count(); //Общее количество вопросов
                 ViewBag.Number = 1;
+
+                var tempTime = newExam.TimeStart.AddMinutes(exam.Time) - DateTime.Now;
+                ViewBag.TimeMin = tempTime.Minutes;
+                ViewBag.TimeSec = tempTime.Seconds;
+
                 return View(model);
             }
             else
@@ -128,6 +133,11 @@ namespace FireTest.Controllers
 
                 ViewBag.Count = count;
                 ViewBag.Number = number + 1;
+
+                var tempTime = end.TimeStart.AddMinutes(exam.Time) - DateTime.Now;
+                ViewBag.TimeMin = tempTime.Minutes;
+                ViewBag.TimeSec = tempTime.Seconds;
+
                 return View(model);
             }
         }
@@ -155,7 +165,9 @@ namespace FireTest.Controllers
                     Name = u.Name,
                     Time = u.Time
                 }).SingleOrDefault();
-           
+            var tempTime = test.start.AddMinutes(exam.Time) - DateTime.Now;
+            ViewBag.TimeMin = tempTime.Minutes;
+            ViewBag.TimeSec = tempTime.Seconds;
             if (test.start.AddMinutes(exam.Time) <= DateTime.Now) //Проверяем если превысили время 
             {
                 var elapsed = dbContext.TestQualification.Find(test.id);
