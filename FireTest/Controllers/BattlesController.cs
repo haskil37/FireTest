@@ -149,7 +149,9 @@ namespace FireTest.Controllers
                      Battles = u.BattleCount,
                      CorrectAnswers = u.CorrectAnswersCount,
                      AllAnswers = u.AnswersCount,
-                     Rating = u.Rating
+                     Rating = u.Rating,
+                     Course = u.Course,
+                     Group = u.Group
                  }).ToList();
 
             List<UsersData> model = new List<UsersData>();
@@ -167,9 +169,11 @@ namespace FireTest.Controllers
                     Name = item.Name,
                     Family = item.Family,
                     Battles = item.Battles,
-                    Group = "",
                     Rating = numbertop + 1,
                 };
+
+                if (item.Course != 100)
+                    temp.Group = item.Course + item.Group;
 
                 if (item.AllAnswers != 0)
                     temp.CorrectAnswers = 100 * item.CorrectAnswers / item.AllAnswers;

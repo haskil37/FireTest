@@ -9,7 +9,10 @@
             <ul>
                 <li><img class="avatar-mini" src="@user.Avatar" /></li>
                 <li>@user.Name @user.Family</li>
-                <li>Учебная группа: @user.Group</li>
+                @if (user.Group != null)
+                {
+                    <li>Учебная группа: @user.Group</li>
+                }
                 <li>Место в рейтинге: @user.Rating</li>
                 <li>Процент правильных ответов: @user.CorrectAnswers</li>
                 <li>Количество поединков: @user.Battles</li>
