@@ -566,7 +566,7 @@ namespace FireTest.Controllers
 
             return PartialView(model.ToPagedList(pageNumber, pageSize));
         }
-        public ActionResult NewQuestion(string Message)
+        public ActionResult NewQuestion(string Message, int? Department, int? Subject, int? Course)
         {
             ViewBag.StatusMessage = Message;
             string userId = User.Identity.GetUserId();
@@ -585,6 +585,7 @@ namespace FireTest.Controllers
                     {
                         Text = u.Name,
                         Value = u.Id.ToString(),
+                        Selected = u.Id == Subject
                     }).ToList();
             ViewBag.Subjects = selectList;
 
@@ -593,17 +594,20 @@ namespace FireTest.Controllers
                {
                    Text = u.Name,
                    Value = u.Id.ToString(),
+                   Selected = u.Id == Department
                }).ToList();
             ViewBag.Departments = selectList;
 
-            var courses = new[]{ //Добавляем выпадающий список курсов
-                 new SelectListItem{ Value="1",Text="Курс 1"},
-                 new SelectListItem{ Value="2",Text="Курс 2"},
-                 new SelectListItem{ Value="3",Text="Курс 3"},
-                 new SelectListItem{ Value="4",Text="Курс 4"},
-                 new SelectListItem{ Value="5",Text="Курс 5"},
-             };
-            ViewBag.Courses = courses;
+            List<int> tempCourses = new List<int>() { 1, 2, 3, 4, 5 }; //Добавляем выпадающий список курсов
+            selectList = tempCourses
+               .Select(u => new SelectListItem()
+               {
+                   Text = "Курс " + u.ToString(),
+                   Value = u.ToString(),
+                   Selected = u == Course
+               }).ToList();
+            ViewBag.Courses = selectList;
+
             ViewBag.Type = 1;
             return View();
         }
@@ -811,7 +815,7 @@ namespace FireTest.Controllers
                 newQuestion.IdCorrect = answerCorrectIndex;
                 dbContext.SaveChanges();
             }
-            return RedirectToAction("NewQuestion", new { Message = "Вопрос был успешно добавлен" });
+            return RedirectToAction("NewQuestion", new { Message = "Вопрос был успешно добавлен", Department = newQuestion.IdDepartment, Subject = newQuestion.IdSubject, Course = newQuestion.IdCourse });
         }
         public ActionResult EditQuestionSelect(string message)
         {
@@ -977,7 +981,7 @@ namespace FireTest.Controllers
                {
                    Text = u.Name,
                    Value = u.Id.ToString(),
-                   Selected = u.Id == question.IdSubject
+                   Selected = u.Id == question.IdDepartment
                }).ToList();
             ViewBag.Departments = selectList;
 
@@ -985,7 +989,7 @@ namespace FireTest.Controllers
             selectList = tempCourses
                .Select(u => new SelectListItem()
                {
-                   Text = u.ToString(),
+                   Text = "Курс " + u.ToString(),
                    Value = u.ToString(),
                    Selected = u == question.IdCourse
                }).ToList();
@@ -1086,6 +1090,7 @@ namespace FireTest.Controllers
             question.IdDepartment = Departments;
             question.IdSubject = Subjects;
             question.QuestionText = Question.QuestionText;
+            question.Tag = Question.Tag;
 
             var NewAnswersId = dbContext.Answers
                     .Where(u => u.IdQuestion == id)
