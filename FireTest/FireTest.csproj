@@ -257,6 +257,7 @@
     <Content Include="Content\bootstrap-datepicker3.standalone.css" />
     <Content Include="Content\bootstrap-datepicker3.standalone.min.css" />
     <Content Include="Content\calendar.css" />
+    <Content Include="Content\favicon.png" />
     <Content Include="Content\Fire.png" />
     <Content Include="Content\fullcalendar.min.css" />
     <Content Include="Content\login.jpg" />
@@ -342,7 +343,6 @@
     <Content Include="Content\Wall.jpg" />
     <Content Include="Content\winner.mp3" />
     <Content Include="Content\winner.png" />
-    <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
