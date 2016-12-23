@@ -82,6 +82,7 @@
 <div class="-opened">
     @{ Html.RenderAction("UserStatistics", "Statistics"); }
 </div>
+<div style="width:0px;height:0px;visibility:collapse;overflow:hidden;">@Html.Raw(ViewBag.Images)</div>
 @section scripts
 {
     @Scripts.Render("~/bundles/statistic")
@@ -100,13 +101,5 @@
         var PieChartQ4 = new Chart(chartQ4, configQ4);
         var chartQ5 = document.getElementById("chartQ5");
         var PieChartQ5 = new Chart(chartQ5, configQ5);
-        var images = [
-        @Html.Raw(ViewBag.Images)
-        ];
-        var imagesLoad = [];
-        for (var i = 0; i < images.length; i++) {
-            imagesLoad[i] = new Image();
-            imagesLoad[i].src = images[i];
-        }
     </script>
 }

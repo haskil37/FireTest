@@ -93,6 +93,7 @@
     visibility: visible;
     -moz-transform: scale(.3);
     -moz-transform-origin: left center;
+    -ms-transform-origin: left center;
 }
 @-moz-document url-prefix() {
     .leftD {

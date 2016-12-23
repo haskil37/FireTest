@@ -163,7 +163,7 @@ namespace FireTest.Controllers
                         }
                         ViewBag.Exam = temp;
                     }
-                    ViewBag.Images = new SIC().SelectImagesCache(SIC.type.quote);
+                    ViewBag.Images = new SIC().SelectImagesCache(SIC.type.img);
                     return View();
             }
         }
