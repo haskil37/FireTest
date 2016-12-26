@@ -1080,7 +1080,7 @@ namespace FireTest.Controllers
             var allanswers = dbContext.Answers.Find(CurrentQuestion);
             question.QuestionText = questionDB.QuestionText;
 
-            if (questionDB.QuestionImage != "NULL")
+            if (!string.IsNullOrEmpty(questionDB.QuestionImage))
                 question.QuestionImage = "/Images/Questions/" + questionDB.QuestionImage;
 
             var allAnswers = dbContext.Answers
