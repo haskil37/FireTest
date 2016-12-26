@@ -195,6 +195,7 @@ namespace FireTest.Controllers
             ViewBag.UpdateCalendar = user.Update;
 
             user.LastActivity = DateTime.Now;
+            dbContext.SaveChanges();
 
             bool invited = user.Invited;        
             if (invited == false)
