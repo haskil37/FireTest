@@ -62,7 +62,7 @@ else
                 int step = Model.QuestionAnswers.Count() / 2;
                 <div class="center textback noselect">Зажмите левой кнопкой мыши строчку из левого столбца и перетащите</div>
                 <div class="col-6">
-                    <ul class="sortable">
+                    <ol class="sortable">
                         @for (int i = 0; i < step; i++)
                         {
                             <li>
@@ -76,10 +76,10 @@ else
                                 </fieldset>
                             </li>
                         }
-                    </ul>
+                    </ol>
                 </div>
                 <div class="col-offset-6">
-                    <ul class="unsortable">
+                    <ol class="unsortable">
                         @for (int i = step; i < step * 2; i++)
                         {
                             <li>
@@ -93,7 +93,7 @@ else
                                 </fieldset>
                             </li>
                         }
-                    </ul>
+                    </ol>
                 </div>
             }
         </div>
