@@ -195,11 +195,13 @@ namespace FireTest.Controllers
             ViewBag.UpdateCalendar = user.Update;
 
             user.LastActivity = DateTime.Now;
-            dbContext.SaveChanges();
 
             bool invited = user.Invited;        
             if (invited == false)
                 return PartialView(false);
+
+            user.Busy = true;
+            dbContext.SaveChanges();
 
             int battleId = user.IdBattleInvite;
             var battle = dbContext.Battles
@@ -216,6 +218,7 @@ namespace FireTest.Controllers
             if ((DateTime.Now - battle.Time).Minutes >= 1)
             {
                 user.Invited = false;
+                user.Busy = false;
                 dbContext.SaveChanges();
                 return PartialView(false);
             }
