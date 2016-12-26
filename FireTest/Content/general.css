@@ -749,13 +749,15 @@ input[type=range]:focus::-ms-fill-upper {
 .sortable li, .unsortable li {
     margin: 5px;
     padding: 5px;
-    height: 22px;
+    min-height: 22px;
     border: 1px dashed rgba(196, 189, 151, 0);
+    list-style-position: outside;
 }
 li.sortable-placeholder {
     border: 1px dashed rgb(196, 189, 151);
     background: rgba(0, 0, 0, 0.7);
 }
+
 /*End Qualification/Test/Battles*/
 #graph canvas {
     position: absolute;
