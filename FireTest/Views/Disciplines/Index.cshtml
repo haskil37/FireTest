@@ -42,6 +42,7 @@ else
     using (Html.BeginForm("Index", "Disciplines", new { id = ViewBag.Id }, FormMethod.Post, new { role = "form" }))
     {
         @Html.AntiForgeryToken()
+        @Html.Hidden("EndId", (int)ViewBag.EndId)
         <div class="row"><h3>У Вас есть незаконченный тест по дисциплине "@ViewBag.DisciplineName"</h3></div>
         <div class="row"><h3>Хотите продолжить?</h3></div>
         <div class="row center">

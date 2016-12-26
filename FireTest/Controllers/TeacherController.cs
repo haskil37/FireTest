@@ -16,9 +16,10 @@ namespace FireTest.Controllers
     public class TeacherController : Controller
     {
         ApplicationDbContext dbContext = new ApplicationDbContext();
-        public ActionResult Index()
+        public ActionResult Index(string message)
         {
             var tests = dbContext.TeacherTests.ToList().Where(u => u.TeacherId == User.Identity.GetUserId()).Where(u => !string.IsNullOrEmpty(u.NameTest));
+            ViewBag.Message = message;
             return View(tests);
         }
         [ChildActionOnly]
@@ -1513,15 +1514,19 @@ namespace FireTest.Controllers
         public ActionResult CreateExam()
         {
             string userId = User.Identity.GetUserId();
-
-            ViewBag.Test = dbContext.TeacherTests
+            var tests = dbContext.TeacherTests
                 .Where(u => u.TeacherId == userId)
+                .Where(u => !string.IsNullOrEmpty(u.NameTest))
+                .Where(u => !string.IsNullOrEmpty(u.Questions))
                 .Select(u => new SelectListItem()
                 {
                     Text = u.NameTest,
                     Value = u.Id.ToString(),
-                }).ToList(); 
+                }).ToList();
+            if (tests == null || tests.Count == 0)
+                return RedirectToAction("Index", new { message = "Нет доступных тестов для создания экзамена" });
 
+            ViewBag.Test = tests;
             ViewBag.Group = dbContext.Users
                 .Where(u => u.Course != 100)
                 .Select(u => new SelectListItem()

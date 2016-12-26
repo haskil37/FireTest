@@ -38,6 +38,7 @@ namespace FireTest.Controllers
                 {
                     ViewBag.DisciplineName = dbContext.Subjects.Find(end.idSubject).Name;
                     ViewBag.Id = end.id;
+                    ViewBag.EndId = id;
                     ViewBag.Сompleted = false;
                 }
                 else  //Если пустой тест, то меняем значение предмета
@@ -92,7 +93,7 @@ namespace FireTest.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Index(int id = 0, string submitButton = "Exit", int count = 10, int course = 1)
+        public ActionResult Index(int? EndId, int id = 0, string submitButton = "Exit", int count = 10, int course = 1)
         {
             if (!ModelState.IsValid || id == 0 || submitButton == "Exit")
                 return RedirectToAction("Index", "Home");
@@ -115,6 +116,7 @@ namespace FireTest.Controllers
                 var deleteTest = dbContext.SelfyTestDisciplines.Find(id);
                 dbContext.SelfyTestDisciplines.Remove(deleteTest);
                 dbContext.SaveChanges();
+                return RedirectToAction("Index", new { id = EndId });
             }
 
             if (submitButton != "Accept") //Т.к. Cancel мы обработали, то если будет любой текст кроме согласия, то это фигня и мы выкидываем пользователя на главную
@@ -353,7 +355,7 @@ namespace FireTest.Controllers
             var allanswers = dbContext.Answers.Find(CurrentQuestion);
             question.QuestionText = questionDB.QuestionText;
 
-            if (!string.IsNullOrEmpty(questionDB.QuestionImage))
+            if (!string.IsNullOrEmpty(questionDB.QuestionImage) && questionDB.QuestionImage != "NULL")
                 question.QuestionImage = "/Images/Questions/" + questionDB.QuestionImage;
 
             var allAnswers = dbContext.Answers
