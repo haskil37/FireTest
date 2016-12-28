@@ -62,7 +62,7 @@ else
                 int step = Model.QuestionAnswers.Count() / 2;
                 <div class="center textback noselect">Зажмите левой кнопкой мыши строчку из левого столбца и перетащите</div>
                 <div class="col-6">
-                    <ol class="sortable">
+                    <ol class="sortable" id="left">
                         @for (int i = 0; i < step; i++)
                         {
                             <li>
@@ -79,7 +79,7 @@ else
                     </ol>
                 </div>
                 <div class="col-offset-6">
-                    <ol class="unsortable">
+                    <ol class="unsortable" id="right">
                         @for (int i = step; i < step * 2; i++)
                         {
                             <li>
@@ -101,6 +101,15 @@ else
     <input type="submit" class="button center" value="Ответить" id="Answer" />
     <script>
         MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'question']);
-        $('.sortable').sortable();
+        $(".sortable").sortable(height());
+        $('.sortable').on('mousemove', function () {
+            height();
+        })
+        function height() {
+            $("#left > li").eq(0).outerHeight($('#right > li').eq(0).height() + 12);
+            $("#left > li").eq(1).outerHeight($('#right > li').eq(1).height() + 12);
+            $("#left > li").eq(2).outerHeight($('#right > li').eq(2).height() + 12);
+            $("#left > li").eq(3).outerHeight($('#right > li').eq(3).height() + 12);
+        };
     </script>
 }
