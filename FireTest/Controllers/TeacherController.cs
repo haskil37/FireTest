@@ -960,7 +960,7 @@ namespace FireTest.Controllers
                 userSubjects = temp.Split('|').ToList();
 
             var question = dbContext.Questions.Find(id); //Данные вопроса
-            if (!string.IsNullOrEmpty(question.QuestionImage))
+            if (!string.IsNullOrEmpty(question.QuestionImage) && question.QuestionImage != "NULL")
                 ViewBag.QuestionImage = question.QuestionImage;
 
             var tempSubjects = dbContext.Subjects.Where(u => userSubjects.Contains(u.Id.ToString())).Select(u => new
