@@ -5,8 +5,8 @@
 @Styles.Render("~/Content/administrator")
 <div class="substrate">
     <p class="text-success">@ViewBag.Message</p>
-    <div class="row"><h3>Заголовок</h3></div>    
-    <div class="row">Тут какой-то текст хотели</div>
+    <div class="row"><h3>Создать тест по дисциплине</h3></div>    
+    <div class="row">Данный раздел позволяет выбрать вопросы из базы данных для создания теста по определенной дисциплине</div>
     <div class="row" id="Tests">
         <table>
             <tr>
@@ -34,14 +34,14 @@
         <br />
         <br />
         <div class="row">
-            <a href="CreateTest" class="button">Создать тест по дисциплине</a>
+            <a href="CreateTest" class="button">Создать тест</a>
         </div>
     </div>
 </div>
 @{ Html.RenderAction("IndexExams", "Teacher"); }
 <div class="substrate">
     <div class="row"><h3>База вопросов</h3></div>
-    <div class="row">Тут какой-то текст хотели</div>
+    <div class="row">Добавляйте, удаляйте, редактируйте вопросы по дисциплинам</div>
     <div class="row">
         <br />
         <br />

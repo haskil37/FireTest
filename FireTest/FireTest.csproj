@@ -222,6 +222,14 @@
     <Compile Include="Migrations\201612141240328_addQtoExam.Designer.cs">
       <DependentUpon>201612141240328_addQtoExam.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201702261409475_updateUserInfo.cs" />
+    <Compile Include="Migrations\201702261409475_updateUserInfo.Designer.cs">
+      <DependentUpon>201702261409475_updateUserInfo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201702261913235_regionFix.cs" />
+    <Compile Include="Migrations\201702261913235_regionFix.Designer.cs">
+      <DependentUpon>201702261913235_regionFix.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Decliner.cs" />
@@ -296,6 +304,7 @@
     <Content Include="Content\reset.css" />
     <Content Include="Content\select.mp3" />
     <Content Include="Content\select.png" />
+    <Content Include="Content\snils.jpg" />
     <Content Include="Content\statistic.css" />
     <Content Include="Content\themes\base\accordion.css" />
     <Content Include="Content\themes\base\all.css" />
@@ -31453,6 +31462,8 @@
     <Content Include="Views\Examination\Index.cshtml" />
     <Content Include="Views\Examination\End.cshtml" />
     <Content Include="Views\Examination\Questions.cshtml" />
+    <Content Include="Views\Home\Mobile.cshtml" />
+    <Content Include="Views\Statistics\IndexUser.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -31491,6 +31502,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201612141240328_addQtoExam.resx">
       <DependentUpon>201612141240328_addQtoExam.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702261409475_updateUserInfo.resx">
+      <DependentUpon>201702261409475_updateUserInfo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702261913235_regionFix.resx">
+      <DependentUpon>201702261913235_regionFix.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

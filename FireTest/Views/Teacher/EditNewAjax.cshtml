@@ -14,7 +14,9 @@
         </script>
     }
     @Html.Hidden("page", (int)ViewBag.page)
-    <div class="row textback center">Остальные вопросы</div>
+    <div class="row">
+        <div class="textback center">Остальные вопросы</div>
+    </div>
     <br />
     <div class="row">
         <div class="col-2">Дисциплина</div>
@@ -29,7 +31,7 @@
         </div>
     </div>
     <div class="row">
-        <h3>Поиск<span class="search"></span><input id="SearchStringNew" name="SearchString" type="text" value="@ViewBag.CurrentFilter"></h3>
+        Поиск<span class="search"></span><input id="SearchStringNew" name="SearchString" type="text" value="@ViewBag.CurrentFilter">
     </div>
     <div class="row">
         <table>

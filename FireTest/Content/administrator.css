@@ -95,16 +95,21 @@ th {
 .No button,
 .Yes button {
     font-size: 20px;
-    color: rgb(196, 189, 151);
     background: none;
     border: none;
     outline: none;
     cursor: pointer;
     vertical-align: middle;
 }
+.No button {
+    color:  rgb(255, 115, 0);
+}
+.Yes button {
+    color:  rgb(114, 191, 230);
+}
 .No button:hover,
 .Yes button:hover {
-    color: rgb(255, 115, 0);
+    color: rgb(196, 189, 151);
 }
 .No button:before,
 .Yes button:before {
@@ -357,7 +362,4 @@ input.datepicker {
 .datepicker table tr td.old,
 .datepicker table tr td.new {
     color: #777777;
-}
-#Tests{
-    font-size: 18px;
 }

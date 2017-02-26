@@ -24,20 +24,20 @@
     <div class="row">
         <div class="center textback">Укажите минимальный процент для получения оценки</div>
         <br />
-        <div class="col-1 right">
+        <div class="col-1 left">
             Для 5
         </div>
         <div class="col-2">
             <input name="Eval" type="text" class="input" value="@ViewBag.Eval5">
         </div>
-        <div class="col-1 right">
-            Для 4
+        <div class="col-1 left">
+            &nbsp;&nbsp;Для 4
         </div>
         <div class="col-2">
             <input name="Eval" type="text" class="input" value="@ViewBag.Eval4">
         </div>
-        <div class="col-1 right">
-            Для 3
+        <div class="col-1 left">
+            &nbsp;&nbsp;Для 3
         </div>
         <div class="col-2">
             <input name="Eval" type="text" class="input" value="@ViewBag.Eval3">
@@ -48,9 +48,11 @@
     </div>
 
     <div class="row">
-        <h3>Поиск<span class="search"></span><input id="SearchStringOld" name="SearchString" type="text" value="@ViewBag.CurrentFilter"></h3>
+        <div class="textback center">Вопросы в тесте</div>
     </div>
-    <div class="row textback center">Вопросы в тесте</div>
+    <div class="row">
+        Поиск<span class="search"></span><input id="SearchStringOld" name="SearchString" type="text" value="@ViewBag.CurrentFilter">
+    </div>
     <br />
     <div class="row">
         <table>

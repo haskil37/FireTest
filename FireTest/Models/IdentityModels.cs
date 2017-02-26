@@ -30,6 +30,9 @@ namespace FireTest.Models
         public int IdBattleInvite { get; set; }
         public System.DateTime LastActivity { get; set; }
         public bool Update { get; set; }
+        public int Age { get; set; }
+        public bool Sex { get; set; }
+        public string Region { get; set; }
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
             // Обратите внимание, что authenticationType должен совпадать с типом, определенным в CookieAuthenticationOptions.AuthenticationType

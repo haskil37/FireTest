@@ -54,6 +54,37 @@
                     @Html.ValidationMessageFor(m => m.Year, "", new { @class = "text-danger" })
                 </div>
             </div>
+            <div class="row">
+                @Html.LabelFor(m => m.Age, new { @class = "col-4" })
+                <div class="col-8">
+                    @Html.TextBoxFor(m => m.Age)
+                    <span class="pen"></span>
+                    @Html.ValidationMessageFor(m => m.Age, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="row">
+                @Html.LabelFor(m => m.Sex, new { @class = "col-4" })
+                <div class="col-8">
+                    <input id="SexM" type="radio" name="Sex" value="true" checked="checked" />
+                    <label for="SexM">
+                        <span>
+                            М
+                        </span>
+                    </label>
+                    <input id="SexF" type="radio" name="Sex" value="false" />
+                    <label for="SexF">
+                        <span>
+                            Ж
+                        </span>
+                    </label>
+                </div>
+            </div>
+            <div class="row">
+                @Html.LabelFor(m => m.Region, new { @class = "col-4" })
+                <div class="col-8">
+                    @Html.DropDownList("Region", ViewBag.Region as SelectList)
+                </div>
+            </div>
             if (ViewBag.FinalGroup != "Преподаватель")
             {
                 <div class="row">
@@ -64,7 +95,6 @@
                 </div>
                 <div class="row">
                     @Html.LabelFor(m => m.Group, new { @class = "col-4" })
-                    <div class="snils">(без года обучения и факультета)</div>
                     <div class="col-8">
                         @Html.TextBoxFor(m => m.Group)
                         <span class="pen"></span>
@@ -93,6 +123,7 @@
 <div id="popup_avatar"></div>
 @section scripts
 {
+    @Scripts.Render("~/bundles/jquerymask")
     <script>
         @*$('#Faculty').on('change', function() {
             $("#Group").empty();
@@ -128,6 +159,8 @@
                 }
             }
         })*@
+        $("#Year").inputmask("9999");
+        $("#Age").inputmask("9999");
         $("#Year").focusout(function (e) {
             var year = $("#Year").val();
             if (year <= 1966) {

@@ -18,8 +18,9 @@
         </div>
     </div>
 }
+<div class="row center"><h3>Выберите вид тестирования</h3></div>
 <div class="spoiler">
-    <span class="headline">Выберите вид тестирования по квалификации</span>
+    <span class="headline">Тестирование по уровню подготовки</span>
 </div>
 <div class="-opened">
     <div class="spoiler">
@@ -70,36 +71,10 @@
 </div>
 
 <div class="spoiler">
-    <span class="headline">Выберите вид тестирования по дисциплинам</span>
+    <span class="headline">Тестирование по дисциплинам</span>
 </div>
 <div class="-closed">
     @{ Html.RenderAction("Departments", "Home"); }
 </div>
-
-<div class="spoiler">
-    <span class="headline">Ваша статистика</span>
-</div>
-<div class="-opened">
-    @{ Html.RenderAction("UserStatistics", "Statistics"); }
-</div>
+<div class="row"></div>
 <div style="width:0px;height:0px;visibility:collapse;overflow:hidden;">@Html.Raw(ViewBag.Images)</div>
-@section scripts
-{
-    @Scripts.Render("~/bundles/statistic")
-    <script>
-        var chartB = document.getElementById("chartB");
-        var PieChartB = new Chart(chartB, configB);
-        var chartA = document.getElementById("chartA");
-        var PieChartA = new Chart(chartA, configA);
-        var chartQ1 = document.getElementById("chartQ1");
-        var PieChartQ1 = new Chart(chartQ1, configQ1);
-        var chartQ2 = document.getElementById("chartQ2");
-        var PieChartQ2 = new Chart(chartQ2, configQ2);
-        var chartQ3 = document.getElementById("chartQ3");
-        var PieChartQ3 = new Chart(chartQ3, configQ3);
-        var chartQ4 = document.getElementById("chartQ4");
-        var PieChartQ4 = new Chart(chartQ4, configQ4);
-        var chartQ5 = document.getElementById("chartQ5");
-        var PieChartQ5 = new Chart(chartQ5, configQ5);
-    </script>
-}

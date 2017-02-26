@@ -21,8 +21,18 @@ namespace FireTest.Models
         [Display(Name = "Год поступления")]
         public string Year { get; set; }
         [Required]
-        [Display(Name = "Учебная группа (без года обучения и факультета)")]
+        [Display(Name = "Учебная группа")]
         public string Group { get; set; }
+        [Required]
+        [StringLength(4, ErrorMessage = "Год рождения должен состоять из 4 цифр.", MinimumLength = 4)]
+        [Display(Name = "Год рождения")]
+        public string Age { get; set; }
+        [Required]
+        [Display(Name = "Пол")]
+        public string Sex { get; set; }
+        [Required]
+        [Display(Name = "Регион поступления")]
+        public string Region { get; set; }
     }
 
     public class ChangePasswordViewModel
@@ -33,7 +43,7 @@ namespace FireTest.Models
         public string OldPassword { get; set; }
 
         [Required]
-        [StringLength(100, ErrorMessage = "Значение {0} должно содержать символов не менее: {2}.", MinimumLength = 6)]
+        [StringLength(100, ErrorMessage = "Пароль должен содержать не менее 8 символов.", MinimumLength = 8)]
         [DataType(DataType.Password)]
         [Display(Name = "Новый пароль")]
         public string NewPassword { get; set; }

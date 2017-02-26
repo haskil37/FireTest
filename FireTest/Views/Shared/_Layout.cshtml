@@ -10,6 +10,9 @@
     @Styles.Render("~/Content/general")
     <title>FireTest</title>
     <script type="text/x-mathjax-config">
+        if (screen.width <= 500) {
+        window.location = '@Url.Action("Mobile")';
+        };
         MathJax.Hub.Config({
         showMathMenu: false,
         showMathMenuMSIE: false,

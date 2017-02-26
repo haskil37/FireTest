@@ -2,41 +2,9 @@
     ViewBag.Title = "Статистика";
 }
 <div class="row">
-    <a href="Groups" class="button">Статистика групп</a>
+    <div class="textback">Ваша статистика</div>
 </div>
-<br />
-<br />
-<br />
-<div class="row">
-    <a href="Courses" class="button">Статистика курсов</a>
-</div>
-<br />
-<br />
-<br />
-<div class="row">
-    <a href="Users" class="button">Статистика студентов</a>
-</div>
-<br />
-<br />
-<br />
-<div class="row">
-    <a href="CompareGroups" class="button">Сравнение групп</a>
-</div>
-<br />
-<br />
-<br />
-<div class="row">
-    <a href="CompareCourses" class="button">Сравнение курсов</a>
-</div>
-<br />
-<br />
-<br />
-<div class="spoiler">
-    <span class="headline">Ваша статистика</span>
-</div>
-<div class="-closed">
-    @{ Html.RenderAction("UserStatistics", "Statistics"); }
-</div>
+@{ Html.RenderAction("UserStatistics", "Statistics"); }
 @section scripts
 {
     @Scripts.Render("~/bundles/statistic")

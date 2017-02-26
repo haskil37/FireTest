@@ -58,6 +58,10 @@ namespace FireTest.Controllers
             }
             return IdentityResult.Success;
         }
+        public ActionResult Mobile()
+        {
+            return View();
+        }
         private bool NewUser(string userID)
         {
             ApplicationUser user = dbContext.Users.Find(User.Identity.GetUserId());

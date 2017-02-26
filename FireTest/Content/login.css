@@ -140,6 +140,7 @@ hr {
     outline: none;
     font-size: 100%;
     white-space: normal;
+    min-width:200px;
 }
 .button:hover {
     background-color: rgba(255, 115, 0, 0.7);
@@ -207,9 +208,9 @@ input[type="checkbox"]:checked ~ span:before {
 }
 .login {
     margin-top: 50px;
-    background: -moz-linear-gradient(top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.2) 100%);
-    background: -webkit-linear-gradient(top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.2) 100%);
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.2) 100%);
+    background: -moz-linear-gradient(top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.8) 100%);
+    background: -webkit-linear-gradient(top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.8) 100%);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.8) 100%);
     filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#4d000000', endColorstr='#4dffffff', GradientType=0);
     -webkit-box-shadow: 7px 9px 64px 1px rgba(0, 0, 0, 1);
     -moz-box-shadow: 7px 9px 64px 1px rgba(0, 0, 0, 1);
@@ -226,4 +227,31 @@ input[type="checkbox"]:checked ~ span:before {
     bottom: 0;
     padding-right: 10px;
     right: 0;
+}
+.bottom{
+    position: fixed;
+    bottom: 0;
+}
+/*Popup*/
+.popup {
+    transition: opacity 500ms;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.7);
+    position: relative;
+    transition: all 5s ease-in-out;
+    color: rgb(196, 189, 151);
+    min-height: 450px;
+}
+.popup .close {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    transition: all 200ms;
+    font-size: 30px;
+    font-weight: bold;
+    text-decoration: none;
+}
+.popup .close:hover {
+    color: #e94d76;
 }

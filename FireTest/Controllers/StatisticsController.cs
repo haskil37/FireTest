@@ -17,6 +17,10 @@ namespace FireTest.Controllers
         {
             return View();
         }
+        public ActionResult IndexUser()
+        {
+            return View();
+        }        
         public PartialViewResult UserStatistics()
         {
             string userId = User.Identity.GetUserId();
