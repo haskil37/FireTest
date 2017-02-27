@@ -11,8 +11,14 @@
     <title>FireTest</title>
 </head>
 <body>
+    @RenderBody()
     <div class="row bottom">
-            @RenderBody()
+        <div class="col-offset-3 col-1">
+            <a href="Login" class="button">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Вход&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>   
+        </div>
+        <div class="col-offset-3 col-1">
+            <a href="Register" class="button"><span>Регистрация</span></a>
+        </div>
     </div>
     <div class="music">
         <span id="play-button" onclick="Audio_Stop()" class="pause"></span>

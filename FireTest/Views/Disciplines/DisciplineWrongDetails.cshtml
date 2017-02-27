@@ -1,0 +1,104 @@
+﻿@model List<FireTest.Models.TestWrongAnswersDetails>
+@{
+    ViewBag.Title = "Детализация неправильных ответов";
+}
+@foreach (var item in Model)
+{
+    <div class="row">
+        <div class="answersback">
+            <div class="row">
+                Текст вопроса: @item.Question
+                <hr />
+            </div>
+            <div class="row">
+                @if (item.TypeQuestion == "standart")
+                {
+                    <div class="col-6">
+                        <div class="rating-left">
+                            <div class="row"><h3>Правильные ответы:</h3></div>
+                            <div class="row">
+                                <ol>
+                                    @foreach (var item2 in item.CorrectAnswers)
+                                    {
+                                        <li>
+                                            <span>@item2</span>
+                                        </li>
+                                    }
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="rating-right">
+                            <div class="row"><h3>Неправильные ответы:</h3></div>
+                            <div class="row">
+                                <ol>
+                                    @foreach (var item2 in item.WrongAnswers)
+                                    {
+                                        <li>
+                                            <span>@item2</span>
+                                        </li>
+                                    }
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if (item.TypeQuestion == "sequence")
+                {
+                    <div class="rating-left">
+                        <div class="row center"><h3>Правильная последовательность:</h3></div>
+                        <div class="row">
+                            <ol>
+                                @foreach (var item2 in item.CorrectAnswers)
+                                {
+                                    <li>
+                                        <span>@item2</span>
+                                    </li>
+                                }
+                            </ol>
+                        </div>
+                    </div>
+                }
+                @if (item.TypeQuestion == "conformity")
+                {
+                    <div class="row center"><h3>Правильное соответствие:</h3></div>
+                    <div class="col-6">
+                        <div class="rating-left">
+                            <div class="row">
+                                <ol>
+                                    @foreach (var item2 in item.CorrectAnswers)
+                                    {
+                                        <li>
+                                            <span>@item2</span>
+                                        </li>
+                                    }
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="rating-right">
+                            <div class="row">
+                                <ol>
+                                    @foreach (var item2 in item.WrongAnswers)
+                                    {
+                                        <li>
+                                            <span>@item2</span>
+                                        </li>
+                                    }
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+        </div>
+    </div>
+}
+<br />
+<br />
+<div class="row center">
+    <a href="/Home/" class="button"><span>На главную</span></a>
+</div>

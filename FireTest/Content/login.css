@@ -5,10 +5,11 @@
 }
 body {
     background: #000 url('login.jpg') no-repeat fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
+    -webkit-background-size: contain;
+    -moz-background-size: contain;
+    -o-background-size: contain;
+    background-size: contain;
+    background-position: center;
     color: rgb(196, 189, 151);
     font-size: 18px;
     font-family: 'Helvetica', 'Arial', sans-serif;
@@ -230,28 +231,34 @@ input[type="checkbox"]:checked ~ span:before {
 }
 .bottom{
     position: fixed;
-    bottom: 0;
+    bottom: 50px;
 }
-/*Popup*/
-.popup {
-    transition: opacity 500ms;
-    padding: 20px;
-    background: rgba(0, 0, 0, 0.7);
-    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.7);
-    position: relative;
-    transition: all 5s ease-in-out;
-    color: rgb(196, 189, 151);
-    min-height: 450px;
+.top{
+    position: fixed;
+    top: 150px;
 }
-.popup .close {
+.snils-help{
+    font-size: 18px;
+    padding: 0px 5px;
+    border: solid 1px;
+    border-radius: 50%;
+    margin-right: 5px;
+    background: rgba(114, 191, 230, 0.7);
+    cursor: pointer;
+}
+.snils-help:hover{
+    background: rgba(255, 115, 0, 0.7)
+}
+
+.snils-help .tooltiptext {
+    visibility: hidden;
+    width: 120px;
     position: absolute;
-    top: 5px;
-    right: 5px;
-    transition: all 200ms;
-    font-size: 30px;
-    font-weight: bold;
-    text-decoration: none;
+    z-index: 1;
+    top: -5px;
+    right: 105%;
 }
-.popup .close:hover {
-    color: #e94d76;
+
+.snils-help:hover .tooltiptext {
+    visibility: visible;
 }

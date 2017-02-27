@@ -41,6 +41,11 @@
             {
                 <div class="row"><h5>@Model[i].Subject - @Model[i].Count</h5></div>
             }
+            <hr />
+            <div class="row center">
+                <a href="@Url.Action("QualificationWrongDetails", new { id = ViewBag.Details, @class="button-Cancel" })">Посмотреть детализацию неправильных ответов</a>
+            </div>
+            <hr />
             <div class="row">
                 <b>
                     Время тестирования:

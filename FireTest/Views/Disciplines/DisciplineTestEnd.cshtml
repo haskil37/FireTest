@@ -35,6 +35,11 @@
             <div class="row"><h5><b>Всего вопросов: @ViewBag.Count</b></h5></div>
             <div class="row"><h5><b>Правильных ответов: @ViewBag.Right</b></h5></div>
             <div class="row"><h5><b>Неправильных ответов: @(ViewBag.Count - ViewBag.Right)</b></h5></div>
+            <hr />
+            <div class="row center">
+                <a href="@Url.Action("DisciplineWrongDetails", new { id = ViewBag.Details, @class="button-Cancel" })">Посмотреть детализацию неправильных ответов</a>
+            </div>
+            <hr />
         </div>
     </div>
 </div>

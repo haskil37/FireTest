@@ -1,20 +1,23 @@
-﻿@model FireTest.Models.RegisterViewModel
-@{
+﻿@{
     Layout = "~/Views/Shared/_Login.cshtml";
     ViewBag.Title = "Завершение регистрации";
 }
-<div class="login">
-    <div class="row center">
-        Подтвержение почты
-    </div>
-    <hr />
-    <div class="row center">
-        На электронный адрес @ViewBag.Mail отправлено письмо.
-        Перейдите по ссылке в письме для подтверждения своей почты.
-    </div>
-    <div class="row center">
-        Зачем подтверждать почту?
-        <hr />
-        Подтверждённая почта необходима для быстрого и самостоятельного восстановления доступа (логина и пароля).
+<div class="row top">
+    <div class="col-offset-3 col-6">
+        <div class="login">
+            <div class="row center">
+                Подтвержение почты
+            </div>
+            <hr />
+            <div class="row center">
+                На электронный адрес @ViewBag.Mail отправлено письмо.
+                Перейдите по ссылке в письме для подтверждения своей почты.
+            </div>
+            <div class="row center">
+                Зачем подтверждать почту?
+                <hr />
+                Подтверждённая почта необходима для быстрого и самостоятельного восстановления доступа (логина и пароля).
+            </div>
+        </div>
     </div>
 </div>

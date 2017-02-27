@@ -31462,8 +31462,11 @@
     <Content Include="Views\Examination\Index.cshtml" />
     <Content Include="Views\Examination\End.cshtml" />
     <Content Include="Views\Examination\Questions.cshtml" />
+    <Content Include="Views\Account\Index.cshtml" />
     <Content Include="Views\Home\Mobile.cshtml" />
     <Content Include="Views\Statistics\IndexUser.cshtml" />
+    <Content Include="Views\Qualification\QualificationWrongDetails.cshtml" />
+    <Content Include="Views\Disciplines\DisciplineWrongDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

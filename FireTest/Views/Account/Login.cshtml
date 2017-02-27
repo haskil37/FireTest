@@ -4,58 +4,49 @@
     Layout = "~/Views/Shared/_Login.cshtml";
     ViewBag.Title = "Выполнить вход";
 }
-<div class="col-offset-3 col-1">
-    <input type="submit" value="Вход" class="button" />
-</div>
-<div class="col-offset-3 col-1">
-    <input type="submit" value="Регистрация" class="button" />
-</div>
-<div id="logreg">
-    <div class="popup">
-        <a class="close" href="">&times;</a>
-        <div class="row center">
-            <div class="login">
-                Вход / @Html.ActionLink("Регистрация", "Register")
-                <hr /><br />
-                @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form" }))
+<div class="row top">
+    <div class="col-offset-3 col-6">
+        <div class="login">
+            Вход
+            <hr /><br />
+            @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form" }))
             {
-                    @Html.AntiForgeryToken()
-                    <span class="text-danger">@ViewBag.Message</span>
-                    if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
-                    {
-                        @Html.Raw(HttpUtility.HtmlDecode(Html.ValidationSummary(true, "", new { @class = "text-danger" }).ToHtmlString()))
-                    }
-                    <div class="row">
-                        <div class="col-4">
-                            @Html.LabelFor(m => m.Snils, new { @class = "right" })
-                        </div>
-                        <div class="col-8">
-                            @Html.TextBoxFor(m => m.Snils)
-                            @Html.ValidationMessageFor(m => m.Snils, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-4">
-                            @Html.LabelFor(m => m.Password, new { @class = "right" })
-                        </div>
-                        <div class="col-8">
-                            @Html.PasswordFor(m => m.Password)
-                            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-                    <div class="row center">
-                        @Html.CheckBoxFor(m => m.RememberMe)
-                        <span></span>
-                        @Html.LabelFor(m => m.RememberMe)
-                    </div>
-                    <div class="row center">
-                        <input type="submit" value="Выполнить вход" class="button" />
-                    </div>
-                    <div class="row center">
-                        @Html.ActionLink("Напомнить пароль", "ForgotPassword", null, new { @class = "button-Cancel" })
-                    </div>
+                @Html.AntiForgeryToken()
+                <span class="text-danger">@ViewBag.Message</span>
+                if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
+                {
+                    @Html.Raw(HttpUtility.HtmlDecode(Html.ValidationSummary(true, "", new { @class = "text-danger" }).ToHtmlString()))
                 }
-            </div>
+                <div class="row">
+                    <div class="col-4">
+                        <label class="right" for="Snils"><span class="snils-help">?<span class="tooltiptext"><img src="~/Content/snils.jpg" /></span></span>СНИЛС</label>
+                    </div>
+                    <div class="col-8">
+                        @Html.TextBoxFor(m => m.Snils)
+                        @Html.ValidationMessageFor(m => m.Snils, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        @Html.LabelFor(m => m.Password, new { @class = "right" })
+                    </div>
+                    <div class="col-8">
+                        @Html.PasswordFor(m => m.Password)
+                        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="row center">
+                    @Html.CheckBoxFor(m => m.RememberMe)
+                    <span></span>
+                    @Html.LabelFor(m => m.RememberMe)
+                </div>
+                <div class="row center">
+                    <input type="submit" value="Выполнить вход" class="button" />
+                </div>
+                <div class="row center">
+                    @Html.ActionLink("Напомнить пароль", "ForgotPassword", null, new { @class = "button-Cancel" })
+                </div>
+            }
         </div>
     </div>
 </div>

@@ -272,10 +272,112 @@ namespace FireTest.Controllers
             userBusy.Rating += (right.Count() / 10.0) + (right.Count() * 100 / count) / 10.0;
             dbContext.SaveChanges();
             ViewBag.Avatar = "/Images/Avatars/" + userBusy.Avatar;
+            ViewBag.Details = disciplineTest.id;
 
             return View();
         }
+        public ActionResult DisciplineWrongDetails(int id)
+        {
+            string user = User.Identity.GetUserId();
+            var disciplineTest = dbContext.SelfyTestDisciplines
+                .Where(u => u.IdUser == user)
+                .Where(u => u.Id == id)
+                .Where(u => u.End == true)
+                .Select(u => new {
+                    rightOrWrong = u.RightOrWrong,
+                    questions = u.Questions,
+                    answers = u.Answers
+                }).SingleOrDefault();
+            if (disciplineTest == null) //Если нет теста, то на главную
+                return RedirectToAction("Index", "Home");
+            int questions = disciplineTest.questions.Split('|').Count();
+            int answers = disciplineTest.answers.Split('|').Count();
 
+            //Берем неправильные ответы и из каких они дисциплин
+            List<string> wrong = new List<string>();
+            List<string> idQuestions = disciplineTest.questions.Split('|').ToList();
+            int countId = 0;
+            foreach (string item in disciplineTest.rightOrWrong.Split('|').ToList())
+            {
+                if (item == "0")
+                    wrong.Add(idQuestions[countId]);
+                countId++;
+            }
+            List<TestWrongAnswersDetails> AllTestWrongAnswersDetails = new List<TestWrongAnswersDetails>();
+            if (wrong.Count() > 0)
+            {
+                foreach (string item in wrong)
+                {
+                    int temp = Convert.ToInt32(item);
+                    var wrongDetails = new TestWrongAnswersDetails();
+                    wrongDetails.Question = dbContext.Questions.Find(temp).QuestionText;
+                    List<string> idCorrect = dbContext.Questions.Find(temp).IdCorrect.Split(',').ToList();
+
+                    if (idCorrect[0][0] == '~') //Если вопрос на последовательность
+                    {
+                        wrongDetails.TypeQuestion = "sequence";
+                        var allAnswers = dbContext.Answers.Where(u => u.IdQuestion == temp).Select(u => new {
+                            answerText = u.AnswerText,
+                            answerId = u.Id
+                        }).ToList();
+                        idCorrect[0] = idCorrect[0].Remove(0, 1);
+
+                        var correctAnswers = new List<string>();
+                        for (int i = 0; i < idCorrect.Count(); i++)
+                        {
+                            //var y = allAnswers.Find(u => u.answerId.ToString() == idCorrect[i]).answerText;
+                            var text = allAnswers.Where(u => u.answerId.ToString() == idCorrect[i]).Select(u => u.answerText).SingleOrDefault();
+                            correctAnswers.Add(text);
+                        }
+                        wrongDetails.CorrectAnswers = correctAnswers;
+                        AllTestWrongAnswersDetails.Add(wrongDetails);
+                    }
+                    else if (idCorrect[0][0] == '#') //Если вопрос на соответствие
+                    {
+                        wrongDetails.TypeQuestion = "conformity";
+                        var allAnswers = dbContext.Answers.Where(u => u.IdQuestion == temp).Select(u => new {
+                            answerText = u.AnswerText,
+                            answerId = u.Id
+                        }).ToList();
+                        idCorrect[0] = idCorrect[0].Remove(0, 1);
+
+                        var correctAnswers = new List<string>();
+                        var wrongAnswers = new List<string>();
+                        for (int i = 0; i < idCorrect.Count; i++)
+                        {
+                            var leftRight = idCorrect[i].Split('=');
+                            correctAnswers.Add(allAnswers.Where(u => u.answerId.ToString() == leftRight[0]).Select(u => u.answerText).SingleOrDefault());
+                            wrongAnswers.Add(allAnswers.Where(u => u.answerId.ToString() == leftRight[1]).Select(u => u.answerText).SingleOrDefault());
+                        }
+                        wrongDetails.WrongAnswers = wrongAnswers;
+                        wrongDetails.CorrectAnswers = correctAnswers;
+                        AllTestWrongAnswersDetails.Add(wrongDetails);
+                    }
+                    else
+                    {
+                        wrongDetails.TypeQuestion = "standart";
+                        var allAnswers = dbContext.Answers.Where(u => u.IdQuestion == temp).Select(u => new {
+                            answerText = u.AnswerText,
+                            answerId = u.Id
+                        }).ToList();
+
+                        var correctAnswers = new List<string>();
+                        var wrongAnswers = new List<string>();
+                        foreach (var answersItem in allAnswers)
+                        {
+                            if (idCorrect.Contains(answersItem.answerId.ToString()))
+                                correctAnswers.Add(answersItem.answerText);
+                            else
+                                wrongAnswers.Add(answersItem.answerText);
+                        }
+                        wrongDetails.WrongAnswers = wrongAnswers;
+                        wrongDetails.CorrectAnswers = correctAnswers;
+                        AllTestWrongAnswersDetails.Add(wrongDetails);
+                    }
+                }
+            }
+            return View(AllTestWrongAnswersDetails);
+        }
         #region Вспомогательные приложения
         protected override void Dispose(bool disposing)
         {

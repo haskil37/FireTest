@@ -53,6 +53,12 @@ namespace FireTest.Controllers
         //
         // GET: /Account/Login
         [AllowAnonymous]
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+        [AllowAnonymous]
         public ActionResult Login(string returnUrl, string message = "")
         {
             ViewBag.ReturnUrl = returnUrl;

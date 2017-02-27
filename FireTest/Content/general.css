@@ -783,6 +783,18 @@ li.sortable-placeholder {
     border-bottom: 1px dashed rgb(196, 189, 151);
     padding-bottom: 5px;
 }
+.answersback{
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 15px;
+    padding: 15px 15px 0px 15px;
+    font-size:20px;
+}
+.answersback ol{
+    font-size:20px;
+}
+.answersback ol li{
+    padding-bottom: 5px;
+}
 .rating-left {
     margin-right: 10px;
 }
