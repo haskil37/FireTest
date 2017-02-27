@@ -1531,8 +1531,11 @@ namespace FireTest.Controllers
                 .Where(u => u.Course != 100)
                 .Select(u => new SelectListItem()
                 {
-                    Text = u.Course + u.Group,
-                    Value = u.Course + u.Group,
+                    //Text = u.Course + u.Group,
+                    //Value = u.Course + u.Group,
+                    Text = u.Group,
+                    Value = u.Group,
+
                 })
                 .Distinct().ToList();
             return View(new ExaminationViewModel() { Date = DateTime.Now });
@@ -1556,8 +1559,10 @@ namespace FireTest.Controllers
                     .Where(u => u.Course != 100)
                     .Select(u => new SelectListItem()
                     {
-                        Text = u.Course + u.Group,
-                        Value = u.Course + u.Group,
+                        //Text = u.Course + u.Group,
+                        //Value = u.Course + u.Group,
+                        Text = u.Group,
+                        Value = u.Group,
                     })
                     .Distinct().ToList();
 
@@ -1575,7 +1580,8 @@ namespace FireTest.Controllers
             dbContext.Examinations.Add(exam);
             dbContext.SaveChanges();
             var allUsers = dbContext.Users.
-                Where(u => u.Course + u.Group == Group).
+                                //Where(u => u.Course + u.Group == Group).
+                Where(u => u.Group == Group).
                 Select(u => u.Id).ToList();
             foreach (var item in allUsers)
             {
@@ -1614,9 +1620,12 @@ namespace FireTest.Controllers
             ViewBag.Group = dbContext.Users
                 .Select(u => new SelectListItem()
                 {
-                    Text = u.Course + u.Group,
-                    Value = u.Course + u.Group,
-                    Selected = u.Course + u.Group == exam.Group
+                    //Text = u.Course + u.Group,
+                    //Value = u.Course + u.Group,
+                    //Selected = u.Course + u.Group == exam.Group
+                    Text = u.Group,
+                    Value = u.Group,
+                    Selected = u.Group == exam.Group
                 })
                 .Distinct().ToList();
             ViewBag.Id = exam.Id;
@@ -1641,8 +1650,10 @@ namespace FireTest.Controllers
                 ViewBag.Group = dbContext.Users
                     .Select(u => new SelectListItem()
                     {
-                        Text = u.Course + u.Group,
-                        Value = u.Course + u.Group,
+                        //Text = u.Course + u.Group,
+                        //Value = u.Course + u.Group,
+                        Text = u.Group,
+                        Value = u.Group,
                     })
                     .Distinct().ToList();
 
@@ -1660,7 +1671,8 @@ namespace FireTest.Controllers
 
             dbContext.SaveChanges();
             var allUsers = dbContext.Users.
-                Where(u => u.Course + u.Group == Group).
+                                //Where(u => u.Course + u.Group == Group).
+                Where(u => u.Group == Group).
                 Select(u => u.Id).ToList();
             foreach (var item in allUsers)
             {
@@ -1753,7 +1765,8 @@ namespace FireTest.Controllers
 
             List<UsersForAdmin> model = new List<UsersForAdmin>();
             string examGroup = dbContext.Examinations.Find(id).Group;
-            var users = dbContext.Users.Where(u => u.Course + u.Group == examGroup);
+            //var users = dbContext.Users.Where(u => u.Course + u.Group == examGroup);
+            var users = dbContext.Users.Where(u => u.Group == examGroup);
 
             if (!String.IsNullOrEmpty(searchString))
             {

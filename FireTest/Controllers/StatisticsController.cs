@@ -98,7 +98,8 @@ namespace FireTest.Controllers
         }
         public ActionResult Groups()
         {
-            var groups = dbContext.Users.Where(u => u.Course != 100).Select(u => u.Course + u.Group).Distinct().ToList();
+            //var groups = dbContext.Users.Where(u => u.Course != 100).Select(u => u.Course + u.Group).Distinct().ToList();
+            var groups = dbContext.Users.Where(u => u.Course != 100).Select(u => u.Group).Distinct().ToList();
             if (groups == null)
                 RedirectToAction("Index", "Home");
             ViewBag.Groups = groups //Выпадающий список групп
@@ -119,7 +120,8 @@ namespace FireTest.Controllers
                     case 0:
                         var users = dbContext.Users
                             .Where(u => u.Course != 100)
-                            .Where(u => u.Course + u.Group == Groups)
+                                                        //.Where(u => u.Course + u.Group == Groups)
+                            .Where(u => u.Group == Groups)
                             .Select(u => new
                             {
                                 BattleCount = u.BattleCount,
@@ -140,7 +142,8 @@ namespace FireTest.Controllers
                     case 1:
                         var users2 = dbContext.Users
                             .Where(u => u.Course != 100)
-                            .Where(u => u.Course + u.Group == Groups)
+                            //.Where(u => u.Course + u.Group == Groups)
+                            .Where(u => u.Group == Groups)
                             .Select(u => new
                             {
                                 AnswersCount = u.AnswersCount,
@@ -165,7 +168,9 @@ namespace FireTest.Controllers
             {
                 var users = dbContext.Users
                     .Where(u => u.Course != 100)
-                    .Where(u => u.Course + u.Group == Groups)
+                    .Where(u => u.Group == Groups)
+                                        //.Where(u => u.Course + u.Group == Groups)
+
                     .Select(u => u.Id).ToList();
                 int range = 0;
 
@@ -254,7 +259,8 @@ namespace FireTest.Controllers
         }
         public ActionResult Courses()
         {
-            var courses = dbContext.Users.Where(u => u.Course != 100).Select(u => u.Course + u.Group.Substring(0, 1)).Distinct().ToList();
+            //var courses = dbContext.Users.Where(u => u.Course != 100).Select(u => u.Course + u.Group.Substring(0, 1)).Distinct().ToList();
+            var courses = dbContext.Users.Where(u => u.Course != 100).Select(u => u.Group.Substring(0, 1)).Distinct().ToList();
             if (courses == null)
                 RedirectToAction("Index", "Home");
             ViewBag.Courses = courses //Выпадающий список курсов
@@ -276,7 +282,8 @@ namespace FireTest.Controllers
                     case 0:
                         var users = dbContext.Users
                             .Where(u => u.Course != 100)
-                            .Where(u => u.Course + u.Group.Substring(0, 1) == Courses)
+                            //.Where(u => u.Course + u.Group.Substring(0, 1) == Courses)
+                            .Where(u => u.Group.Substring(0, 1) == Courses)
                             .Select(u => new
                             {
                                 BattleCount = u.BattleCount,
@@ -296,7 +303,9 @@ namespace FireTest.Controllers
                     case 1:
                         var users2 = dbContext.Users
                             .Where(u => u.Course != 100)
-                            .Where(u => u.Course + u.Group.Substring(0, 1) == Courses)
+                            //.Where(u => u.Course + u.Group.Substring(0, 1) == Courses)
+                            .Where(u => u.Group.Substring(0, 1) == Courses)
+
                             .Select(u => new
                             {
                                 AnswersCount = u.AnswersCount,
@@ -320,7 +329,8 @@ namespace FireTest.Controllers
             {
                 var users = dbContext.Users
                     .Where(u => u.Course != 100)
-                    .Where(u => u.Course + u.Group.Substring(0, 1) == Courses)
+                    //.Where(u => u.Course + u.Group.Substring(0, 1) == Courses)
+                    .Where(u => u.Group.Substring(0, 1) == Courses)
                     .Select(u => u.Id).ToList();
                 int range = 0;
 
@@ -425,7 +435,8 @@ namespace FireTest.Controllers
                 searchString = currentFilter;
             ViewBag.CurrentFilter = searchString;
 
-            var groups = dbContext.Users.Where(u => u.Course != 100).Select(u => u.Course + u.Group).Distinct().ToList();
+            //var groups = dbContext.Users.Where(u => u.Course != 100).Select(u => u.Course + u.Group).Distinct().ToList();
+            var groups = dbContext.Users.Where(u => u.Course != 100).Select(u => u.Group).Distinct().ToList();
             if (groups == null)
                 RedirectToAction("Index", "Home");
             ViewBag.Group = groups //Выпадающий список групп
@@ -441,8 +452,9 @@ namespace FireTest.Controllers
                 ViewBag.Group.Insert(0, new SelectListItem { Text = " -- Выберите группу -- ", Disabled = true });
 
             List<UsersForAdmin> model = new List<UsersForAdmin>(); //т.к. нам надо только имя и ид
-            var users = dbContext.Users.Where(u => u.Course != 100).Where(u => u.Course + u.Group == Group).
-                Select(u => new {
+            //var users = dbContext.Users.Where(u => u.Course != 100).Where(u => u.Course + u.Group == Group).
+            var users = dbContext.Users.Where(u => u.Course != 100).Where(u => u.Group == Group).
+            Select(u => new {
                     Id = u.Id,
                     Name = u.Family + " " + u.Name + " " + u.SubName,
                 }).ToList();
@@ -592,7 +604,8 @@ namespace FireTest.Controllers
         }
         public ActionResult CompareGroups()
         {
-            var groups = dbContext.Users.Where(u => u.Course != 100).Select(u => u.Course + u.Group).Distinct().ToList();
+            //var groups = dbContext.Users.Where(u => u.Course != 100).Select(u => u.Course + u.Group).Distinct().ToList();
+            var groups = dbContext.Users.Where(u => u.Course != 100).Select(u => u.Group).Distinct().ToList();
             if (groups == null)
                 RedirectToAction("Index", "Home");
             ViewBag.Group1 = groups //Выпадающий список групп
@@ -616,7 +629,9 @@ namespace FireTest.Controllers
                     case 1:
                         var users1 = dbContext.Users
                            .Where(u => u.Course != 100)
-                           .Where(u => u.Course + u.Group == Group1)
+                           //.Where(u => u.Course + u.Group == Group1)
+                           .Where(u => u.Group == Group1)
+
                            .Select(u => new
                            {
                                AnswersCount = u.AnswersCount,
@@ -624,7 +639,8 @@ namespace FireTest.Controllers
                            }).ToList();
                         var users2 = dbContext.Users
                            .Where(u => u.Course != 100)
-                           .Where(u => u.Course + u.Group == Group2)
+                           //.Where(u => u.Course + u.Group == Group2)
+                           .Where(u => u.Group == Group2)
                            .Select(u => new
                            {
                                AnswersCount = u.AnswersCount,
@@ -658,12 +674,14 @@ namespace FireTest.Controllers
             {
                 var users1 = dbContext.Users
                     .Where(u => u.Course != 100)
-                    .Where(u => u.Course + u.Group == Group1)
-                    .Select(u => u.Id).ToList();
+                    .Where(u => u.Group == Group1)
+                                //  .Where(u => u.Course + u.Group == Group1)
+      .Select(u => u.Id).ToList();
                 var users2 = dbContext.Users
                     .Where(u => u.Course != 100)
-                    .Where(u => u.Course + u.Group == Group2)
-                    .Select(u => u.Id).ToList();
+                    .Where(u => u.Group == Group2)
+                          //  .Where(u => u.Course + u.Group == Group2)
+            .Select(u => u.Id).ToList();
                 int range = 0;
 
                 List<bool> selected = new List<bool>() { false, false, false };
@@ -791,7 +809,8 @@ namespace FireTest.Controllers
         }
         public ActionResult CompareCourses()
         {
-            var courses = dbContext.Users.Where(u => u.Course != 100).Select(u => u.Course + u.Group.Substring(0, 1)).Distinct().ToList();
+            //var courses = dbContext.Users.Where(u => u.Course != 100).Select(u => u.Course + u.Group.Substring(0, 1)).Distinct().ToList();
+            var courses = dbContext.Users.Where(u => u.Course != 100).Select(u => u.Group.Substring(0, 1)).Distinct().ToList();
             if (courses == null)
                 RedirectToAction("Index", "Home");
             ViewBag.Course1 = courses //Выпадающий список курсов
@@ -815,7 +834,8 @@ namespace FireTest.Controllers
                     case 1:
                         var users1 = dbContext.Users
                            .Where(u => u.Course != 100)
-                           .Where(u => u.Course + u.Group.Substring(0, 1) == Course1)
+                           .Where(u => u.Group.Substring(0, 1) == Course1)
+                                                     //.Where(u => u.Course + u.Group.Substring(0, 1) == Course1)
                            .Select(u => new
                            {
                                AnswersCount = u.AnswersCount,
@@ -823,7 +843,9 @@ namespace FireTest.Controllers
                            }).ToList();
                         var users2 = dbContext.Users
                            .Where(u => u.Course != 100)
-                           .Where(u => u.Course + u.Group.Substring(0, 1) == Course2)
+                           //.Where(u => u.Course + u.Group.Substring(0, 1) == Course2)
+                           .Where(u => u.Group.Substring(0, 1) == Course2)
+
                            .Select(u => new
                            {
                                AnswersCount = u.AnswersCount,
@@ -857,12 +879,14 @@ namespace FireTest.Controllers
             {
                 var users1 = dbContext.Users
                     .Where(u => u.Course != 100)
-                    .Where(u => u.Course + u.Group.Substring(0, 1) == Course1)
-                    .Select(u => u.Id).ToList();
+                    .Where(u => u.Group.Substring(0, 1) == Course1)
+                                 //.Where(u => u.Course + u.Group.Substring(0, 1) == Course1)
+       .Select(u => u.Id).ToList();
                 var users2 = dbContext.Users
                     .Where(u => u.Course != 100)
-                    .Where(u => u.Course + u.Group.Substring(0, 1) == Course2)
-                    .Select(u => u.Id).ToList();
+                    .Where(u => u.Group.Substring(0, 1) == Course2)
+                          //.Where(u => u.Course + u.Group.Substring(0, 1) == Course2)
+              .Select(u => u.Id).ToList();
                 int range = 0;
 
                 List<bool> selected = new List<bool>() { false, false, false };

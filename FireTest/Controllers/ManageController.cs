@@ -59,6 +59,7 @@ namespace FireTest.Controllers
         // GET: /Manage/Index
         public async Task<ActionResult> Index(ManageMessageId? message)
         {
+            //ВЕРНУТЬ ГРУППУ ОБЯЗАТЕЛЬНОЙ, А ПРЕПОДАМ ЧТО_ТО СДЕЛАТЬ
             ViewBag.StatusMessage =
                 message == ManageMessageId.ChangePasswordSuccess ? "Ваш пароль изменен."
                 : message == ManageMessageId.Error ? "Произошла ошибка."
@@ -90,18 +91,17 @@ namespace FireTest.Controllers
                         selectedF[2] = true;
                         break;
                 }
-                if (!string.IsNullOrEmpty(user.Group))
+                if (user.Course != 100)
                 {
-                    if (user.Course != 100)
-                    {
-                        //if (user.Group.Substring(0, 1) == "2" && user.Course > 4)
-                        //    ViewBag.FinalGroup = (user.Course + 1) + user.Group;
-                        //else
-                        //    ViewBag.FinalGroup = user.Course + user.Group;
-                    }
-                    else
-                        ViewBag.FinalGroup = "Выпускник";
+                    //if (user.Group.Substring(0, 1) == "2" && user.Course > 4)
+                    //    ViewBag.FinalGroup = (user.Course + 1) + user.Group;
+                    //else
+                    //    ViewBag.FinalGroup = user.Course + user.Group;
+                    ViewBag.FinalGroup = user.Group;
                 }
+                else
+                    ViewBag.FinalGroup = "Выпускник";
+
                 model = new IndexViewModel
                 {
                     Name = user.Name,
@@ -498,11 +498,17 @@ namespace FireTest.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Index(IndexViewModel model, string Faculty)
         {
+
             if (!ModelState.IsValid)
             {
                 var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
                 ViewBag.Avatar = "/Images/Avatars/" + user.Avatar;
                 List<bool> selectedF = new List<bool>() { false, false, false };
+                List<bool> selectedR = new List<bool>();
+                for (int i = 0; i < 86; i++)
+                {
+                    selectedR.Add(false);
+                }
                 if (!string.IsNullOrEmpty(user.Group))
                 {
                     switch (user.Group.Substring(1, 1))
@@ -518,18 +524,13 @@ namespace FireTest.Controllers
                             break;
                     }
                 }
-                var facultyList = new[]{
+                ViewBag.Faculty = new[]{
                      new SelectListItem{ Value="1",Text="Факультет пожарной безопасности", Selected=selectedF[1]},
                      new SelectListItem{ Value="2",Text="Факультет техносферной безопасности", Selected=selectedF[2]},
                      new SelectListItem{ Value="0",Text="Факультет платных образовательных услуг", Selected=selectedF[0]},
-                 };
-                ViewBag.Faculty = facultyList.ToList();
+                 }.ToList();
+                //ViewBag.Faculty = facultyList.ToList();
 
-                List<bool> selectedR = new List<bool>();
-                for (int i = 0; i < 86; i++)
-                {
-                    selectedR.Add(false);
-                }
                 if (!string.IsNullOrEmpty(user.Region))
                 {
 
@@ -795,7 +796,7 @@ namespace FireTest.Controllers
                             break;
                     }
                 }
-                var regionList = new[]{
+                ViewBag.Region = new[]{
                     new SelectListItem{ Value="01",Text="Республика Адыгея", Selected=selectedR[0]},
                     new SelectListItem{ Value="02, 102",Text="Республика Башкортостан", Selected=selectedR[1]},
                     new SelectListItem{ Value="03",Text="Республика Бурятия", Selected=selectedR[2]},
@@ -882,11 +883,12 @@ namespace FireTest.Controllers
                     new SelectListItem{ Value="92",Text="Резерв МВД Российской Федерации", Selected=selectedR[83]},
                     new SelectListItem{ Value="94",Text="Территории, которые находятся вне РФ и обслуживаются Департаментом режимных объектов МВД. Пример – Байконур", Selected=selectedR[84]},
                     new SelectListItem{ Value="95",Text="Чеченская республика", Selected=selectedR[85]},
-                 };
-                ViewBag.Region = regionList.ToList();
+                 }.ToList();
+                //ViewBag.Region = regionList.ToList();
 
                 return View(model);
             }
+
             string userId = User.Identity.GetUserId();
             var result = await UpdateUserAsync(userId, model, Faculty);
             if (result.Succeeded)
@@ -915,16 +917,16 @@ namespace FireTest.Controllers
                     int course = (zeroTime + diff).Year;
                     if (course <= 6)
                     {
-                        if (user.Group.Substring(0, 1) == "1") //Если ПБ
+                        if (user.Group.Substring(1, 1) == "1") //Если ПБ
                         {
                             if (course < 6)
                                 user.Course = course;
                             else
                                 user.Course = 100;
                         }
-                        if (user.Group.Substring(0, 1) == "2") //Если ТБ
+                        if (user.Group.Substring(1, 1) == "2") //Если ТБ
                             user.Course = course;
-                        if (user.Group.Substring(0, 1) == "0") //Если платно
+                        if (user.Group.Substring(1, 1) == "0") //Если платно
                         {
                             if (course < 5)
                                 user.Course = course;
@@ -953,7 +955,10 @@ namespace FireTest.Controllers
                 user.SubName = model.SubName.Trim();
                 user.Family = model.Family.Trim();
                 //user.Group = Faculty + model.Group.Trim();
-                user.Group = model.Group.Trim();
+                if (model.Group == null)
+                    user.Group = "";
+                else
+                    user.Group = model.Group.Trim();
                 user.Year = Convert.ToInt32(model.Year.Trim());
                 user.Age = Convert.ToInt32(model.Age.Trim());
                 user.Sex = Convert.ToBoolean(model.Sex.Trim());
