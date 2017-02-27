@@ -80,7 +80,7 @@
                 </div>
             </div>
             <div class="row">
-                @Html.LabelFor(m => m.Region, new { @class = "col-4" })
+                <div class="col-4">Регион</div>
                 <div class="col-8">
                     @Html.DropDownList("Region", ViewBag.Region as SelectList)
                 </div>

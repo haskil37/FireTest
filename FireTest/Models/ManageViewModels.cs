@@ -20,7 +20,7 @@ namespace FireTest.Models
         [StringLength(4, ErrorMessage = "Год поступления должен состоять из 4 цифр.", MinimumLength = 4)]
         [Display(Name = "Год поступления")]
         public string Year { get; set; }
-        [Required]
+        //[Required]
         [Display(Name = "Учебная группа")]
         public string Group { get; set; }
         [Required]
@@ -30,7 +30,7 @@ namespace FireTest.Models
         [Required]
         [Display(Name = "Пол")]
         public string Sex { get; set; }
-        [Required]
+        //[Required]
         [Display(Name = "Регион поступления")]
         public string Region { get; set; }
     }

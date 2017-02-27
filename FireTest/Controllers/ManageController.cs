@@ -78,7 +78,7 @@ namespace FireTest.Controllers
 
             if (dbContext.Roles.Find(role.RoleId).Name == "USER" && !string.IsNullOrEmpty(user.Group))
             {
-                switch (user.Group.Substring(1, 2))
+                switch (user.Group.Substring(1, 1))
                 {
                     case "0":
                         selectedF[0] = true;
@@ -505,7 +505,7 @@ namespace FireTest.Controllers
                 List<bool> selectedF = new List<bool>() { false, false, false };
                 if (!string.IsNullOrEmpty(user.Group))
                 {
-                    switch (user.Group.Substring(1, 2))
+                    switch (user.Group.Substring(1, 1))
                     {
                         case "0":
                             selectedF[0] = true;
