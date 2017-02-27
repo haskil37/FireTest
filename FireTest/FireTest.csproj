@@ -364,6 +364,7 @@
     <Content Include="Content\bootstrap-datepicker.min.css.map" />
     <Content Include="Content\bootstrap-datepicker.css.map" />
     <None Include="Properties\PublishProfiles\Public.pubxml" />
+    <None Include="Properties\PublishProfiles\Public2.pubxml" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="Images\Avatars\NoAvatar.png" />
     <Content Include="Images\Questions\01.JPG" />
