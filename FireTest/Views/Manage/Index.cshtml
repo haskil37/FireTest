@@ -110,6 +110,7 @@
                         <input value="@ViewBag.FinalGroup" type="text" disabled="disabled" />
                     </div>
                 </div>
+                @Html.Hidden("Group", Model.Group)
             }
             <div class="row center">
                 <input type="submit" class="button" value="Сохранить изменения" />

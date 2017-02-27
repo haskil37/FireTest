@@ -59,7 +59,6 @@ namespace FireTest.Controllers
         // GET: /Manage/Index
         public async Task<ActionResult> Index(ManageMessageId? message)
         {
-            //ВЕРНУТЬ ГРУППУ ОБЯЗАТЕЛЬНОЙ, А ПРЕПОДАМ ЧТО_ТО СДЕЛАТЬ
             ViewBag.StatusMessage =
                 message == ManageMessageId.ChangePasswordSuccess ? "Ваш пароль изменен."
                 : message == ManageMessageId.Error ? "Произошла ошибка."
@@ -123,6 +122,7 @@ namespace FireTest.Controllers
                         SubName = user.SubName,
                         Family = user.Family,
                         Year = year,
+                        Group = user.Group,
                         Age = user.Age.ToString()
                     };
                     ViewBag.FinalGroup = "Преподаватель";
@@ -955,10 +955,7 @@ namespace FireTest.Controllers
                 user.SubName = model.SubName.Trim();
                 user.Family = model.Family.Trim();
                 //user.Group = Faculty + model.Group.Trim();
-                if (model.Group == null)
-                    user.Group = "";
-                else
-                    user.Group = model.Group.Trim();
+                user.Group = model.Group.Trim();
                 user.Year = Convert.ToInt32(model.Year.Trim());
                 user.Age = Convert.ToInt32(model.Age.Trim());
                 user.Sex = Convert.ToBoolean(model.Sex.Trim());
