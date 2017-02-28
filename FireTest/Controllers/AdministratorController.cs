@@ -105,61 +105,96 @@ namespace FireTest.Controllers
                 ViewBag.userId = userId;
             return View();
         }
-        public PartialViewResult TeacherSubjectsAjax(string currentFilter, string searchString, int? page, int? submitButton, int? Page, string userId)
+        public PartialViewResult TeacherSubjectsAjax(string currentFilter, string searchString, int? page, int? submitButton, int? Page, string userId, bool submitButtonAll = false)
         {
             ViewBag.userId = userId;
-            var access = dbContext.TeachersAccess
-                .Where(u => u.TeacherId == userId)
-                .Select(u => new
-                {
-                    Id = u.Id,
-                    TeacherSubjects = u.TeacherSubjects
-                }).SingleOrDefault();
             List<string> subjectsAccess = new List<string>();
-            if (access != null && access.TeacherSubjects != null)
-                subjectsAccess = access.TeacherSubjects.Split('|').ToList();
-            if (submitButton != null)
+            if (submitButtonAll)
             {
-                string newAccess = "";
-                int index = subjectsAccess.IndexOf(submitButton.ToString());
-                if (index == -1)
-                {
-                    subjectsAccess.Add(submitButton.ToString());
-                    if (access != null && access.TeacherSubjects != null && access.TeacherSubjects.Count() != 0)
-                        newAccess = access.TeacherSubjects + "|" + submitButton.ToString();
-                    else
-                        newAccess = submitButton.ToString();
-                }
-                else
-                {
-                    subjectsAccess.RemoveAt(index);
-                    foreach (string item in subjectsAccess)
+                var access = dbContext.TeachersAccess
+                    .Where(u => u.TeacherId == userId)
+                    .Select(u => new
                     {
-                        if (newAccess.Length != 0)
-                            newAccess = newAccess + "|" + item;
-                        else
-                            newAccess = item;
-                    }
-                }
+                        Id = u.Id,
+                        TeacherSubjects = u.TeacherSubjects,
+                        TeacherQualifications = u.TeacherQualifications
+                    }).SingleOrDefault();
+                bool TeacherQualificationsAccess = false;
                 if (access != null)
                 {
-                    var temp = dbContext.TeachersAccess.Find(access.Id);
-                    temp.TeacherSubjects = newAccess;
+                    TeacherQualificationsAccess = access.TeacherQualifications;
+                    var delete = dbContext.TeachersAccess.Find(access.Id);
+                    dbContext.TeachersAccess.Remove(delete);
+                    var newAccess = new TeacherAccess();
+                    newAccess.TeacherId = userId;
+                    newAccess.TeacherQualifications = TeacherQualificationsAccess;
+
+                    var Subjects = "";
+                    var allSubjects = dbContext.Subjects.ToList();
+                    foreach (var item in allSubjects)
+                    {
+                        subjectsAccess.Add(item.Id.ToString());
+                        if (Subjects.Length > 0)
+                            Subjects += "|" + item.Id;
+                        else
+                            Subjects += item.Id;
+                    }
+                    newAccess.TeacherSubjects = Subjects;
+                    dbContext.TeachersAccess.Add(newAccess);
+                    dbContext.SaveChanges();
                 }
-                else
-                {
-                    var temp = new TeacherAccess();
-                    temp.TeacherId = userId;
-                    temp.TeacherQualifications = false;
-                    temp.TeacherSubjects = newAccess;
-                    dbContext.TeachersAccess.Add(temp);
-                }
-                dbContext.SaveChanges();
             }
-            if (searchString != null)
-                page = 1;
             else
-                searchString = currentFilter;
+            {
+                var access = dbContext.TeachersAccess
+                    .Where(u => u.TeacherId == userId)
+                    .Select(u => new
+                    {
+                        Id = u.Id,
+                        TeacherSubjects = u.TeacherSubjects
+                    }).SingleOrDefault();
+                if (access != null && access.TeacherSubjects != null)
+                    subjectsAccess = access.TeacherSubjects.Split('|').ToList();
+                if (submitButton != null)
+                {
+                    string newAccess = "";
+                    int index = subjectsAccess.IndexOf(submitButton.ToString());
+                    if (index == -1)
+                    {
+                        subjectsAccess.Add(submitButton.ToString());
+                        if (access != null && access.TeacherSubjects != null && access.TeacherSubjects.Count() != 0)
+                            newAccess = access.TeacherSubjects + "|" + submitButton.ToString();
+                        else
+                            newAccess = submitButton.ToString();
+                    }
+                    else
+                    {
+                        subjectsAccess.RemoveAt(index);
+                        foreach (string item in subjectsAccess)
+                        {
+                            if (newAccess.Length != 0)
+                                newAccess = newAccess + "|" + item;
+                            else
+                                newAccess = item;
+                        }
+                    }
+                    if (access != null)
+                    {
+                        var temp = dbContext.TeachersAccess.Find(access.Id);
+                        temp.TeacherSubjects = newAccess;
+                    }
+                    else
+                    {
+                        var temp = new TeacherAccess();
+                        temp.TeacherId = userId;
+                        temp.TeacherQualifications = false;
+                        temp.TeacherSubjects = newAccess;
+                        dbContext.TeachersAccess.Add(temp);
+                    }
+                    dbContext.SaveChanges();
+                }
+            }
+            currentFilter = searchString;
             ViewBag.CurrentFilter = searchString;
 
             var subjects = dbContext.Subjects.ToList();
@@ -220,11 +255,7 @@ namespace FireTest.Controllers
                 }
                 dbContext.SaveChanges();
             }
-
-            if (searchString != null)
-                page = 1;
-            else
-                searchString = currentFilter;
+            currentFilter = searchString;
             ViewBag.CurrentFilter = searchString;
 
             string user = User.Identity.GetUserId();

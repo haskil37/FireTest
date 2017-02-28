@@ -9,6 +9,7 @@
     UpdateTargetId = "Subjects",
 }))
 {
+    @Html.Hidden("userId", (string)ViewBag.userId)
     <div class="row">
         <h3>Поиск<span class="search"></span><input id="SearchString" name="SearchString" type="text"></h3>
     </div>

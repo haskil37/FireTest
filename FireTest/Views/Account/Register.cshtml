@@ -36,7 +36,6 @@
                     </div>
                     <div class="col-7">
                         @Html.PasswordFor(m => m.Password)
-                        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
                     </div>
                 </div>
                 <div class="row">
@@ -45,7 +44,6 @@
                     </div>
                     <div class="col-7">
                         @Html.PasswordFor(m => m.ConfirmPassword)
-                        @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
                     </div>
                 </div>
                 <div class="row center">

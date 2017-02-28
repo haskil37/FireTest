@@ -87,7 +87,7 @@ namespace FireTest.Controllers
                     if (UserManager.FindByName(login).EmailConfirmed)
                         return RedirectToLocal(returnUrl);
                     AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-                    ModelState.AddModelError("", "Учетная запись не подтверждена. Если хотите получить письмо подтверждения повторно, то нажмите <a href='EmailReconfirm/" + UserManager.FindByName(model.Snils).Id + "'>здесь</a>.");
+                    ModelState.AddModelError("", "Учетная запись не подтверждена. Если хотите получить письмо подтверждения повторно, то нажмите <a href='EmailReconfirm/" + UserManager.FindByName(login).Id + "'>здесь</a>.");
                     return View(model);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
@@ -133,6 +133,11 @@ namespace FireTest.Controllers
             {
                 string login = model.Snils.Replace(" ", string.Empty);
                 login = login.Replace("-", string.Empty);
+
+                var confirmOrNo = await UserManager.FindByNameAsync(login);//Если юзер есть, но почта не активирована, можно удалить и создать заново
+                if (!confirmOrNo.EmailConfirmed)
+                   UserManager.Delete(confirmOrNo);
+
                 var user = new ApplicationUser { UserName = login, Email = model.Email, Snils = model.Snils, Avatar = "NoAvatar.png", LastActivity = DateTime.Now };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)

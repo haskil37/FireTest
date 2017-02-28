@@ -1,10 +1,8 @@
 ﻿using FireTest.Models;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace FireTest.Controllers
@@ -19,6 +17,9 @@ namespace FireTest.Controllers
         {
             if (!ModelState.IsValid || id < 1 || id > 5 || course < 1 || course > 5)
                 return RedirectToAction("Index", "Home");
+
+            if (id > course) //Чтоб курс был не больше квалификации
+                id = course;
 
             ViewBag.QualificationName = dbContext.Qualifications.Find(id).Name;
 
