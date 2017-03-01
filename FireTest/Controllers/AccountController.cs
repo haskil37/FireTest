@@ -135,8 +135,8 @@ namespace FireTest.Controllers
                 login = login.Replace("-", string.Empty);
 
                 var confirmOrNo = await UserManager.FindByNameAsync(login);//Если юзер есть, но почта не активирована, можно удалить и создать заново
-                if (!confirmOrNo.EmailConfirmed)
-                   UserManager.Delete(confirmOrNo);
+                if (confirmOrNo != null && !confirmOrNo.EmailConfirmed)
+                    UserManager.Delete(confirmOrNo);
 
                 var user = new ApplicationUser { UserName = login, Email = model.Email, Snils = model.Snils, Avatar = "NoAvatar.png", LastActivity = DateTime.Now };
                 var result = await UserManager.CreateAsync(user, model.Password);
