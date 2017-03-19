@@ -83,11 +83,11 @@ namespace FireTest.Controllers
                         .Where(u => u.IdSubject == idSubject.id)
                         .Where(u => u.IdCourse == course).Count();
             ViewBag.Count = count;
-            ViewBag.CountMax = 0;
-            if (count < 100) //Если вопросов меньше 100, то изменяем максимум ползунка
-            {
-                ViewBag.CountMax = Math.Ceiling(count / 10.0);
-            }
+            //ViewBag.CountMax = 0;
+            //if (count < 100) //Если вопросов меньше 100, то изменяем максимум ползунка
+            //{
+             ViewBag.CountMax = Math.Ceiling(count / 10.0);
+            //}
 
             return PartialView();
         }
