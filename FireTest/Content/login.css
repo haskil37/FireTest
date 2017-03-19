@@ -169,6 +169,7 @@ input[type="password"] {
     border: none;
     font-size: 20px;
     outline-color: rgb(255, 115, 0);
+    width: 100%;
 }
 .checkbox {
     padding: 15px 0;

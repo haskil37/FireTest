@@ -21,7 +21,7 @@
                     <div class="col-4">
                         <label class="right" for="Snils"><span class="snils-help">?<span class="tooltiptext"><img src="~/Content/snils.jpg" /></span></span>СНИЛС</label>
                     </div>
-                    <div class="col-8">
+                    <div class="col-4">
                         @Html.TextBoxFor(m => m.Snils)
                         @Html.ValidationMessageFor(m => m.Snils, "", new { @class = "text-danger" })
                     </div>
@@ -30,7 +30,7 @@
                     <div class="col-4">
                         @Html.LabelFor(m => m.Password, new { @class = "right" })
                     </div>
-                    <div class="col-8">
+                    <div class="col-4">
                         @Html.PasswordFor(m => m.Password)
                         @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
                     </div>

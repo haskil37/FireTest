@@ -13,38 +13,43 @@
                 @Html.AntiForgeryToken()
                 @Html.ValidationSummary("", new { @class = "text-danger" })
                 <div class="row">
-                    <div class="col-5">
+                    <div class="col-4">
                         <label class="right" for="Snils"><span class="snils-help">?<span class="tooltiptext"><img src="~/Content/snils.jpg" /></span></span>СНИЛС</label>
                     </div>
-                    <div class="col-7">
+                    <div class="col-4">
                         @Html.TextBoxFor(m => m.Snils)
                         @Html.ValidationMessageFor(m => m.Snils, "", new { @class = "text-danger" })
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-5">
+                    <div class="col-4">
                         @Html.LabelFor(m => m.Email, new { @class = "right" })
                     </div>
-                    <div class="col-7">
+                    <div class="col-4">
                         @Html.TextBoxFor(m => m.Email)
                         @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-5">
+                    <div class="col-4">
                         @Html.LabelFor(m => m.Password, new { @class = "right" })
                     </div>
-                    <div class="col-7">
+                    <div class="col-4">
                         @Html.PasswordFor(m => m.Password)
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-5">
+                    <div class="col-4">
                         @Html.LabelFor(m => m.ConfirmPassword, new { @class = "right" })
                     </div>
-                    <div class="col-7">
+                    <div class="col-4">
                         @Html.PasswordFor(m => m.ConfirmPassword)
                     </div>
+                </div>
+                <div class="row center">
+                    @Html.CheckBoxFor(m => m.SnilsConfirm)
+                    <span></span>
+                    @Html.LabelFor(m => m.SnilsConfirm)
                 </div>
                 <div class="row center">
                     <input type="submit" value="Регистрация" class="button" />

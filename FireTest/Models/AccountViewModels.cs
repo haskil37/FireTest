@@ -60,6 +60,9 @@ namespace FireTest.Models
         [Display(Name = "Подтверждение пароля")]
         [Compare("Password", ErrorMessage = "Пароль и его подтверждение не совпадают.")]
         public string ConfirmPassword { get; set; }
+        [Display(Name = "Согласие на обработку персональных данных")]
+        [Range(typeof(bool), "true", "true", ErrorMessage = "Вы должны дать согласие на обработку персональных данных")]
+        public bool SnilsConfirm { get; set; }
     }
 
     public class ResetPasswordViewModel
