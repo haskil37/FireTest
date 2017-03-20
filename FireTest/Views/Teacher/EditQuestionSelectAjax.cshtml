@@ -22,6 +22,12 @@
     <div class="row">
         <h3>Поиск<span class="search"></span><input id="SearchString" name="SearchString" type="text" value="@ViewBag.CurrentFilter"></h3>
     </div>
+    <div>
+        Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
+        @Html.PagedListPager(Model, page => Url.Action("EditQuestionSelectAjax",
+            new { page, currentFilter = ViewBag.CurrentFilter, Tags = Session["Tags"], Subjects = Session["Subjects"] }),
+            PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "Questions" }))
+    </div>
     <div class="row" id="question">
         <table>
             <tr>
@@ -36,7 +42,6 @@
                     </th>
                 }
             </tr>
-
             @foreach (var item in Model)
             {
                 <tr>

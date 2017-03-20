@@ -76,31 +76,39 @@ namespace FireTest.Controllers
             IndexViewModel model = new IndexViewModel();
             List<bool> selectedF = new List<bool>() { false, false, false };
 
+            ViewBag.Editable = true;
             if (dbContext.Roles.Find(role.RoleId).Name == "USER" && !string.IsNullOrEmpty(user.Group))
             {
-                switch (user.Group.Substring(1, 1))
+                if (!string.IsNullOrEmpty(user.Faculty))
                 {
-                    case "0":
-                        selectedF[0] = true;
-                        break;
-                    case "1":
-                        selectedF[1] = true;
-                        break;
-                    case "2":
-                        selectedF[2] = true;
-                        break;
+                    switch (user.Faculty)
+                    {
+                        case "0":
+                            selectedF[0] = true;
+                            break;
+                        case "1":
+                            selectedF[1] = true;
+                            break;
+                        case "2":
+                            selectedF[2] = true;
+                            break;
+                    }
                 }
+                else
+                    selectedF[1] = true;
                 if (user.Course != 100)
                 {
                     //if (user.Group.Substring(0, 1) == "2" && user.Course > 4)
                     //    ViewBag.FinalGroup = (user.Course + 1) + user.Group;
                     //else
                     //    ViewBag.FinalGroup = user.Course + user.Group;
-                    ViewBag.FinalGroup = user.Group;
+                    //ViewBag.FinalGroup = user.Group;
                 }
                 else
+                {
                     ViewBag.FinalGroup = "Выпускник";
-
+                    ViewBag.Editable = false;
+                }
                 model = new IndexViewModel
                 {
                     Name = user.Name,
@@ -128,6 +136,14 @@ namespace FireTest.Controllers
                     ViewBag.FinalGroup = "Преподаватель";
                 }
             }
+
+            ViewBag.SexM = false;
+            ViewBag.SexF = false;
+            if (user.Sex)
+                ViewBag.SexM = true;
+            else
+                ViewBag.SexF = true;
+
             var facultyList = new[]{
                      new SelectListItem{ Value="1",Text="Факультет пожарной безопасности", Selected=selectedF[1]},
                      new SelectListItem{ Value="2",Text="Факультет техносферной безопасности", Selected=selectedF[2]},
@@ -511,19 +527,104 @@ namespace FireTest.Controllers
                 }
                 if (!string.IsNullOrEmpty(user.Group))
                 {
-                    switch (user.Group.Substring(1, 1))
+                    if (!string.IsNullOrEmpty(user.Faculty))
                     {
-                        case "0":
-                            selectedF[0] = true;
-                            break;
-                        case "1":
-                            selectedF[1] = true;
-                            break;
-                        case "2":
-                            selectedF[2] = true;
-                            break;
+                        switch (user.Faculty)
+                        {
+                            case "0":
+                                selectedF[0] = true;
+                                break;
+                            case "1":
+                                selectedF[1] = true;
+                                break;
+                            case "2":
+                                selectedF[2] = true;
+                                break;
+                        }
+                    }
+                    else
+                        selectedF[1] = true;
+                }
+
+                ViewBag.SexM = false;
+                ViewBag.SexF = false;
+                if (user.Sex)
+                    ViewBag.SexM = true;
+                else
+                    ViewBag.SexF = true;
+
+                string year = "";
+                if (user.Year != 0)
+                    year = user.Year.ToString();
+
+                var role = dbContext.Users.Find(User.Identity.GetUserId()).Roles.SingleOrDefault();
+                ViewBag.Editable = true;
+                if (dbContext.Roles.Find(role.RoleId).Name == "USER" && !string.IsNullOrEmpty(user.Group))
+                {
+                    if (!string.IsNullOrEmpty(user.Faculty))
+                    {
+                        switch (user.Faculty)
+                        {
+                            case "0":
+                                selectedF[0] = true;
+                                break;
+                            case "1":
+                                selectedF[1] = true;
+                                break;
+                            case "2":
+                                selectedF[2] = true;
+                                break;
+                        }
+                    }
+                    else
+                        selectedF[1] = true;
+
+                    if (user.Course != 100)
+                    {
+                        //if (user.Group.Substring(0, 1) == "2" && user.Course > 4)
+                        //    ViewBag.FinalGroup = (user.Course + 1) + user.Group;
+                        //else
+                        //    ViewBag.FinalGroup = user.Course + user.Group;
+                        //ViewBag.FinalGroup = user.Group;
+                    }
+                    else
+                    {
+                        ViewBag.FinalGroup = "Выпускник";
+                        ViewBag.Editable = false;
+                    }
+                    model = new IndexViewModel
+                    {
+                        Name = user.Name,
+                        SubName = user.SubName,
+                        Family = user.Family,
+                        Year = year,
+                        //Group = user.Group.Remove(0, 1)
+                        Group = user.Group,
+                        Age = user.Age.ToString()
+                    };
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(user.Group))
+                    {
+                        model = new IndexViewModel
+                        {
+                            Name = user.Name,
+                            SubName = user.SubName,
+                            Family = user.Family,
+                            Year = year,
+                            Group = user.Group,
+                            Age = user.Age.ToString()
+                        };
+                        ViewBag.FinalGroup = "Преподаватель";
                     }
                 }
+
+
+
+
+
+
                 ViewBag.Faculty = new[]{
                      new SelectListItem{ Value="1",Text="Факультет пожарной безопасности", Selected=selectedF[1]},
                      new SelectListItem{ Value="2",Text="Факультет техносферной безопасности", Selected=selectedF[2]},
@@ -954,6 +1055,7 @@ namespace FireTest.Controllers
                 user.Name = model.Name.Trim();
                 user.SubName = model.SubName.Trim();
                 user.Family = model.Family.Trim();
+                user.Faculty = Faculty;
                 //user.Group = Faculty + model.Group.Trim();
                 user.Group = model.Group.Trim();
                 user.Year = Convert.ToInt32(model.Year.Trim());

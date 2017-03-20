@@ -13,6 +13,12 @@
     <div class="right">
         <button type="submit" value="true" name="submitButtonAll" class="button-Cancel">Выбрать все дисциплины</button>
     </div>
+    <div>
+        Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
+        @Html.PagedListPager(Model, page => Url.Action("TeacherSubjectsAjax",
+            new { page, currentFilter = ViewBag.CurrentFilter, userId = (string)ViewBag.userId }),
+            PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "Subjects" }))
+    </div>
     <div class="row">
         <table>
             <tr>

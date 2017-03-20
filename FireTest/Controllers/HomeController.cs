@@ -28,27 +28,39 @@ namespace FireTest.Controllers
                     //То должны вычитать 1, но т.к. начинаем мы не с 0 курса, а с первого то прибавляем 1.
                     //Итого получается, что мы не вычитаем и не прибавляем
                     int course = (zeroTime + diff).Year;
-                    if (course <= 6)
-                    {
-                        if (user.Group.Substring(0, 1) == "1") //Если ПБ
-                        {
-                            if (course < 6)
-                                user.Course = course;
-                            else
-                                user.Course = 100;
-                        }
-                        if (user.Group.Substring(0, 1) == "2") //Если ТБ
-                            user.Course = course;
-                        if (user.Group.Substring(0, 1) == "0") //Если платно
-                        {
-                            if (course < 5)
-                                user.Course = course;
-                            else
-                                user.Course = 100;
-                        }
-                    }
-                    else
+                    //if (course <= 6)
+                    //{
+                    //    if (user.Group.Substring(0, 1) == "1") //Если ПБ
+                    //    {
+                    //        if (course < 6)
+                    //            user.Course = course;
+                    //        else
+                    //            user.Course = 100;
+                    //    }
+                    //    if (user.Group.Substring(0, 1) == "2") //Если ТБ
+                    //        user.Course = course;
+                    //    if (user.Group.Substring(0, 1) == "0") //Если платно
+                    //    {
+                    //        if (course < 5)
+                    //            user.Course = course;
+                    //        else
+                    //            user.Course = 100;
+                    //    }
+                    //}
+                    //else
+                    //    user.Course = 100;
+                    user.Course = course;
+                    var vipusk = user.Group[1];
+                    if (vipusk == '1' && course >= 6)
                         user.Course = 100;
+                    if (vipusk == '2' && course >= 5)
+                        user.Course = 100;
+                    if (course > 6)
+                        user.Course = 100;
+
+                    if (user.Course != 100)
+                        user.Group = user.Course + user.Group.Remove(0, 1);
+
                     dbContext.SaveChanges();
                 }
             }

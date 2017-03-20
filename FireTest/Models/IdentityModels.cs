@@ -20,6 +20,8 @@ namespace FireTest.Models
         public int Course { get; set; }
         public int Year { get; set; }
         public string Group { get; set; }
+        public string Faculty { get; set; }
+        public string QualificationPoint { get; set; }
         public bool Invited { get; set; }
         public int BattleCount { get; set; }
         public int BattleWinCount { get; set; }

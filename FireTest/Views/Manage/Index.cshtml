@@ -19,59 +19,181 @@
         }
     </div>
     <div class="col-8 manageDisabled">
-        @using (Html.BeginForm("Index", "Manage", FormMethod.Post, new { role = "form", id = "edit" }))
+        @if (ViewBag.Editable == true)
+        {
+            using (Html.BeginForm("Index", "Manage", FormMethod.Post, new { role = "form", id = "edit" }))
             {
-            @Html.AntiForgeryToken()
+                @Html.AntiForgeryToken()
+                <div class="row">
+                    @Html.LabelFor(m => m.Name, new { @class = "col-4" })
+                    <div class="col-8">
+                        @Html.TextBoxFor(m => m.Name)
+                        <span class="pen"></span>
+                        @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="row">
+                    @Html.LabelFor(m => m.SubName, new { @class = "col-4" })
+                    <div class="col-8">
+                        @Html.TextBoxFor(m => m.SubName)
+                        <span class="pen"></span>
+                        @Html.ValidationMessageFor(m => m.SubName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="row">
+                    @Html.LabelFor(m => m.Family, new { @class = "col-4" })
+                    <div class="col-8">
+                        @Html.TextBoxFor(m => m.Family)
+                        <span class="pen"></span>
+                        @Html.ValidationMessageFor(m => m.Family, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="row">
+                    @Html.LabelFor(m => m.Year, new { @class = "col-4" })
+                    <div class="col-8">
+                        @Html.TextBoxFor(m => m.Year)
+                        <span class="pen"></span>
+                        @Html.ValidationMessageFor(m => m.Year, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="row">
+                    @Html.LabelFor(m => m.Age, new { @class = "col-4" })
+                    <div class="col-8">
+                        @Html.TextBoxFor(m => m.Age)
+                        <span class="pen"></span>
+                        @Html.ValidationMessageFor(m => m.Age, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="row">
+                    @Html.LabelFor(m => m.Sex, new { @class = "col-4" })
+                    <div class="col-8">
+                        @if (ViewBag.SexM)
+                    {
+                            <input id="SexM" type="radio" name="Sex" value="true" checked="checked" />
+                        }
+                        else
+                        {
+                            <input id="SexM" type="radio" name="Sex" value="true" />
+                        }
+                        <label for="SexM">
+                            <span>
+                                М
+                            </span>
+                        </label>
+                        @if (ViewBag.SexF)
+                    {
+                            <input id="SexF" type="radio" name="Sex" value="false" checked="checked" />
+                        }
+                        else
+                        {
+                            <input id="SexF" type="radio" name="Sex" value="false" />
+                        }
+                        <label for="SexF">
+                            <span>
+                                Ж
+                            </span>
+                        </label>
+                    </div>
+                </div>
+                if (ViewBag.FinalGroup != "Преподаватель")
+                { 
+                    <div class="row">
+                        @Html.LabelFor(m => m.Group, new { @class = "col-4" })
+                        <div class="col-8">
+                            @Html.TextBoxFor(m => m.Group)
+                            <span class="pen"></span>
+                            @Html.ValidationMessageFor(m => m.Group, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">Факультет</div>
+                        <div class="col-8">
+                            @Html.DropDownList("Faculty", ViewBag.Faculty as SelectList)
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">Регион</div>
+                        <div class="col-8">
+                            @Html.DropDownList("Region", ViewBag.Region as SelectList)
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    @Html.Hidden("Group", Model.Group)
+                    @Html.Hidden("Region", "0")
+                    @Html.Hidden("Faculty", "1")
+                    <div class="row">
+                        @Html.LabelFor(m => m.Group, new { @class = "col-4" })
+                        <div class="col-8">
+                            @ViewBag.FinalGroup
+                        </div>
+                    </div>
+                }
+                <div class="row center">
+                    <input type="submit" class="button" value="Сохранить изменения" />
+                </div>
+                <div class="row center">
+                    <a href="ChangePassword" class="button-Cancel">Изменить пароль</a>
+                </div>
+            }
+        }
+        else
+        {
             <div class="row">
                 @Html.LabelFor(m => m.Name, new { @class = "col-4" })
                 <div class="col-8">
-                    @Html.TextBoxFor(m => m.Name)
-                    <span class="pen"></span>
-                    @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+                    @Html.DisplayTextFor(m => m.Name)
                 </div>
             </div>
             <div class="row">
                 @Html.LabelFor(m => m.SubName, new { @class = "col-4" })
                 <div class="col-8">
-                    @Html.TextBoxFor(m => m.SubName)
-                    <span class="pen"></span>
-                    @Html.ValidationMessageFor(m => m.SubName, "", new { @class = "text-danger" })
+                    @Html.DisplayTextFor(m => m.SubName)
                 </div>
             </div>
             <div class="row">
                 @Html.LabelFor(m => m.Family, new { @class = "col-4" })
                 <div class="col-8">
-                    @Html.TextBoxFor(m => m.Family)
-                    <span class="pen"></span>
-                    @Html.ValidationMessageFor(m => m.Family, "", new { @class = "text-danger" })
+                    @Html.DisplayTextFor(m => m.Family)
                 </div>
             </div>
             <div class="row">
                 @Html.LabelFor(m => m.Year, new { @class = "col-4" })
                 <div class="col-8">
-                    @Html.TextBoxFor(m => m.Year)
-                    <span class="pen"></span>
-                    @Html.ValidationMessageFor(m => m.Year, "", new { @class = "text-danger" })
+                    @Html.DisplayTextFor(m => m.Year)
                 </div>
             </div>
             <div class="row">
                 @Html.LabelFor(m => m.Age, new { @class = "col-4" })
                 <div class="col-8">
-                    @Html.TextBoxFor(m => m.Age)
-                    <span class="pen"></span>
-                    @Html.ValidationMessageFor(m => m.Age, "", new { @class = "text-danger" })
+                    @Html.DisplayTextFor(m => m.Age)
                 </div>
             </div>
             <div class="row">
                 @Html.LabelFor(m => m.Sex, new { @class = "col-4" })
                 <div class="col-8">
-                    <input id="SexM" type="radio" name="Sex" value="true" checked="checked" />
+                    @if (ViewBag.SexM)
+                    {
+                        <input id="SexM" type="radio" name="Sex" value="true" checked="checked" />
+                    }
+                    else
+                    {
+                        <input id="SexM" type="radio" name="Sex" value="true" disabled="disabled" />
+                    }
                     <label for="SexM">
                         <span>
                             М
                         </span>
                     </label>
-                    <input id="SexF" type="radio" name="Sex" value="false" />
+                    @if (ViewBag.SexF)
+                    {
+                        <input id="SexF" type="radio" name="Sex" value="false" checked="checked" />
+                    }
+                    else
+                    {
+                        <input id="SexF" type="radio" name="Sex" value="false" disabled="disabled" />
+                    }
                     <label for="SexF">
                         <span>
                             Ж
@@ -80,43 +202,10 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-4">Регион</div>
+                @Html.LabelFor(m => m.Group, new { @class = "col-4" })
                 <div class="col-8">
-                    @Html.DropDownList("Region", ViewBag.Region as SelectList)
+                    @ViewBag.FinalGroup
                 </div>
-            </div>
-            if (ViewBag.FinalGroup != "Преподаватель")
-            {
-                <div class="row">
-                    <div class="col-4">Факультет</div>
-                    <div class="col-8">
-                        @Html.DropDownList("Faculty", ViewBag.Faculty as SelectList)
-                    </div>
-                </div>
-                <div class="row">
-                    @Html.LabelFor(m => m.Group, new { @class = "col-4" })
-                    <div class="col-8">
-                        @Html.TextBoxFor(m => m.Group)
-                        <span class="pen"></span>
-                        @Html.ValidationMessageFor(m => m.Group, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-            }
-            if (!string.IsNullOrEmpty(@ViewBag.FinalGroup))
-            {
-                <div class="row">
-                    <label class="col-4">Группа</label>
-                    <div class="col-8">
-                        <input value="@ViewBag.FinalGroup" type="text" disabled="disabled" />
-                    </div>
-                </div>
-                @Html.Hidden("Group", Model.Group)
-            }
-            <div class="row center">
-                <input type="submit" class="button" value="Сохранить изменения" />
-            </div>
-            <div class="row center">
-                <a href="ChangePassword" class="button-Cancel">Изменить пароль</a>
             </div>
         }
     </div>
