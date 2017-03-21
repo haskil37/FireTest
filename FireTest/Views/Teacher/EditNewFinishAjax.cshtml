@@ -1,6 +1,6 @@
 ﻿@model PagedList.IPagedList<FireTest.Models.SubjectAccess>
 @using PagedList.Mvc;
-@using (Ajax.BeginForm("EditNewAjax", null, new AjaxOptions
+@using (Ajax.BeginForm("EditNewFinishAjax", null, new AjaxOptions
 {
     HttpMethod = "Get",
     InsertionMode = InsertionMode.Replace,
@@ -36,7 +36,7 @@
     <div>
         Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
 
-        @Html.PagedListPager(Model, page => Url.Action("EditNewAjax",
+        @Html.PagedListPager(Model, page => Url.Action("EditNewFinishAjax",
         new { page, currentFilter = ViewBag.CurrentFilter, Tags = Session["Tags"], Subjects = Session["Subjects"] }),
         PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "QuestionsNew" }))
     </div>
@@ -69,7 +69,7 @@
     <div>
         Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
 
-        @Html.PagedListPager(Model, page => Url.Action("EditNewAjax",
+        @Html.PagedListPager(Model, page => Url.Action("EditNewFinishAjax",
         new { page, currentFilter = ViewBag.CurrentFilter, Tags = Session["Tags"], Subjects = Session["Subjects"] }),
         PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "QuestionsNew" }))
     </div>

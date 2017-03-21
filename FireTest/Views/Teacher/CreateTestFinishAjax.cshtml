@@ -1,24 +1,30 @@
 ﻿@model PagedList.IPagedList<FireTest.Models.SubjectAccess>
 @using PagedList.Mvc;
-@using (Ajax.BeginForm("EditOldAjax", null, new AjaxOptions
+@using (Ajax.BeginForm("CreateTestFinishAjax", new AjaxOptions
 {
     HttpMethod = "Get",
     InsertionMode = InsertionMode.Replace,
-    UpdateTargetId = "QuestionsOld",
-}, new { id = "Old" }))
+    UpdateTargetId = "Questions",
+}))
 {
-    if (ViewBag.Submit == true)
-    {
-        <script>
-            $('#New').submit();
-        </script>
-    }
     @Html.Hidden("page", (int)ViewBag.page)
     <div class="row">
         <div class="col-2">Название теста</div>
         <div class="col-10">
             <input name="NameTest" type="text" class="input" value="@ViewBag.NameTest">
             <button type="submit" class="save">Сохранить</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2">Дисциплина</div>
+        <div class="col-10">
+            @Html.DropDownList("Subjects", ViewBag.Subjects as SelectList, new { @onchange = "$(this.form).submit();" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2">Название раздела</div>
+        <div class="col-10">
+            @Html.DropDownList("Tags", ViewBag.Tags as SelectList, new { @onchange = "$(this.form).submit();" })
         </div>
     </div>
     <div class="row">
@@ -46,21 +52,17 @@
             <button type="submit" class="saveEval">Сохранить % оценок</button>
         </div>
     </div>
-
     <div class="row">
-        <div class="textback center">Вопросы в тесте</div>
-    </div>
-    <div class="row">
-        Поиск<span class="search"></span><input id="SearchStringOld" name="SearchString" type="text" value="@ViewBag.CurrentFilter">
+        Поиск<span class="search"></span><input id="SearchString" name="SearchString" type="text" value="@ViewBag.CurrentFilter" />
     </div>
     <div>
         Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
 
-        @Html.PagedListPager(Model, page => Url.Action("EditOldAjax",
-        new { page, currentFilter = ViewBag.CurrentFilter }),
-        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "QuestionsOld" }))
+        @Html.PagedListPager(Model, page => Url.Action("CreateTestFinishAjax",
+        new { page, currentFilter = ViewBag.CurrentFilter, Tags = Session["Tags"], Subjects = Session["Subjects"] }),
+        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "Questions" }))
     </div>
-    <div class="row">
+    <div class="row" id="question">
         <table>
             <tr>
                 <th>
@@ -78,9 +80,18 @@
                         @item.Name
                     </td>
                     <td class="center" width="15%">
-                        <div class="Yes">
-                            <button type="submit" value="@item.Id" name="submitButton"></button>
-                        </div>
+                        @if (item.Access == true)
+                        {
+                            <div class="Yes">
+                                <button type="submit" value="@item.Id" name="submitButton"></button>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="No">
+                                <button type="submit" value="@item.Id" name="submitButton"></button>
+                            </div>
+                        }
                     </td>
                 </tr>
             }
@@ -89,21 +100,22 @@
     <div>
         Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
 
-        @Html.PagedListPager(Model, page => Url.Action("EditOldAjax",
-        new { page, currentFilter = ViewBag.CurrentFilter }),
-        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "QuestionsOld" }))
+        @Html.PagedListPager(Model, page => Url.Action("CreateTestFinishAjax",
+        new { page, currentFilter = ViewBag.CurrentFilter, Tags = Session["Tags"], Subjects = Session["Subjects"] }),
+        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "Questions" }))
     </div>
     <script>
+        MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'question']);
         (function ($) {
             $.fn.setCursorToTextEnd = function () {
                 var $initialVal = this.val();
                 this.val($initialVal);
             };
         })(jQuery);
-        $('#SearchStringOld').focus();
-        $('#SearchStringOld').setCursorToTextEnd();
-        $('#SearchStringOld').keyup(function () {
-            $('#Old').submit();
+        $('#SearchString').focus();
+        $('#SearchString').setCursorToTextEnd();
+        $('#SearchString').keyup(function () {
+            $(this.form).submit();
         });
     </script>
 }

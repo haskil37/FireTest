@@ -173,7 +173,9 @@ namespace FireTest.Controllers
                 };
 
                 if (item.Course != 100)
-                    temp.Group = item.Course + item.Group;
+                    temp.Group = item.Group;
+                else
+                    temp.Group = "Преподаватель";
 
                 if (item.AllAnswers != 0)
                     temp.CorrectAnswers = 100 * item.CorrectAnswers / item.AllAnswers;
@@ -255,7 +257,7 @@ namespace FireTest.Controllers
                 Family = user.Family,
                 Name = user.Name,
                 Battles = user.BattleCount,
-                Group = user.Course + user.Group,
+                Group = user.Group,
                 Rating = numbertop + 1,
                 CorrectAnswers = temp,
             });
@@ -269,7 +271,7 @@ namespace FireTest.Controllers
                 Family = otheruser.Family,
                 Name = otheruser.Name,
                 Battles = user.BattleCount,
-                Group = user.Course + user.Group,
+                Group = user.Group,
                 Rating = numbertop + 1,
                 CorrectAnswers = temp,
             });

@@ -1,0 +1,25 @@
+﻿@model FireTest.Models.TeacherTestDetails
+@{
+    ViewBag.Title = "Редактировать тест";
+}
+@Styles.Render("~/Content/administrator")
+<div id="QuestionsOld">
+    @{ Html.RenderAction("EditOldFinishAjax", new { Page = 1 }); }
+</div>
+<div id="QuestionsNew">
+    @{ Html.RenderAction("EditNewFinishAjax", new { Page = 1 }); }
+</div>
+<div class="row center">
+    @Html.ActionLink("На главную", "Index", null, new { @class = "button-Cancel" })
+</div>
+@section scripts
+{
+    <script>
+        $('#SearchStringOld').keyup(function () {
+            $('#Old').submit();
+        });
+        $('#SearchStringNew').keyup(function () {
+            $('#New').submit();
+        });
+    </script>
+}

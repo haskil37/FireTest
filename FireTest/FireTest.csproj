@@ -232,6 +232,10 @@
     <Compile Include="Migrations\201703201924136_addNewFunc.Designer.cs">
       <DependentUpon>201703201924136_addNewFunc.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201703211119099_addFinishQuaTest.cs" />
+    <Compile Include="Migrations\201703211119099_addFinishQuaTest.Designer.cs">
+      <DependentUpon>201703211119099_addFinishQuaTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Decliner.cs" />
@@ -31469,6 +31473,15 @@
     <Content Include="Views\Statistics\IndexUser.cshtml" />
     <Content Include="Views\Qualification\QualificationWrongDetails.cshtml" />
     <Content Include="Views\Disciplines\DisciplineWrongDetails.cshtml" />
+    <Content Include="Views\Teacher\Error.cshtml" />
+    <Content Include="Views\Teacher\IndexQualification.cshtml" />
+    <Content Include="Views\Teacher\DetailsFinish.cshtml" />
+    <Content Include="Views\Teacher\DeleteFinish.cshtml" />
+    <Content Include="Views\Teacher\EditFinish.cshtml" />
+    <Content Include="Views\Teacher\EditOldFinishAjax.cshtml" />
+    <Content Include="Views\Teacher\EditNewFinishAjax.cshtml" />
+    <Content Include="Views\Teacher\CreateTestFinish.cshtml" />
+    <Content Include="Views\Teacher\CreateTestFinishAjax.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -31516,6 +31529,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201703201924136_addNewFunc.resx">
       <DependentUpon>201703201924136_addNewFunc.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703211119099_addFinishQuaTest.resx">
+      <DependentUpon>201703211119099_addFinishQuaTest.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

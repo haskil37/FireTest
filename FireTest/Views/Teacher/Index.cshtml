@@ -39,6 +39,10 @@
     </div>
 </div>
 @{ Html.RenderAction("IndexExams", "Teacher"); }
+@if (ViewBag.Access)
+{
+    { Html.RenderAction("IndexQualification", "Teacher"); }
+}
 <div class="substrate">
     <div class="row"><h3>База вопросов</h3></div>
     <div class="row">Добавляйте, удаляйте, редактируйте вопросы по дисциплинам</div>

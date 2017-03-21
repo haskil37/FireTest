@@ -1,0 +1,15 @@
+﻿@{
+    ViewBag.Title = "Создание теста";
+}
+@Styles.Render("~/Content/administrator")
+<div id="Questions">
+    @{ Html.RenderAction("CreateTestFinishAjax", new { Page = 1 }); }
+</div>
+@section scripts
+{
+    <script>
+    $('#SearchString').keyup(function () {
+        $(this.form).submit();
+    });
+    </script>
+}

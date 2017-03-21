@@ -1,0 +1,35 @@
+﻿@model IEnumerable<FireTest.Models.TeacherFinishTest>
+<div class="substrate">
+    <div class="row"><h3>Создать итоговое тестирование по уровню подготовки</h3></div>
+    <div class="row">Данный раздел позволяет выбрать вопросы из базы данных для создания итогового теста по определенной квалификации</div>
+    <div class="row" id="Tests">
+        <table>
+            <tr>
+                <th width="60%">
+                    Созданные тестирования:
+                </th>
+                <th>
+                </th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NameTest)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Редактировать", "EditFinish", new { id = item.Id }) |
+                        @Html.ActionLink("Подробности", "DetailsFinish", new { id = item.Id }) |
+                        @Html.ActionLink("Удалить", "DeleteFinish", new { id = item.Id })
+                    </td>
+                </tr>
+            }
+        </table>
+        <br />
+        <br />
+        <div class="row">
+            <a href="CreateTestFinish" class="button">Создать тест</a>
+        </div>
+    </div>
+</div>
