@@ -272,8 +272,18 @@ namespace FireTest.Models
     {
         public int Id { get; set; }
         public string TeacherId { get; set; }
+        public int IdQualification { get; set; }
         public string NameTest { get; set; }
         public string Questions { get; set; }
+        public int Eval5 { get; set; }
+        public int Eval4 { get; set; }
+        public int Eval3 { get; set; }
+    }
+    public class TeacherFinishTestPrepareViewModel
+    {
+        [Required(ErrorMessage = "Вы должны указать название итогового тестирования")]
+        public string NameTest { get; set; }
+        public int Qualifications { get; set; }
         public int Eval5 { get; set; }
         public int Eval4 { get; set; }
         public int Eval3 { get; set; }

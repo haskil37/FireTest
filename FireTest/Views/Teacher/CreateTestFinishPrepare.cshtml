@@ -1,0 +1,46 @@
+﻿@model FireTest.Models.TeacherFinishTestPrepareViewModel
+@{
+    ViewBag.Title = "Создание итогового теста по уровню подготовки";
+}
+@using (Html.BeginForm("CreateTestFinishPrepare", "Teacher", null, FormMethod.Post, new { role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+    <div class="row">
+        <div class="col-2">Название теста</div>
+        <div class="col-10">
+            <input name="NameTest" type="text" class="input">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2">Дисциплина</div>
+        <div class="col-10">
+            @Html.DropDownList("Qualifications", ViewBag.Qualifications as SelectList)
+        </div>
+    </div>
+    <div class="row">
+        <div class="center textback">Укажите минимальный процент для получения оценки</div>
+        <br />
+        <div class="col-1 left col-offset-1">
+            Для 5
+        </div>
+        <div class="col-2">
+            <input name="Eval5" type="text" class="input">
+        </div>
+        <div class="col-1 left">
+            &nbsp;&nbsp;Для 4
+        </div>
+        <div class="col-2">
+            <input name="Eval4" type="text" class="input">
+        </div>
+        <div class="col-1 left">
+            &nbsp;&nbsp;Для 3
+        </div>
+        <div class="col-2">
+            <input name="Eval3" type="text" class="input">
+        </div>
+    </div>
+    <div class="row center">
+        <input type="submit" value="Перейти к выбору вопросов" class="button" />
+    </div>
+}

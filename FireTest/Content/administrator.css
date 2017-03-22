@@ -126,6 +126,13 @@ th {
     background-color: transparent;
     border: 1px solid rgb(196, 189, 151);
 }
+.pagination > .disabled > span,
+.pagination > .disabled > a,
+.pagination > .disabled > a:hover,
+.pagination > .disabled > a:focus {
+    background-color: transparent;
+    border: 1px solid rgb(196, 189, 151);
+}
 .pagination > li > a:hover,
 .pagination > li > span:hover,
 .pagination > li > a:focus,

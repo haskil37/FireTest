@@ -312,6 +312,7 @@ input[type="text"], textarea, input[type="password"] {
     border: none;
     font-size: 20px;
     font-family: 'Helvetica', 'Arial', sans-serif;
+    width: 100%;
 }
 input[type=range] {
     -webkit-appearance: none;

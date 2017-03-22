@@ -20,7 +20,12 @@
         </div>
     </div>
     <div class="row">
-        <h3>Поиск<span class="search"></span><input id="SearchString" name="SearchString" type="text" value="@ViewBag.CurrentFilter"></h3>
+        <div class="col-1">
+            <h3>Поиск</h3>
+        </div>
+        <div class="col-3">
+            <span class="search"></span><input id="SearchString" name="SearchString" type="text" value="@ViewBag.CurrentFilter" />
+        </div>
     </div>
     <div>
         Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount

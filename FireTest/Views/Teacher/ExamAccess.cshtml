@@ -13,7 +13,12 @@
         <div class="textback center"><h3>Выберите каким студентам открыть доступ к экзамену</h3></div>
     </div>
     <div class="row">
-        <h3>Поиск<span class="search"></span><input id="SearchString" name="SearchString" type="text"></h3>
+        <div class="col-1">
+            <h3>Поиск</h3>
+        </div>
+        <div class="col-3">
+            <span class="search"></span><input id="SearchString" name="SearchString" type="text" value="@ViewBag.CurrentFilter" />
+        </div>
     </div>
 }
 <div id="Users">

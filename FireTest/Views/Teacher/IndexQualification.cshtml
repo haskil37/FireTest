@@ -19,7 +19,7 @@
                         @Html.DisplayFor(modelItem => item.NameTest)
                     </td>
                     <td>
-                        @Html.ActionLink("Редактировать", "EditFinish", new { id = item.Id }) |
+                        @Html.ActionLink("Редактировать", "CreateTestFinish", new { idTest = item.Id }) |
                         @Html.ActionLink("Подробности", "DetailsFinish", new { id = item.Id }) |
                         @Html.ActionLink("Удалить", "DeleteFinish", new { id = item.Id })
                     </td>
@@ -29,7 +29,7 @@
         <br />
         <br />
         <div class="row">
-            <a href="CreateTestFinish" class="button">Создать тест</a>
+            <a href="CreateTestFinishPrepare" class="button">Создать тест</a>
         </div>
     </div>
 </div>
