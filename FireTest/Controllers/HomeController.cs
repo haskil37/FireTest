@@ -198,6 +198,8 @@ namespace FireTest.Controllers
         public ActionResult Rating()
         {
             var top = dbContext.Users
+                    .Where(u => !string.IsNullOrEmpty(u.Name))
+                    .Where(u => !string.IsNullOrEmpty(u.SubName))
                     .Select(u => new
                     {
                         avatar = u.Avatar,
@@ -218,20 +220,24 @@ namespace FireTest.Controllers
         }
         public ActionResult RatingPlace()
         {
-            ApplicationUser you = dbContext.Users.Find(User.Identity.GetUserId());
-
-            string YouId = you.Id;
+            string YouId = User.Identity.GetUserId();
+            ApplicationUser you = dbContext.Users.Find(YouId);
 
             int numbertop = dbContext.Users
                     .Where(u => u.Rating > you.Rating)
                     .Where(u => u.Group == you.Group)
+                    .Where(u => !string.IsNullOrEmpty(u.Name))
+                    .Where(u => !string.IsNullOrEmpty(u.SubName))
                     .Select(u => u.Rating).OrderByDescending(u => u).Count();
             int numberbottom = dbContext.Users
                     .Where(u => u.Rating <= you.Rating)
                     .Where(u => u.Id != YouId)
                     .Where(u => u.Group == you.Group)
+                    .Where(u => !string.IsNullOrEmpty(u.Name))
+                    .Where(u => !string.IsNullOrEmpty(u.SubName))
                     .Select(u => u.Rating).OrderByDescending(u => u).Count();
 
+            ViewBag.RatingPosition = numbertop + 1;
             int taketop = 2;
             int takebottom = 2;
             switch (numberbottom)
@@ -269,6 +275,8 @@ namespace FireTest.Controllers
             var top = dbContext.Users
                     .Where(u => u.Rating > you.Rating)
                     .Where(u => u.Group == you.Group)
+                    .Where(u => !string.IsNullOrEmpty(u.Name))
+                    .Where(u => !string.IsNullOrEmpty(u.SubName))
                     .Select(u => new
                     {
                         Avatar = u.Avatar,
@@ -301,6 +309,8 @@ namespace FireTest.Controllers
             var bottom = dbContext.Users
                     .Where(u => u.Rating <= you.Rating)
                     .Where(u => u.Group == you.Group)
+                    .Where(u => !string.IsNullOrEmpty(u.Name))
+                    .Where(u => !string.IsNullOrEmpty(u.SubName))
                     .Where(u => u.Id != YouId)
                     .Select(u => new
                     {
