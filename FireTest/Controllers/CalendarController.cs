@@ -18,7 +18,7 @@ namespace FireTest.Controllers
             user.Update = false;
             dbContext.SaveChanges();
             var exams = dbContext.Examinations
-                .Where(u => u.Group == user.Course + user.Group)
+                .Where(u => u.Group == user.Group)
                 .Select(u => new {
                     Name = u.Name,
                     Classroom = u.Classroom,

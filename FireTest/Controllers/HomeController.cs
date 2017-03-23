@@ -133,15 +133,16 @@ namespace FireTest.Controllers
 
                     var exams = dbContext.Examinations.
                         Where(u => u.Date == DateTime.Today).
-                        Where(u => u.Group == user.Course + user.Group).
+                        Where(u => u.Group == user.Group).
                         Select(u => new {
                             Name = u.Name,
                             Classroom = u.Classroom,
                             Annotations = u.Annotations,
                         }).ToList();
                     ViewBag.User = "user";
-                    string role = user.Roles.SingleOrDefault().RoleId;
-                    if (dbContext.Roles.Find(role).Name != "USER")
+                    var role = dbContext.Users.Find(userId).Roles.SingleOrDefault();
+                    ViewBag.Access = dbContext.Roles.Find(role.RoleId).Name;
+                    if (dbContext.Roles.Find(role.RoleId).Name != "USER")
                     {
                         exams = dbContext.Examinations.
                             Where(u => u.Date == DateTime.Today).
@@ -198,6 +199,7 @@ namespace FireTest.Controllers
         public ActionResult Rating()
         {
             var top = dbContext.Users
+                    .Where(u => u.Course != 100)
                     .Where(u => !string.IsNullOrEmpty(u.Name))
                     .Where(u => !string.IsNullOrEmpty(u.SubName))
                     .Select(u => new
@@ -222,19 +224,25 @@ namespace FireTest.Controllers
         {
             string YouId = User.Identity.GetUserId();
             ApplicationUser you = dbContext.Users.Find(YouId);
-
+            if (you.Course == 100)
+            {
+                ViewBag.NoRatingPosition = "Вы не участвуете в рейтинге";
+                return View();
+            }
             int numbertop = dbContext.Users
-                    .Where(u => u.Rating > you.Rating)
-                    .Where(u => u.Group == you.Group)
+                    .Where(u => u.Course != 100)
                     .Where(u => !string.IsNullOrEmpty(u.Name))
                     .Where(u => !string.IsNullOrEmpty(u.SubName))
+                    .Where(u => u.Rating > you.Rating)
+                    .Where(u => u.Group == you.Group)
                     .Select(u => u.Rating).OrderByDescending(u => u).Count();
             int numberbottom = dbContext.Users
+                    .Where(u => u.Course != 100)
+                    .Where(u => !string.IsNullOrEmpty(u.Name))
+                    .Where(u => !string.IsNullOrEmpty(u.SubName))
                     .Where(u => u.Rating <= you.Rating)
                     .Where(u => u.Id != YouId)
                     .Where(u => u.Group == you.Group)
-                    .Where(u => !string.IsNullOrEmpty(u.Name))
-                    .Where(u => !string.IsNullOrEmpty(u.SubName))
                     .Select(u => u.Rating).OrderByDescending(u => u).Count();
 
             ViewBag.RatingPosition = numbertop + 1;
@@ -273,10 +281,11 @@ namespace FireTest.Controllers
             ViewBag.Start = numbertop + 1 - taketop;
 
             var top = dbContext.Users
-                    .Where(u => u.Rating > you.Rating)
-                    .Where(u => u.Group == you.Group)
+                    .Where(u => u.Course != 100)
                     .Where(u => !string.IsNullOrEmpty(u.Name))
                     .Where(u => !string.IsNullOrEmpty(u.SubName))
+                    .Where(u => u.Rating > you.Rating)
+                    .Where(u => u.Group == you.Group)
                     .Select(u => new
                     {
                         Avatar = u.Avatar,
@@ -307,10 +316,11 @@ namespace FireTest.Controllers
             });
 
             var bottom = dbContext.Users
-                    .Where(u => u.Rating <= you.Rating)
-                    .Where(u => u.Group == you.Group)
+                    .Where(u => u.Course != 100)
                     .Where(u => !string.IsNullOrEmpty(u.Name))
                     .Where(u => !string.IsNullOrEmpty(u.SubName))
+                    .Where(u => u.Rating <= you.Rating)
+                    .Where(u => u.Group == you.Group)
                     .Where(u => u.Id != YouId)
                     .Select(u => new
                     {

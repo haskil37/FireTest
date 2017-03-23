@@ -301,7 +301,7 @@ namespace FireTest.Controllers
                     Id = u.Id,
                     Text = u.QuestionText
                 }).ToList();
-            if (Tags != "Все разделы" && Tags != "Без раздела")
+            if (Tags != "Все разделы" && Tags != "Без раздела" && !string.IsNullOrEmpty(Tags))
             {
                 tempQuestions = dbContext.Questions //Берем все вопросы дисциплины нужного раздела
                     .Where(u => u.IdSubject == sub)
@@ -2081,6 +2081,8 @@ namespace FireTest.Controllers
         {
             Examination exam = dbContext.Examinations.Find(id);
             TestQualificationAccess testQualificationAccess = dbContext.TestQualificationAccess.Where(u => u.IdExamination == id).SingleOrDefault();
+            if (testQualificationAccess == null)
+                return RedirectToAction("Index");
             dbContext.TestQualificationAccess.Remove(testQualificationAccess);
             dbContext.Examinations.Remove(exam);
             dbContext.SaveChanges();
