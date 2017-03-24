@@ -240,6 +240,10 @@
     <Compile Include="Migrations\201703220958020_AddQuainTest.Designer.cs">
       <DependentUpon>201703220958020_AddQuainTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201703240810501_addFinishTestInExam.cs" />
+    <Compile Include="Migrations\201703240810501_addFinishTestInExam.Designer.cs">
+      <DependentUpon>201703240810501_addFinishTestInExam.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Decliner.cs" />
@@ -31537,6 +31541,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201703220958020_AddQuainTest.resx">
       <DependentUpon>201703220958020_AddQuainTest.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703240810501_addFinishTestInExam.resx">
+      <DependentUpon>201703240810501_addFinishTestInExam.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

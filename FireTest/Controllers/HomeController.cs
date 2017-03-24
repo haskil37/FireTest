@@ -154,31 +154,34 @@ namespace FireTest.Controllers
                             }).ToList();
                         ViewBag.User = "nouser";
                     }
-                    if (exams.Count != 0)
-                    {
-                        string temp = "У Вас сегодня экзамен";
-                        if (exams.Count == 1)
+                    if (ViewBag.User == "nouser" || user.Course != 100)
+                    { 
+                        if (exams.Count != 0)
                         {
-                            foreach (var item in exams)
+                            string temp = "У Вас сегодня экзамен";
+                            if (exams.Count == 1)
                             {
-                                temp += ": \"" + item.Name + "\" в аудитории: " + item.Classroom;
-                                if (!string.IsNullOrEmpty(item.Annotations))
-                                    temp += " (" + item.Annotations + ")";
+                                foreach (var item in exams)
+                                {
+                                    temp += ": \"" + item.Name + "\" в аудитории: " + item.Classroom;
+                                    if (!string.IsNullOrEmpty(item.Annotations))
+                                        temp += " (" + item.Annotations + ")";
+                                }
                             }
-                        }
-                        else
-                        {
-                            temp += "ы:\n";
-                            foreach (var item in exams)
+                            else
                             {
-                                temp += "\"" + item.Name + "\" в аудитории: " + item.Classroom;
-                                if (!string.IsNullOrEmpty(item.Annotations))
-                                    temp += " (" + item.Annotations + ")\n";
-                                else
-                                    temp += "\n";
+                                temp += "ы:\n";
+                                foreach (var item in exams)
+                                {
+                                    temp += "\"" + item.Name + "\" в аудитории: " + item.Classroom;
+                                    if (!string.IsNullOrEmpty(item.Annotations))
+                                        temp += " (" + item.Annotations + ")\n";
+                                    else
+                                        temp += "\n";
+                                }
                             }
+                            ViewBag.Exam = temp;
                         }
-                        ViewBag.Exam = temp;
                     }
                     ViewBag.Images = new SIC().SelectImagesCache(SIC.type.img);
                     return View();

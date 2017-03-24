@@ -568,7 +568,7 @@ namespace FireTest.Controllers
                     Tag = u.Tag
                 }).ToList();
 
-            if (Tags != "Все разделы" && Tags != "Без раздела")
+            if (Tags != "Все разделы" && Tags != "Без раздела" && !string.IsNullOrEmpty(Tags))
             {
                 tempQuestions = tempQuestions //Берем все вопросы дисциплины нужного раздела
                     .Where(u => u.Tag == Tags)
@@ -1890,7 +1890,7 @@ namespace FireTest.Controllers
                 .Select(u => new SelectListItem()
                 {
                     Text = u.NameTest,
-                    Value = u.Id.ToString(),
+                    Value = u.Id.ToString() + "F",
                 }).ToList();
             if (finishTests == null || finishTests.Count == 0)
             {
@@ -1921,7 +1921,7 @@ namespace FireTest.Controllers
             return View(new ExaminationViewModel() { Date = DateTime.Now });
         }
         [HttpPost]
-        public ActionResult CreateExam(ExaminationViewModel model, string Group, int Test, int Time)
+        public ActionResult CreateExam(ExaminationViewModel model, string Group, string Test, int Time)
         {
             string userId = User.Identity.GetUserId();
 
@@ -1953,14 +1953,15 @@ namespace FireTest.Controllers
             exam.Annotations = model.Annotations;
             exam.Classroom = model.Classroom;
             exam.Group = Group;
-            exam.IdTest = Test;
+            if (Test.Contains("F"))
+                exam.FinishTest = true;
+            exam.IdTest = Convert.ToInt32(Test.Replace("F", ""));
             exam.TeacherId = userId;
             exam.Date = model.Date;
             exam.Time = Time;
             dbContext.Examinations.Add(exam);
             dbContext.SaveChanges();
             var allUsers = dbContext.Users.
-                                //Where(u => u.Course + u.Group == Group).
                 Where(u => u.Group == Group).
                 Select(u => u.Id).ToList();
             foreach (var item in allUsers)
@@ -1988,21 +1989,45 @@ namespace FireTest.Controllers
             model.Name = exam.Name;
             model.Time = exam.Time;
 
-            ViewBag.Test = dbContext.TeacherTests
+
+            var tests = dbContext.TeacherTests
                 .Where(u => u.TeacherId == userId)
+                .Where(u => !string.IsNullOrEmpty(u.NameTest))
+                .Where(u => !string.IsNullOrEmpty(u.Questions))
                 .Select(u => new SelectListItem()
                 {
                     Text = u.NameTest,
                     Value = u.Id.ToString(),
-                    Selected = u.Id == exam.IdTest
                 }).ToList();
+
+            var finishTests = dbContext.TeacherFinishTests
+                .Where(u => u.TeacherId == userId)
+                .Where(u => !string.IsNullOrEmpty(u.NameTest))
+                .Where(u => !string.IsNullOrEmpty(u.Questions))
+                .Select(u => new SelectListItem()
+                {
+                    Text = u.NameTest,
+                    Value = u.Id.ToString() + "F",
+                }).ToList();
+            if (finishTests == null || finishTests.Count == 0)
+            {
+                if ((tests == null || tests.Count == 0))
+                    return RedirectToAction("Index", new { message = "Нет доступных тестов для создания экзамена" });
+            }
+            else
+            {
+                if ((tests == null || tests.Count == 0))
+                    tests = finishTests;
+                else
+                    foreach (var item in finishTests)
+                        tests.Add(item);
+            }
+
+            ViewBag.Test = tests;
 
             ViewBag.Group = dbContext.Users
                 .Select(u => new SelectListItem()
                 {
-                    //Text = u.Course + u.Group,
-                    //Value = u.Course + u.Group,
-                    //Selected = u.Course + u.Group == exam.Group
                     Text = u.Group,
                     Value = u.Group,
                     Selected = u.Group == exam.Group
@@ -2013,7 +2038,7 @@ namespace FireTest.Controllers
             return View(model);
         }
         [HttpPost]
-        public ActionResult EditExams(ExaminationViewModel model, string Group, int Test, int id)
+        public ActionResult EditExams(ExaminationViewModel model, string Group, string Test, int id)
         {
             string userId = User.Identity.GetUserId();
 
@@ -2030,8 +2055,6 @@ namespace FireTest.Controllers
                 ViewBag.Group = dbContext.Users
                     .Select(u => new SelectListItem()
                     {
-                        //Text = u.Course + u.Group,
-                        //Value = u.Course + u.Group,
                         Text = u.Group,
                         Value = u.Group,
                     })
@@ -2044,14 +2067,19 @@ namespace FireTest.Controllers
             exam.Annotations = model.Annotations;
             exam.Classroom = model.Classroom;
             exam.Group = Group;
-            exam.IdTest = Test;
+            if (Test.Contains("F"))
+                exam.FinishTest = true;
+            else
+                exam.FinishTest = false;
+            exam.IdTest = Convert.ToInt32(Test.Replace("F", ""));
             exam.TeacherId = userId;
             exam.Date = model.Date;
             exam.Time = model.Time;
 
+            var teacher = dbContext.Users.Find(userId);
+            teacher.Update = true;
             dbContext.SaveChanges();
             var allUsers = dbContext.Users.
-                                //Where(u => u.Course + u.Group == Group).
                 Where(u => u.Group == Group).
                 Select(u => u.Id).ToList();
             foreach (var item in allUsers)

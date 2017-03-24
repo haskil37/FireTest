@@ -19,7 +19,7 @@ namespace FireTest.Controllers
             ApplicationUser user = dbContext.Users.Find(userId);
             var exams = dbContext.Examinations.
                 Where(u => u.Date == DateTime.Today).
-                Where(u => u.Group == user.Course + user.Group).
+                Where(u => u.Group == user.Group).
                 Select(u => new {
                     Id = u.Id,
                     Name = u.Name,

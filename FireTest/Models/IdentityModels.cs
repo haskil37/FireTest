@@ -304,6 +304,7 @@ namespace FireTest.Models
         public int Id { get; set; }
         public string TeacherId { get; set; }
         public int IdTest { get; set; }
+        public bool FinishTest { get; set; }
         public string Name { get; set; }
         public string Group { get; set; }
         public System.DateTime Date { get; set; }

@@ -25,6 +25,17 @@ namespace FireTest.Controllers
                     Date = u.Date,
                     Annotations = u.Annotations
                 }).ToList();
+            if (exams.Count == 0)
+                exams = dbContext.Examinations
+                   .Where(u => u.TeacherId == userId)
+                   .Select(u => new
+                   {
+                       Name = u.Name,
+                       Classroom = u.Classroom,
+                       Date = u.Date,
+                       Annotations = u.Annotations
+                   }).ToList();
+
             ViewBag.Dates = "";
             foreach(var item in exams)
             {
