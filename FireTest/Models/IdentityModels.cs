@@ -347,25 +347,7 @@ namespace FireTest.Models
         public int Score { get; set; }
         public bool End { get; set; }
     }
-    public class FinishTestQualification
-    {
-        public int Id { get; set; }
-        public int IdExamination { get; set; }
-        public string IdUser { get; set; }
-        public string Questions { get; set; }
-        public string Answers { get; set; }
-        public string RightOrWrong { get; set; }
-        public System.DateTime TimeStart { get; set; }
-        public int Score { get; set; }
-        public bool End { get; set; }
-    }
     public class TestQualificationAccess
-    {
-        public int Id { get; set; }
-        public int IdExamination { get; set; }
-        public string IdUsers { get; set; }
-    }
-    public class FinishTestQualificationAccess
     {
         public int Id { get; set; }
         public int IdExamination { get; set; }
@@ -390,8 +372,6 @@ namespace FireTest.Models
         public DbSet<Examination> Examinations { get; set; }
         public DbSet<TestQualification> TestQualification { get; set; }
         public DbSet<TestQualificationAccess> TestQualificationAccess { get; set; }
-        public DbSet<FinishTestQualification> FinishTestQualification { get; set; }
-        public DbSet<FinishTestQualificationAccess> FinishTestQualificationAccess { get; set; }
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
         {

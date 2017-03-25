@@ -251,13 +251,18 @@ namespace FireTest.Controllers
             if (user.AnswersCount != 0)
                 temp = 100 * user.CorrectAnswersCount / user.AnswersCount;
 
+            string group = user.Group;
+            var role = dbContext.Users.Find(userId).Roles.SingleOrDefault();
+            if (user.Course == 100)
+                group = "Преподаватель";
+                
             invite.Add(new UsersData
             {
                 Avatar = "/Images/Avatars/" + user.Avatar,
                 Family = user.Family,
                 Name = user.Name,
                 Battles = user.BattleCount,
-                Group = user.Group,
+                Group = group,
                 Rating = numbertop + 1,
                 CorrectAnswers = temp,
             });
@@ -265,13 +270,21 @@ namespace FireTest.Controllers
             if (otheruser.AnswersCount != 0)
                 temp = 100 * otheruser.CorrectAnswersCount / otheruser.AnswersCount;
 
+            numbertop = dbContext.Users
+                    .Where(u => u.Rating > otheruser.Rating)
+                    .Select(u => u.Rating).OrderByDescending(u => u).Count();
+
+            group = otheruser.Group;
+            if (otheruser.Course == 100)
+                group = "Преподаватель";
+
             invite.Add(new UsersData
             {
                 Avatar = "/Images/Avatars/" + otheruser.Avatar,
                 Family = otheruser.Family,
                 Name = otheruser.Name,
-                Battles = user.BattleCount,
-                Group = user.Group,
+                Battles = otheruser.BattleCount,
+                Group = group,
                 Rating = numbertop + 1,
                 CorrectAnswers = temp,
             });

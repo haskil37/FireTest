@@ -1059,7 +1059,9 @@ namespace FireTest.Controllers
                 //user.Group = Faculty + model.Group.Trim();
                 user.Group = model.Group.Trim();
                 user.Year = Convert.ToInt32(model.Year.Trim());
-                user.Age = Convert.ToInt32(model.Age.Trim());
+                model.Age = model.Age.Trim();
+                model.Age = model.Age.Replace("_", "");
+                user.Age = Convert.ToInt32(model.Age);
                 user.Sex = Convert.ToBoolean(model.Sex.Trim());
                 user.Region = model.Region.Trim();
                 DateTime entrance = DateTime.Parse("1 Sep " + user.Year);

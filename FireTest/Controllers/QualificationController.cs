@@ -24,9 +24,15 @@ namespace FireTest.Controllers
             ViewBag.QualificationName = dbContext.Qualifications.Find(id).Name;
 
             int count = dbContext.Questions
+                        .Where(u => u.IdQualification > 0)
                         .Where(u => u.IdQualification <= id)
                         .Where(u => u.IdCourse <= course).Count();
             ViewBag.Count = count;
+            int countCurrent = dbContext.Questions
+                        .Where(u => u.IdQualification == id)
+                        .Where(u => u.IdCourse <= course).Count();
+            ViewBag.CountCurrent = countCurrent;
+
             //ViewBag.CountMax = 0;
             //if (count < 100) //Если вопросов меньше 100, то изменяем максимум ползунка
             //{
@@ -82,7 +88,7 @@ namespace FireTest.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Index(int? EndId, int? EndCourse, int id = 0, string submitButton = "Exit", int count = 10)
         {
-            if (!ModelState.IsValid || id == 0 || submitButton == "Exit")
+            if (!ModelState.IsValid || id == 0 || submitButton == "Exit" || submitButton == "Cancel")
                 return RedirectToAction("Index", "Home");
 
             string user = User.Identity.GetUserId();
@@ -415,22 +421,42 @@ namespace FireTest.Controllers
             try
             {
                 List<int> idQuestions = new List<int>();
-                var questionsId = dbContext.Questions
+                var questionsId = dbContext.Questions //Берем сколько вопросов по данной квалификации
                      .Where(u => u.IdQualification > 0)
-                     .Where(u => u.IdQualification <= idQualification)
+                     .Where(u => u.IdQualification == idQualification)
                      .Where(u => u.IdCourse <= course)
                      .Select(u => new
                      {
                          id = u.Id
                      }).ToList();
 
+
+
                 if (count >= questionsId.Count) //Если выбрали вопросов больше или столько же сколько в базе, то делаем максимум что есть
                 {
                     for (int i = 0; i < questionsId.Count; i++)
                         idQuestions.Add(questionsId.ElementAt(i).id);
                     Shuffle(idQuestions); //Берем все вопросы без рандома и перемешиваем.
+                                          //Теперь добиваем остальными наугад
+                    Random rnd = new Random();
+                    var otherQuestionsId = dbContext.Questions 
+                             .Where(u => u.IdQualification > 0)
+                             .Where(u => u.IdQualification < idQualification)
+                             .Where(u => u.IdCourse <= course)
+                             .Select(u => new
+                             {
+                                 id = u.Id
+                             }).ToList();
+                    while (idQuestions.Count != count)
+                    {
+                        int value = rnd.Next(otherQuestionsId.Count());
+                        int item = otherQuestionsId.ElementAt(value).id;
+
+                        if (!idQuestions.Contains(item))
+                            idQuestions.Add(item);
+                    }
                 }
-                else //Иначе набираем рандомно вопросы
+                else //Выбираем наугад, но только нужной квалификации
                 {
                     Random rnd = new Random();
                     while (idQuestions.Count != count)
@@ -442,6 +468,24 @@ namespace FireTest.Controllers
                             idQuestions.Add(item);
                     }
                 }
+                //if (count >= questionsId.Count) //Если выбрали вопросов больше или столько же сколько в базе, то делаем максимум что есть
+                //{
+                //    for (int i = 0; i < questionsId.Count; i++)
+                //        idQuestions.Add(questionsId.ElementAt(i).id);
+                //    Shuffle(idQuestions); //Берем все вопросы без рандома и перемешиваем.
+                //}
+                //else //Иначе набираем рандомно вопросы
+                //{
+                //    Random rnd = new Random();
+                //    while (idQuestions.Count != count)
+                //    {
+                //        int value = rnd.Next(questionsId.Count());
+                //        int item = questionsId.ElementAt(value).id;
+
+                //        if (!idQuestions.Contains(item))
+                //            idQuestions.Add(item);
+                //    }
+                //}
 
                 string questions = ""; //Сохраняем вопросы в тест
                 foreach (int item in idQuestions)

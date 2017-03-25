@@ -1165,26 +1165,35 @@ namespace FireTest.Controllers
             }
             return RedirectToAction("NewQuestion", new { Message = "Вопрос был успешно добавлен", Department = newQuestion.IdDepartment, Subject = newQuestion.IdSubject, Course = newQuestion.IdCourse });
         }
-        public ActionResult EditQuestionSelect(string message)
+        public ActionResult EditQuestionSelect(string message, string Message, bool clear = true)
         {
-            Session.Clear();
+            if (clear)
+                Session.Clear();
 
             string userId = User.Identity.GetUserId();
             string temp = dbContext.TeachersAccess.Where(u => u.TeacherId == userId).Select(u => u.TeacherSubjects).SingleOrDefault();
             if (string.IsNullOrEmpty(temp))
                 return RedirectToAction("Error");
 
-            ViewBag.DeleteQualifications = message;
+            ViewBag.StatusMessage = Message;
+
             return View();
         }
         public PartialViewResult EditQuestionSelectAjax(string currentFilter, string searchString, int? page, string NameTest, int? Subjects, string Tags)
         {
             string userId = User.Identity.GetUserId();
-            if (Session["Subjects"] != null && Session["Tags"] != null)
-                if ((int)Session["Subjects"] != Subjects || (string)Session["Tags"] != Tags)
-                    page = 1;
-            Session["Subjects"] = Subjects;
-            Session["Tags"] = Tags;
+            if (Session["Subjects"] != null && Subjects == null)
+                Subjects = (int)Session["Subjects"];
+            if (Session["Tags"] != null && string.IsNullOrEmpty(Tags))
+                Tags = (string)Session["Tags"];
+                //    if ((int)Session["Subjects"] != Subjects || (string)Session["Tags"] != Tags)
+                //    {
+                //        Session["Subjects"] = 0;
+                //        Session["Tags"] = "";
+                //        page = 1;
+                //    }
+                //Session["Subjects"] = Subjects;
+            //Session["Tags"] = Tags;
             if (!string.IsNullOrEmpty(searchString))
                 page = 1;
             else
@@ -1229,6 +1238,8 @@ namespace FireTest.Controllers
             else
                 tempTags[0] = "Все разделы";
             tempTags.Add("Без раздела");
+            if (!tempTags.Contains(Tags))
+                Tags = "Все разделы";
             selectList = tempTags //Выпадающий список разделов
                 .Select(u => new SelectListItem()
                 {
@@ -1245,7 +1256,7 @@ namespace FireTest.Controllers
                     Text = u.QuestionText,
                     Qualification = u.IdQualification
                 }).ToList();
-            if (Tags != "Все разделы" && Tags != "Без раздела")
+            if (Tags != "Все разделы" && Tags != "Без раздела" && !string.IsNullOrEmpty(Tags))
             {
                 tempQuestions = dbContext.Questions //Берем все вопросы дисциплины нужного раздела
                     .Where(u => u.IdSubject == sub)
@@ -1302,10 +1313,9 @@ namespace FireTest.Controllers
 
             return PartialView(model.ToPagedList(pageNumber, pageSize));
         }
-        public ActionResult EditQuestion(int id, string Message)
+        public ActionResult EditQuestion(int id)
         {
             ViewBag.Id = id;
-            ViewBag.StatusMessage = Message;
             string userId = User.Identity.GetUserId();
             string temp = dbContext.TeachersAccess.Where(u => u.TeacherId == userId).Select(u => u.TeacherSubjects).SingleOrDefault();
             List<string> userSubjects = new List<string>(); //Берем в массив ид предметов у которых у нас доступ
@@ -1447,6 +1457,9 @@ namespace FireTest.Controllers
             question.IdSubject = Subjects;
             question.QuestionText = Question.QuestionText;
             question.Tag = Question.Tag;
+
+            Session["Subjects"] = Subjects;
+            Session["Tags"] = Question.Tag;
 
             var NewAnswersId = dbContext.Answers
                     .Where(u => u.IdQuestion == id)
@@ -1683,7 +1696,9 @@ namespace FireTest.Controllers
                 question.QuestionImage = ImageName + extension;
             }
             dbContext.SaveChanges();
-            return RedirectToAction("EditQuestion", new { id, Message = "Вопрос был успешно изменен" });
+            return RedirectToAction("EditQuestionSelect", new { clear = false, Message = "Вопрос был успешно изменен" });
+
+            //return RedirectToAction("EditQuestion", new { id, Message = "Вопрос был успешно изменен" });
         }
         public ActionResult DeleteQuestionSelect()
         {
@@ -1763,7 +1778,7 @@ namespace FireTest.Controllers
                     Id = u.Id,
                     Text = u.QuestionText
                 }).ToList();
-            if (Tags != "Все разделы" && Tags != "Без раздела")
+            if (Tags != "Все разделы" && Tags != "Без раздела" && !string.IsNullOrEmpty(Tags))
             {
                 tempQuestions = dbContext.Questions //Берем все вопросы дисциплины нужного раздела
                     .Where(u => u.IdSubject == sub)

@@ -45,10 +45,13 @@
         <li>
             <a href="/Home/Index"><span class="sidebar-li home"></span>Главная</a>
         </li>
-        <li class="battlesWidth">
-            <a href="/Battles/Index"><span class="sidebar-li time"></span>Поединок</a>
-            <div id="invite"></div>
-        </li>
+        if (!ViewBag.NoBattle)
+        {
+            <li class="battlesWidth">
+                <a href="/Battles/Index"><span class="sidebar-li time"></span>Поединок</a>
+                <div id="invite"></div>
+            </li>
+        }
         <li>
             <a href="/Calendar/Index"><span class="sidebar-li calendar"></span>Календарь событий<span class="updateCalendar"></span></a>
         </li>

@@ -143,7 +143,7 @@ namespace FireTest.Controllers
                     ViewBag.User = "user";
                     var role = dbContext.Users.Find(userId).Roles.SingleOrDefault();
                     ViewBag.Access = dbContext.Roles.Find(role.RoleId).Name;
-                    if (dbContext.Roles.Find(role.RoleId).Name != "USER")
+                    if (ViewBag.Access != "USER")
                     {
                         exams = dbContext.Examinations.
                             Where(u => u.Date == DateTime.Today).
@@ -241,8 +241,16 @@ namespace FireTest.Controllers
         [ChildActionOnly]
         public ActionResult Menu()
         {
-            var role = dbContext.Users.Find(User.Identity.GetUserId()).Roles.SingleOrDefault();           
+            string userId = User.Identity.GetUserId();
+            var role = dbContext.Users.Find(userId).Roles.SingleOrDefault();           
             ViewBag.Access = dbContext.Roles.Find(role.RoleId).Name;
+            if (ViewBag.Access == "USER")
+            {
+                var userCourse = dbContext.Users.Find(userId).Course;
+                ViewBag.NoBattle = false;
+                if (userCourse == 100)
+                    ViewBag.NoBattle = true;
+            }
             return PartialView();
         }
         public ActionResult Rating()

@@ -244,6 +244,10 @@
     <Compile Include="Migrations\201703240810501_addFinishTestInExam.Designer.cs">
       <DependentUpon>201703240810501_addFinishTestInExam.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201703251216351_delTwoTable.cs" />
+    <Compile Include="Migrations\201703251216351_delTwoTable.Designer.cs">
+      <DependentUpon>201703251216351_delTwoTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Decliner.cs" />
@@ -31544,6 +31548,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201703240810501_addFinishTestInExam.resx">
       <DependentUpon>201703240810501_addFinishTestInExam.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703251216351_delTwoTable.resx">
+      <DependentUpon>201703251216351_delTwoTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

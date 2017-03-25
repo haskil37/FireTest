@@ -6,7 +6,9 @@
     @Html.AntiForgeryToken()
     if (ViewBag.Сompleted == true)
     {
-        <div class="row center"><h3>По данной квалификации в базе @ViewBag.Count вопросов.</h3></div>
+        <div class="row center"><h3>По данному уровню подготовки в базе @ViewBag.CountCurrent вопросов из @ViewBag.Count по всем предыдущим уровням подготовки на этом курсе</h3></div>
+        <div class="row center"><h3>При выборе вопросов больше чем есть по данному уровню подготовки остальные вопросы будут взяты из предыдущих уровней подготовки</h3></div>
+        <br />
         <div class="row center"><h3>Выберите количество вопросов</h3></div>
         <div class="row center">
             <input type="range" min="1" max="@ViewBag.CountMax" id="count" name="count" oninput="countQ()" value="1">           

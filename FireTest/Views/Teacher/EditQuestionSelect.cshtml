@@ -2,7 +2,7 @@
     ViewBag.Title = "Редактирование вопроса";
 }
 @Styles.Render("~/Content/administrator")
-<div class="text-success">@ViewBag.DeleteQualifications</div>
+<div class="text-success">@ViewBag.StatusMessage</div>
 <div id="Questions">
     @{ Html.RenderAction("EditQuestionSelectAjax", new { Page = 1 }); }
 </div>
