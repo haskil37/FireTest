@@ -69,7 +69,7 @@
                     "#70bee6",
                 ],
             }],
-            labels: ["Завершено", "Не завершено"]
+            labels: ["Изучено", "Не изучено"]
         },
         options: optionQ,
     };
@@ -83,7 +83,7 @@
                     "#70bee6",
                 ],
             }],
-            labels: ["Завершено", "Не завершено"]
+            labels: ["Изучено", "Не изучено"]
         },
         options: optionQ
     };
@@ -91,13 +91,13 @@
         type: 'doughnut',
         data: {
             datasets: [{
-                data: [@ViewBag.QualificationRight[2], 100],
+                data: [@ViewBag.QualificationRight[2], 100-@ViewBag.QualificationRight[2]],
                 backgroundColor: [
                     "#ff7300",
                     "#70bee6",
                 ],
             }],
-            labels: ["Завершено", "Не завершено"]
+            labels: ["Изучено", "Не изучено"]
         },
         options: optionQ
     };
@@ -105,13 +105,13 @@
         type: 'doughnut',
         data: {
             datasets: [{
-                data: [@ViewBag.QualificationRight[3], 100-@ViewBag.QualificationRight[2]],
+                data: [@ViewBag.QualificationRight[3], 100-@ViewBag.QualificationRight[3]],
                 backgroundColor: [
                     "#ff7300",
                     "#70bee6",
                 ],
             }],
-            labels: ["Завершено", "Не завершено"]
+            labels: ["Изучено", "Не изучено"]
         },
         options: optionQ
     };
@@ -119,13 +119,13 @@
         type: 'doughnut',
         data: {
             datasets: [{
-                data: [@ViewBag.QualificationRight[4], 100-@ViewBag.QualificationRight[3]],
+                data: [@ViewBag.QualificationRight[4], 100-@ViewBag.QualificationRight[4]],
                 backgroundColor: [
                     "#ff7300",
                     "#70bee6",
                 ],
             }],
-            labels: ["Завершено", "Не завершено"]
+            labels: ["Изучено", "Не изучено"]
         },
         options: optionQ
     };

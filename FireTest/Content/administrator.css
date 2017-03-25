@@ -370,3 +370,6 @@ input.datepicker {
 .datepicker table tr td.new {
     color: #777777;
 }
+.qualification-color {
+    color: rgb(255, 115, 0);
+}

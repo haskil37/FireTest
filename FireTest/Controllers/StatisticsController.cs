@@ -47,22 +47,29 @@ namespace FireTest.Controllers
                     .Where(u => u.End == true)
                     .Where(u => u.IdQualification == i)
                     .Select(u => u.RightOrWrong).ToList();
-                List<string> tempRoW = new List<string>();
+                int right = 0;
                 foreach (string item in tempAllRightOrWrong)
                 {
                     var temp = item.Split('|').ToList();
-                    foreach (string item2 in temp)
-                        tempRoW.Add(item2);
+                    temp.RemoveAll(RemoveNull);
+                    right += temp.Count;
                 }
-                int right = tempRoW.Where(u => u != "0").Count();
-                if (tempRoW.Count() != 0)
-                    RightQ.Add(right * 100 / tempRoW.Count());
+                var allQuestionsThisQualification = dbContext.Questions.Where(u => u.IdQualification == i).Count();
+                int value = right * 100 / allQuestionsThisQualification;
+                if (value != 0)
+                    RightQ.Add(value);
+                else if (value > 100)
+                    RightQ.Add(100);
                 else
                     RightQ.Add(0);
             }
             ViewBag.QualificationRight = RightQ;
 
             return PartialView();
+        }
+        private bool RemoveNull(String s)
+        {
+            return s == "0";
         }
         public PartialViewResult CountBattles(string userId)
         {

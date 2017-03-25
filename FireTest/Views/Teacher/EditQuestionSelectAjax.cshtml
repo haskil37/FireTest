@@ -61,7 +61,7 @@
                         if (item.Qualification != 0)
                         {
                             <td class="center" width="15%">
-                                Квалификация: @item.QualificationName
+                                Квалификация: <span class="qualification-color">@item.QualificationName</span>
                                 <hr />
                                 <a href="QuestionQualification/@item.Id">Убрать</a>
                             </td>
@@ -69,7 +69,7 @@
                         else
                         {
                             <td class="center" width="15%">
-                                Квалификация: нет
+                                Квалификация: <span class="qualification-color">нет</span>
                                 <hr />
                                 <a href="QuestionQualification/@item.Id">Добавить</a>
                             </td>
