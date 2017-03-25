@@ -76,6 +76,7 @@ namespace FireTest.Controllers
             TeacherTestDetails testDetails = new TeacherTestDetails();
             testDetails.Id = teacherFinishTest.Id;
             testDetails.NameTest = teacherFinishTest.NameTest;
+            testDetails.Qualification = dbContext.Qualifications.Find(teacherFinishTest.IdQualification).Name;
             testDetails.Eval5 = teacherFinishTest.Eval5;
             testDetails.Eval4 = teacherFinishTest.Eval4;
             testDetails.Eval3 = teacherFinishTest.Eval3;
@@ -662,6 +663,7 @@ namespace FireTest.Controllers
             newtest.Eval3 = model.Eval3;
             newtest.Eval4 = model.Eval4;
             newtest.Eval5 = model.Eval5;
+            newtest.IdQualification = model.Qualifications;
             dbContext.TeacherFinishTests.Add(newtest);
             dbContext.SaveChanges();
             //        return RedirectToAction("CreateTestFinish", new System.Web.Routing.RouteValueDictionary(

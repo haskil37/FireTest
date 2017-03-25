@@ -9,6 +9,10 @@
         <div class="col-8">@Model.NameTest</div>
     </div>
     <div class="row">
+        <div class="col-2"><b>Итоговое тестирование по уровню подготовки:</b></div>
+        <div class="col-8">@Model.Qualification</div>
+    </div>
+    <div class="row">
         <b>Критерии оценки:</b>
     </div>
     <div class="row">
@@ -47,7 +51,7 @@
     {
         <table>
             <tr>
-                <td colspan="2">
+                <td>
                     <b>
                         Вопросы:
                     </b>
@@ -56,7 +60,6 @@
             @foreach (var item in Model.Questions)
             {
                 <tr>
-                    <td></td>
                     <td>@Html.DisplayFor(d => item.QuestionText)</td>
                 </tr>
             }

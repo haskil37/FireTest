@@ -19,6 +19,7 @@ namespace FireTest.Controllers
             ApplicationUser user = dbContext.Users.Find(userId);
             var exams = dbContext.Examinations.
                 Where(u => u.Date == DateTime.Today).
+                Where(u => !u.FinishTest).
                 Where(u => u.Group == user.Group).
                 Select(u => new {
                     Id = u.Id,
@@ -39,9 +40,39 @@ namespace FireTest.Controllers
                 {
                     List<string> usersAccess = temp.Split(',').ToList();
                     if (usersAccess.Contains(userId))
-                        start += "<a href=\"../Examination/Index/" + item.Id + "\">Приступить к экзамену: \"" + item.Name + "\"</a><br />";
+                        start += "<br /><a href=\"../Examination/Index/" + item.Id + "\">Приступить к экзамену: \"" + item.Name + "\"</a><br />";
                 }
             }
+            exams = dbContext.Examinations.
+                    Where(u => u.Date == DateTime.Today).
+                    Where(u => u.FinishTest).
+                    Where(u => u.Group == user.Group).
+                    Select(u => new {
+                        Id = u.Id,
+                        Name = u.Name,
+                    }).ToList();
+            foreach (var item in exams)
+            {
+                var temp = dbContext.TestQualificationAccess.
+                    Where(u => u.IdExamination == item.Id).
+                    Select(u => u.IdUsers).SingleOrDefault();
+                var test = dbContext.TestQualification.
+                     Where(u => u.IdExamination == item.Id).
+                     Where(u => u.IdUser == userId).
+                     Where(u => u.End == true).SingleOrDefault();
+
+                if (temp != null && test == null)
+                {
+                    List<string> usersAccess = temp.Split(',').ToList();
+                    if (usersAccess.Contains(userId))
+                    {
+                        if (start.Length != 0)
+                            start += "<hr />";
+                        start += "<br /><a href=\"../Examination/Index/" + item.Id + "\">Приступить к итоговому тестированию: \"" + item.Name + "\"</a><br />";
+                    }
+                }
+            }
+
             ViewBag.Start = start;
             return PartialView();
         }
@@ -66,7 +97,8 @@ namespace FireTest.Controllers
                 {
                     Id = u.IdTest,
                     Name = u.Name,
-                    Time = u.Time
+                    Time = u.Time,
+                    Finish = u.FinishTest
                 }).SingleOrDefault();
             ViewBag.ExaminationName = exam.Name;
             int count = 0;
@@ -77,14 +109,26 @@ namespace FireTest.Controllers
                 newExam.IdUser = userId;
                 newExam.IdExamination = id.Value;
                 newExam.TimeStart = DateTime.Now;
-                string examQuestions = dbContext.TeacherTests
-                    .Where(u => u.Id == exam.Id)
-                    .Select(u => u.Questions).SingleOrDefault();
+
+                string examQuestions = "";
+                if (!exam.Finish)
+                    examQuestions = dbContext.TeacherTests
+                        .Where(u => u.Id == exam.Id)
+                        .Select(u => u.Questions).SingleOrDefault();
+                else
+                    examQuestions = dbContext.TeacherFinishTests
+                        .Where(u => u.Id == exam.Id)
+                        .Select(u => u.Questions).SingleOrDefault();
+
                 newExam.Questions = examQuestions;
                 dbContext.TestQualification.Add(newExam);
                 dbContext.SaveChanges();
 
                 Questions model = new Questions();
+                //if (exam.Finish)
+                //    model = SelectQuestion(newExam.Id, true);
+                //else
+                //    model = SelectQuestion(newExam.Id, false);
                 model = SelectQuestion(newExam.Id);
 
                 ViewBag.Count = examQuestions.Split('|').ToList().Count(); //Общее количество вопросов
@@ -129,6 +173,10 @@ namespace FireTest.Controllers
                     return RedirectToAction("End");
 
                 Questions model = new Questions();
+                //if (exam.Finish)
+                //    model = SelectQuestion(end.Id, true);
+                //else
+                //    model = SelectQuestion(end.Id, false);
                 model = SelectQuestion(end.Id);
 
                 ViewBag.Count = count;
@@ -163,7 +211,8 @@ namespace FireTest.Controllers
                 .Select(u => new
                 {
                     Name = u.Name,
-                    Time = u.Time
+                    Time = u.Time,
+                    //Finish = u.FinishTest
                 }).SingleOrDefault();
             var tempTime = test.start.AddMinutes(exam.Time) - DateTime.Now;
             ViewBag.TimeMin = tempTime.Minutes;
@@ -210,6 +259,10 @@ namespace FireTest.Controllers
                 ViewBag.ExaminationEnd = false;
 
                 Questions model = new Questions();
+                //if (exam.Finish)
+                //    model = SelectQuestion(test.id, true);
+                //else
+                //    model = SelectQuestion(test.id, false);
                 model = SelectQuestion(test.id);
                 return PartialView(model);
             }

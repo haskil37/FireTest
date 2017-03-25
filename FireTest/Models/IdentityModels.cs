@@ -284,8 +284,11 @@ namespace FireTest.Models
         [Required(ErrorMessage = "Вы должны указать название итогового тестирования")]
         public string NameTest { get; set; }
         public int Qualifications { get; set; }
+        [Required(ErrorMessage = "Вы должны указать критерий оценки для 5")]
         public int Eval5 { get; set; }
+        [Required(ErrorMessage = "Вы должны указать критерий оценки для 4")]
         public int Eval4 { get; set; }
+        [Required(ErrorMessage = "Вы должны указать критерий оценки для 3")]
         public int Eval3 { get; set; }
     }
     public class TeacherTestDetails
@@ -293,6 +296,7 @@ namespace FireTest.Models
         public int Id { get; set; }
         [Required]
         public string NameTest { get; set; }
+        public string Qualification { get; set; }
         public int Eval5 { get; set; }
         public int Eval4 { get; set; }
         public int Eval3 { get; set; }

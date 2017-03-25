@@ -138,6 +138,7 @@ namespace FireTest.Controllers
                             Name = u.Name,
                             Classroom = u.Classroom,
                             Annotations = u.Annotations,
+                            Finish = u.FinishTest
                         }).ToList();
                     ViewBag.User = "user";
                     var role = dbContext.Users.Find(userId).Roles.SingleOrDefault();
@@ -151,37 +152,82 @@ namespace FireTest.Controllers
                                 Name = u.Name,
                                 Classroom = u.Classroom,
                                 Annotations = u.Annotations,
+                                Finish = u.FinishTest
                             }).ToList();
                         ViewBag.User = "nouser";
                     }
                     if (ViewBag.User == "nouser" || user.Course != 100)
-                    { 
-                        if (exams.Count != 0)
+                    {
+                        string tempExamHeader = "";
+                        string tempFinishHeader = "";
+                        string tempExam = "";
+                        string tempFinish = "";
+                        int countExam = 0;
+                        int countFinish = 0;
+                        foreach (var item in exams)
                         {
-                            string temp = "У Вас сегодня экзамен";
-                            if (exams.Count == 1)
+                            if (countFinish > 1)
+                                tempFinishHeader = "У Вас сегодня итоговые тестирования:\n";
+                            else
+                                tempFinishHeader = "У Вас сегодня итоговое тестирование:\n";
+
+                            if (countExam > 1)
+                                tempExamHeader = "У Вас сегодня экзамены:\n";
+                            else
+                                tempExamHeader = "У Вас сегодня экзамен:\n";
+
+                            if (item.Finish)
                             {
-                                foreach (var item in exams)
-                                {
-                                    temp += ": \"" + item.Name + "\" в аудитории: " + item.Classroom;
-                                    if (!string.IsNullOrEmpty(item.Annotations))
-                                        temp += " (" + item.Annotations + ")";
-                                }
+                                countFinish++;
+                                tempFinish += "\"" + item.Name + "\" в аудитории: " + item.Classroom;
+                                if (!string.IsNullOrEmpty(item.Annotations))
+                                    tempFinish += " (" + item.Annotations + ")\n";
+                                else
+                                    tempFinish += "\n";
                             }
                             else
                             {
-                                temp += "ы:\n";
-                                foreach (var item in exams)
-                                {
-                                    temp += "\"" + item.Name + "\" в аудитории: " + item.Classroom;
-                                    if (!string.IsNullOrEmpty(item.Annotations))
-                                        temp += " (" + item.Annotations + ")\n";
-                                    else
-                                        temp += "\n";
-                                }
+                                countExam++;
+                                tempExam += "\"" + item.Name + "\" в аудитории: " + item.Classroom;
+                                if (!string.IsNullOrEmpty(item.Annotations))
+                                    tempExam += " (" + item.Annotations + ")\n";
+                                else
+                                    tempExam += "\n";
                             }
-                            ViewBag.Exam = temp;
                         }
+                        if (tempExam.Length != 0 && tempFinish.Length != 0)
+                            ViewBag.Exam = tempExamHeader + tempExam + "<hr/>" + tempFinishHeader + tempFinish;
+                        else if (tempExam.Length == 0)
+                            ViewBag.Exam = tempFinishHeader + tempFinish;
+                        else
+                            ViewBag.Exam = tempExamHeader + tempExam;
+
+                        //if (exams.Count != 0)
+                        //{
+                        //    string temp = "У Вас сегодня экзамен";
+                        //    if (exams.Count == 1)
+                        //    {
+                        //        foreach (var item in exams)
+                        //        {
+                        //            temp += ": \"" + item.Name + "\" в аудитории: " + item.Classroom;
+                        //            if (!string.IsNullOrEmpty(item.Annotations))
+                        //                temp += " (" + item.Annotations + ")";
+                        //        }
+                        //    }
+                        //    else
+                        //    {
+                        //        temp += "ы:\n";
+                        //        foreach (var item in exams)
+                        //        {
+                        //            temp += "\"" + item.Name + "\" в аудитории: " + item.Classroom;
+                        //            if (!string.IsNullOrEmpty(item.Annotations))
+                        //                temp += " (" + item.Annotations + ")\n";
+                        //            else
+                        //                temp += "\n";
+                        //        }
+                        //    }
+                        //    ViewBag.Exam = temp;
+                        //}
                     }
                     ViewBag.Images = new SIC().SelectImagesCache(SIC.type.img);
                     return View();
