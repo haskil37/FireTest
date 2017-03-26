@@ -1,0 +1,23 @@
+﻿@model FireTest.Models.Awards
+<div class="awards">
+    <div class="textback">
+        <h3 class="center">Награды за схватки</h3>
+        @for (int i = 1; i <= Model.Gold; i++)
+        {
+            <img src="~/Content/gold.jpg"/>
+        }
+        @for (int i = 1; i <= Model.Silver; i++)
+        {
+            <img src="~/Content/silver.jpg" />
+        }
+        @for (int i = 1; i <= Model.Bronze; i++)
+        {
+            <img src="~/Content/bronze.jpg" />
+        }
+        <h3 class="center">Награды по уровню подготовки</h3>
+        @foreach (var item in Model.Qualification)
+        {
+            <img src="~/Content/@item" />
+        }
+    </div>
+</div>

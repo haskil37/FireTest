@@ -600,6 +600,11 @@ input[type=range]:focus::-ms-fill-upper {
     color: #fff;
     background: rgb(255, 115, 0);
 }
+.awards {
+    padding-top: 200px;
+    width: 90%;
+    margin-left: 5%;
+}
 /*Avatar*/
 #avatar{
     position: absolute;

@@ -64,6 +64,13 @@ namespace FireTest.Models
         public bool Administrator { get; set; }
         public bool Qualification { get; set; }
     }
+    public class Awards
+    {
+        public List<string> Qualification { get; set; }
+        public int Gold { get; set; }
+        public int Silver { get; set; }
+        public int Bronze { get; set; }
+    }
     #endregion
     #region Структура (факультеты, дисциплины, специальности, квалификации, группы)
     public class Department

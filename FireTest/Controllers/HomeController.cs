@@ -401,10 +401,63 @@ namespace FireTest.Controllers
         }
         public PartialViewResult Departments()
         {
-            DepartmentsAndSubjects DepartmentsAndSubjects = new DepartmentsAndSubjects();
-            DepartmentsAndSubjects.Department = dbContext.Departments.ToList();            
-            DepartmentsAndSubjects.Subject = dbContext.Subjects.OrderBy(u => u.Name).ToList(); 
+            DepartmentsAndSubjects DepartmentsAndSubjects = new DepartmentsAndSubjects()
+            {
+                Department = dbContext.Departments.ToList(),
+                Subject = dbContext.Subjects.OrderBy(u => u.Name).ToList()
+            };
             return PartialView(DepartmentsAndSubjects);
+        }
+        [ChildActionOnly]
+        public ActionResult Awards()
+        {
+            string userId = User.Identity.GetUserId();
+            var user = dbContext.Users.Find(userId);
+            var all = user.BattleWinCount;
+
+            var temp = dbContext.Examinations
+                .Where(u => u.Group == user.Group)
+                .Where(u => u.FinishTest)
+                .Select(u => new
+                {
+                    idTest = u.IdTest,
+                    id = u.Id
+                }).ToList();
+            var Qualifications = new List<string>();
+            foreach (var item in temp)
+            {
+                var score = dbContext.TestQualification
+                    .Where(u => u.IdExamination == item.id)
+                    .Where(u => u.End)
+                    .Select(u => u.Score).SingleOrDefault();
+
+                var idQualification = dbContext.TeacherFinishTests
+                    .Where(u => u.Id == item.idTest)
+                    .Select(u => new
+                    {
+                        IdQualification = u.IdQualification,
+                        eval3 = u.Eval3,
+                        eval4 = u.Eval4,
+                        eval5 = u.Eval5
+                    }).SingleOrDefault();
+
+                var word = "";
+                if (score >= idQualification.eval5)
+                    word = "G.png";
+                else if (score >= idQualification.eval4)
+                    word = "S.png";
+                else if (score >= idQualification.eval3)
+                    word = "B.png";
+                Qualifications.Add(idQualification.IdQualification + word);
+            }
+            var model = new Awards()
+            {
+                Gold = all / 50,
+                Silver = (all % 50) / 30,
+                Bronze = ((all % 50) % 30) / 10,
+                Qualification = Qualifications
+            };
+            return PartialView(model);
         }
     }
 }

@@ -282,10 +282,12 @@
     <Content Include="Content\bootstrap-datepicker3.min.css" />
     <Content Include="Content\bootstrap-datepicker3.standalone.css" />
     <Content Include="Content\bootstrap-datepicker3.standalone.min.css" />
+    <Content Include="Content\bronze.jpg" />
     <Content Include="Content\calendar.css" />
     <Content Include="Content\favicon.png" />
     <Content Include="Content\Fire.png" />
     <Content Include="Content\fullcalendar.min.css" />
+    <Content Include="Content\gold.jpg" />
     <Content Include="Content\login.jpg" />
     <Content Include="Content\department.png" />
     <Content Include="Content\departments.css" />
@@ -322,6 +324,7 @@
     <Content Include="Content\reset.css" />
     <Content Include="Content\select.mp3" />
     <Content Include="Content\select.png" />
+    <Content Include="Content\silver.jpg" />
     <Content Include="Content\snils.jpg" />
     <Content Include="Content\statistic.css" />
     <Content Include="Content\themes\base\accordion.css" />
@@ -31492,6 +31495,7 @@
     <Content Include="Views\Teacher\CreateTestFinish.cshtml" />
     <Content Include="Views\Teacher\CreateTestFinishAjax.cshtml" />
     <Content Include="Views\Teacher\CreateTestFinishPrepare.cshtml" />
+    <Content Include="Views\Home\Awards.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
