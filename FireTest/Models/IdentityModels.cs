@@ -67,9 +67,7 @@ namespace FireTest.Models
     public class Awards
     {
         public List<string> Qualification { get; set; }
-        public int Gold { get; set; }
-        public int Silver { get; set; }
-        public int Bronze { get; set; }
+        public List<string> Battles { get; set; }
     }
     #endregion
     #region Структура (факультеты, дисциплины, специальности, квалификации, группы)

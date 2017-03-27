@@ -473,6 +473,9 @@ namespace FireTest.Controllers
             if (battle == null)
                 return RedirectToAction("Index", "Home");
 
+            if (model.Qualification > model.Course) //Чтоб курс был не меньше квалификации
+                model.Course = model.Qualification;
+
             battle.Course = model.Course;
             battle.Qualification = model.Qualification;
             battle.TimeStartFirstPlayer = DateTime.Now;
@@ -1035,7 +1038,7 @@ namespace FireTest.Controllers
 
                 List<int> idQuestions = new List<int>();
                 var questionsId = dbContext.Questions
-                     .Where(u => u.IdQualification <= battle.Qualification)
+                     .Where(u => u.IdQualification == battle.Qualification) //Только эта квалификация, но курсы все, ибо они только по одному на квалификацию
                      .Where(u => u.IdCourse <= battle.Course)
                      .Select(u => new
                      {

@@ -259,21 +259,21 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\1B.png" />
-    <Content Include="Content\1G.png" />
-    <Content Include="Content\1S.png" />
-    <Content Include="Content\2B.png" />
-    <Content Include="Content\2G.png" />
-    <Content Include="Content\2S.png" />
-    <Content Include="Content\3B.png" />
-    <Content Include="Content\3G.png" />
-    <Content Include="Content\3S.png" />
-    <Content Include="Content\4B.png" />
-    <Content Include="Content\4G.png" />
-    <Content Include="Content\4S.png" />
-    <Content Include="Content\5B.png" />
-    <Content Include="Content\5G.png" />
-    <Content Include="Content\5S.png" />
+    <Content Include="Content\B1B.png" />
+    <Content Include="Content\B1G.png" />
+    <Content Include="Content\B1S.png" />
+    <Content Include="Content\B2B.png" />
+    <Content Include="Content\B2G.png" />
+    <Content Include="Content\B2S.png" />
+    <Content Include="Content\B3B.png" />
+    <Content Include="Content\B3G.png" />
+    <Content Include="Content\B3S.png" />
+    <Content Include="Content\B4B.png" />
+    <Content Include="Content\B4G.png" />
+    <Content Include="Content\B4S.png" />
+    <Content Include="Content\B5B.png" />
+    <Content Include="Content\B5G.png" />
+    <Content Include="Content\B5S.png" />
     <Content Include="Content\administrator.css" />
     <Content Include="Content\audio.css" />
     <Content Include="Content\battle.css" />
@@ -297,12 +297,10 @@
     <Content Include="Content\bootstrap-datepicker3.min.css" />
     <Content Include="Content\bootstrap-datepicker3.standalone.css" />
     <Content Include="Content\bootstrap-datepicker3.standalone.min.css" />
-    <Content Include="Content\bronze.jpg" />
     <Content Include="Content\calendar.css" />
     <Content Include="Content\favicon.png" />
     <Content Include="Content\Fire.png" />
     <Content Include="Content\fullcalendar.min.css" />
-    <Content Include="Content\gold.jpg" />
     <Content Include="Content\login.jpg" />
     <Content Include="Content\department.png" />
     <Content Include="Content\departments.css" />
@@ -339,7 +337,6 @@
     <Content Include="Content\reset.css" />
     <Content Include="Content\select.mp3" />
     <Content Include="Content\select.png" />
-    <Content Include="Content\silver.jpg" />
     <Content Include="Content\snils.jpg" />
     <Content Include="Content\statistic.css" />
     <Content Include="Content\themes\base\accordion.css" />

@@ -277,10 +277,12 @@ namespace FireTest.Controllers
             List<Rating> users = new List<Rating>();
             foreach (var item in top)
             {
-                Rating temp = new Rating();
-                temp.Avatar = "/Images/Avatars/" + item.avatar;
-                temp.Name = item.name;
-                temp.Family = item.family;
+                Rating temp = new Rating()
+                {
+                    Avatar = "/Images/Avatars/" + item.avatar,
+                    Name = item.name,
+                    Family = item.family
+                };
                 users.Add(temp);
             }
             return View(users);
@@ -421,8 +423,27 @@ namespace FireTest.Controllers
         {
             string userId = User.Identity.GetUserId();
             var user = dbContext.Users.Find(userId);
-            var all = user.BattleWinCount;
 
+            //Кубки за батлы
+            var Battles = new List<string>();
+            for (int i = 1; i <= 5; i++) //По количеству квалификаций
+            {
+                var count = dbContext.Battles
+                    .Where(u => u.Winner == userId)
+                    .Where(u => u.Qualification == i)
+                    .Count();
+                var Gold = count / 50;
+                var Silver = (count % 50) / 30;
+                var Bronze = ((count % 50) % 30) / 10;
+                for (int j = 1; j <= Gold; j++)
+                    Battles.Add("B" + i + "G.png");
+                for (int j = 1; j <= Silver; j++)
+                    Battles.Add("B" + i + "S.png");
+                for (int j = 1; j <= Bronze; j++)
+                    Battles.Add("B" + i + "B.png");
+            }
+
+            //Кубки за квалификации
             var temp = dbContext.Examinations
                 .Where(u => u.Group == user.Group)
                 .Where(u => u.FinishTest)
@@ -457,14 +478,12 @@ namespace FireTest.Controllers
                         word = "S.png";
                     else if (score >= idQualification.eval3)
                         word = "B.png";
-                    Qualifications.Add(idQualification.IdQualification + word);
+                    Qualifications.Add("Q" + idQualification.IdQualification + word);
                 }
             }
             var model = new Awards()
             {
-                Gold = all / 50,
-                Silver = (all % 50) / 30,
-                Bronze = ((all % 50) % 30) / 10,
+                Battles = Battles,
                 Qualification = Qualifications
             };
             return PartialView(model);
