@@ -259,6 +259,21 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\1B.png" />
+    <Content Include="Content\1G.png" />
+    <Content Include="Content\1S.png" />
+    <Content Include="Content\2B.png" />
+    <Content Include="Content\2G.png" />
+    <Content Include="Content\2S.png" />
+    <Content Include="Content\3B.png" />
+    <Content Include="Content\3G.png" />
+    <Content Include="Content\3S.png" />
+    <Content Include="Content\4B.png" />
+    <Content Include="Content\4G.png" />
+    <Content Include="Content\4S.png" />
+    <Content Include="Content\5B.png" />
+    <Content Include="Content\5G.png" />
+    <Content Include="Content\5S.png" />
     <Content Include="Content\administrator.css" />
     <Content Include="Content\audio.css" />
     <Content Include="Content\battle.css" />

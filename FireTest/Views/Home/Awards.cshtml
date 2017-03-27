@@ -2,6 +2,7 @@
 <div class="awards">
     <div class="textback">
         <h3 class="center">Награды за схватки</h3>
+        <br />
         @for (int i = 1; i <= Model.Gold; i++)
         {
             <img src="~/Content/gold.jpg"/>
@@ -14,10 +15,20 @@
         {
             <img src="~/Content/bronze.jpg" />
         }
+        @if (Model.Gold == 0 && Model.Silver == 0 && Model.Bronze == 0)
+        {
+            <div class="center">Пока еще не получены</div>
+        }
+        <hr />
         <h3 class="center">Награды по уровню подготовки</h3>
+        <br />
         @foreach (var item in Model.Qualification)
         {
             <img src="~/Content/@item" />
+        }
+        @if (Model.Qualification.Count == 0)
+        {
+            <div class="center">Пока еще не получены</div>
         }
     </div>
 </div>

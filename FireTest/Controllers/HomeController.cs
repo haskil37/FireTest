@@ -135,6 +135,7 @@ namespace FireTest.Controllers
                         Where(u => u.Date == DateTime.Today).
                         Where(u => u.Group == user.Group).
                         Select(u => new {
+                            Id = u.Id,
                             Name = u.Name,
                             Classroom = u.Classroom,
                             Annotations = u.Annotations,
@@ -149,6 +150,7 @@ namespace FireTest.Controllers
                             Where(u => u.Date == DateTime.Today).
                             Where(u => u.TeacherId == userId).
                             Select(u => new {
+                                Id=u.Id,
                                 Name = u.Name,
                                 Classroom = u.Classroom,
                                 Annotations = u.Annotations,
@@ -166,33 +168,39 @@ namespace FireTest.Controllers
                         int countFinish = 0;
                         foreach (var item in exams)
                         {
-                            if (countFinish > 1)
-                                tempFinishHeader = "У Вас сегодня итоговые тестирования:\n";
-                            else
-                                tempFinishHeader = "У Вас сегодня итоговое тестирование:\n";
-
-                            if (countExam > 1)
-                                tempExamHeader = "У Вас сегодня экзамены:\n";
-                            else
-                                tempExamHeader = "У Вас сегодня экзамен:\n";
-
-                            if (item.Finish)
+                            var end = dbContext.TestQualification
+                                .Where(u => u.IdExamination == item.Id)
+                                .SingleOrDefault().End;
+                            if (!end)
                             {
-                                countFinish++;
-                                tempFinish += "\"" + item.Name + "\" в аудитории: " + item.Classroom;
-                                if (!string.IsNullOrEmpty(item.Annotations))
-                                    tempFinish += " (" + item.Annotations + ")\n";
+                                if (countFinish > 1)
+                                    tempFinishHeader = "У Вас сегодня итоговые тестирования:\n";
                                 else
-                                    tempFinish += "\n";
-                            }
-                            else
-                            {
-                                countExam++;
-                                tempExam += "\"" + item.Name + "\" в аудитории: " + item.Classroom;
-                                if (!string.IsNullOrEmpty(item.Annotations))
-                                    tempExam += " (" + item.Annotations + ")\n";
+                                    tempFinishHeader = "У Вас сегодня итоговое тестирование:\n";
+
+                                if (countExam > 1)
+                                    tempExamHeader = "У Вас сегодня экзамены:\n";
                                 else
-                                    tempExam += "\n";
+                                    tempExamHeader = "У Вас сегодня экзамен:\n";
+
+                                if (item.Finish)
+                                {
+                                    countFinish++;
+                                    tempFinish += "\"" + item.Name + "\" в аудитории: " + item.Classroom;
+                                    if (!string.IsNullOrEmpty(item.Annotations))
+                                        tempFinish += " (" + item.Annotations + ")\n";
+                                    else
+                                        tempFinish += "\n";
+                                }
+                                else
+                                {
+                                    countExam++;
+                                    tempExam += "\"" + item.Name + "\" в аудитории: " + item.Classroom;
+                                    if (!string.IsNullOrEmpty(item.Annotations))
+                                        tempExam += " (" + item.Annotations + ")\n";
+                                    else
+                                        tempExam += "\n";
+                                }
                             }
                         }
                         if (tempExam.Length != 0 && tempFinish.Length != 0)
@@ -440,15 +448,17 @@ namespace FireTest.Controllers
                         eval4 = u.Eval4,
                         eval5 = u.Eval5
                     }).SingleOrDefault();
-
-                var word = "";
-                if (score >= idQualification.eval5)
-                    word = "G.png";
-                else if (score >= idQualification.eval4)
-                    word = "S.png";
-                else if (score >= idQualification.eval3)
-                    word = "B.png";
-                Qualifications.Add(idQualification.IdQualification + word);
+                if (score > idQualification.eval3)
+                { 
+                    var word = "";
+                    if (score >= idQualification.eval5)
+                        word = "G.png";
+                    else if (score >= idQualification.eval4)
+                        word = "S.png";
+                    else if (score >= idQualification.eval3)
+                        word = "B.png";
+                    Qualifications.Add(idQualification.IdQualification + word);
+                }
             }
             var model = new Awards()
             {

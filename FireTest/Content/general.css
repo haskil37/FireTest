@@ -605,6 +605,9 @@ input[type=range]:focus::-ms-fill-upper {
     width: 90%;
     margin-left: 5%;
 }
+.awards img{
+    width: 40%;
+}
 /*Avatar*/
 #avatar{
     position: absolute;
