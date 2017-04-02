@@ -54,7 +54,7 @@ namespace FireTest.Controllers
                     temp.RemoveAll(RemoveNull);
                     right += temp.Count;
                 }
-                var allQuestionsThisQualification = dbContext.Questions.Where(u => u.IdQualification == i).Count();
+                var allQuestionsThisQualification = dbContext.Questions.Where(u => u.IdQualification <= i).Count();
                 int value = right * 100 / allQuestionsThisQualification;
                 if (value != 0)
                     RightQ.Add(value);

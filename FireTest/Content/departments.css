@@ -73,6 +73,7 @@
 #departments .wrapper {
     position: relative;
     cursor: pointer;
+    padding: 3px;
 }
 #departments .parent {
     width: 100%;
@@ -115,6 +116,7 @@
     padding-top: 115px;
     -webkit-transition: height .5s ease;
     -webkit-transition-delay: .4s;
+    width: 100%;
 }
 #departments .wrapper:active .content {
     z-index: 3;
@@ -145,7 +147,12 @@
     padding-left: 10px;
     line-height: 20px;
 }
-@media(max-width:1000px) {
+@media(max-width:1240px) {
+    .rightD {
+        font-size: 14px;
+    }
+}
+@media(max-width:1140px) {
     .leftD {
         visibility: collapse;
         width: 0;
