@@ -13,14 +13,15 @@ namespace FireTest.Controllers
     public class StatisticsController : Controller
     {
         ApplicationDbContext dbContext = new ApplicationDbContext();
+        public ActionResult IndexUser()
+        {
+            return View();
+        }
+        [Authorize(Roles = "ADMIN, TEACHER")]
         public ActionResult Index()
         {
             return View();
         }
-        public ActionResult IndexUser()
-        {
-            return View();
-        }        
         public PartialViewResult UserStatistics()
         {
             string userId = User.Identity.GetUserId();

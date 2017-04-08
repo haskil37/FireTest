@@ -15,7 +15,6 @@ namespace FireTest.Controllers
     {
         ApplicationDbContext dbContext = new ApplicationDbContext();
         UserManager<ApplicationUser> userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
-
         public ActionResult Index()
         {
             return View();
@@ -24,7 +23,6 @@ namespace FireTest.Controllers
         {
             return View();
         }
-
         public PartialViewResult UsersAjax(string currentFilter, string searchString, int? page, string submitButton, int? Page)
         {
             if (!string.IsNullOrEmpty(submitButton))
