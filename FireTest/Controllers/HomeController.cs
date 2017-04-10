@@ -70,6 +70,7 @@ namespace FireTest.Controllers
             }
             return IdentityResult.Success;
         }
+        [AllowAnonymous]
         public ActionResult Mobile()
         {
             return View();

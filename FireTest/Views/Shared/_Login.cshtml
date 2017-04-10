@@ -10,6 +10,11 @@
     @Styles.Render("~/Content/login")
     @Styles.Render("~/Content/audio")
     <title>FireTest</title>
+    <script>
+        if (screen.width <= 500) {
+        window.location = '@Url.Action("Mobile", "Home")';
+        };
+    </script>
 </head>
 <body>
     @RenderBody()
