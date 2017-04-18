@@ -287,6 +287,8 @@ namespace FireTest.Controllers
             else
                 tempTags[0] = "Все разделы";
             tempTags.Add("Без раздела");
+            if (!tempTags.Contains(Tags))
+                Tags = "Все разделы";
             selectList = tempTags //Выпадающий список разделов
                 .Select(u => new SelectListItem()
                 {
@@ -551,6 +553,8 @@ namespace FireTest.Controllers
             else
                 tempTags[0] = "Все разделы";
             tempTags.Add("Без раздела");
+            if (!tempTags.Contains(Tags))
+                Tags = "Все разделы";
             selectList = tempTags //Выпадающий список разделов
                 .Select(u => new SelectListItem()
                 {
@@ -1191,18 +1195,26 @@ namespace FireTest.Controllers
         public PartialViewResult EditQuestionSelectAjax(string currentFilter, string searchString, int? page, string NameTest, int? Subjects, string Tags)
         {
             string userId = User.Identity.GetUserId();
-            if (Session["Subjects"] != null && Subjects == null)
-                Subjects = (int)Session["Subjects"];
-            if (Session["Tags"] != null && string.IsNullOrEmpty(Tags))
-                Tags = (string)Session["Tags"];
-                //    if ((int)Session["Subjects"] != Subjects || (string)Session["Tags"] != Tags)
-                //    {
-                //        Session["Subjects"] = 0;
-                //        Session["Tags"] = "";
-                //        page = 1;
-                //    }
-                //Session["Subjects"] = Subjects;
+            //if (Session["Subjects"] != null && Subjects == null)
+            //    Subjects = (int)Session["Subjects"];
+            //if (Session["Tags"] != null && string.IsNullOrEmpty(Tags))
+            //    Tags = (string)Session["Tags"];
+            //    if ((int)Session["Subjects"] != Subjects || (string)Session["Tags"] != Tags)
+            //    {
+            //        Session["Subjects"] = 0;
+            //        Session["Tags"] = "";
+            //        page = 1;
+            //    }
+            //Session["Subjects"] = Subjects;
             //Session["Tags"] = Tags;
+
+            if (Session["Subjects"] != null && Session["Tags"] != null)
+                if ((int)Session["Subjects"] != Subjects || (string)Session["Tags"] != Tags)
+                    page = 1;
+            Session["Subjects"] = Subjects;
+            Session["Tags"] = Tags;
+
+
             if (!string.IsNullOrEmpty(searchString))
                 page = 1;
             else
@@ -1772,6 +1784,8 @@ namespace FireTest.Controllers
             else
                 tempTags[0] = "Все разделы";
             tempTags.Add("Без раздела");
+            if (!tempTags.Contains(Tags))
+                Tags = "Все разделы";
             selectList = tempTags //Выпадающий список разделов
                 .Select(u => new SelectListItem()
                 {
