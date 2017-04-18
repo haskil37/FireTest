@@ -88,6 +88,15 @@ namespace FireTest.Models
         public string Name { get; set; }
         public bool Access { get; set; }
     }
+    public class TestFinishAccess
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Subject { get; set; }
+        public int Course { get; set; }
+        public bool Access { get; set; }
+    }
+
     public class SubjectsAndQualification
     {
         public int Id { get; set; }

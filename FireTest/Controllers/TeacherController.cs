@@ -735,7 +735,7 @@ namespace FireTest.Controllers
             if (submitButtonAll)
             {
                 var Subjects = "";
-                var allSubjects = dbContext.Questions.Where(u => u.IdQualification == test.IdQualification).ToList();
+                var allSubjects = dbContext.Questions.Where(u => u.IdQualification <= test.IdQualification).Where(u => u.IdQualification > 0).ToList();
                 foreach (var item in allSubjects)
                 {
                     if (Subjects.Length > 0)
@@ -851,10 +851,14 @@ namespace FireTest.Controllers
             //ViewBag.Tags = selectList;
 
             var tempQuestions = dbContext.Questions //Берем все вопросы дисциплины
-                .Where(u => u.IdQualification == test.IdQualification)
+                .Where(u => u.IdQualification > 0)
+                .Where(u => u.IdQualification <= test.IdQualification)
                 .Select(u => new {
                     Id = u.Id,
-                    Text = u.QuestionText
+                    Text = u.QuestionText,
+                    Subject = u.IdSubject,
+                    Course = u.IdCourse,
+                    Qualification = u.IdQualification
                 }).ToList();
             //if (Tags != "Все разделы" && Tags != "Без раздела")
             //{
@@ -876,14 +880,16 @@ namespace FireTest.Controllers
             //            Text = u.QuestionText
             //        }).ToList();
             //}
-            List<SubjectAccess> model = new List<SubjectAccess>(); //Использую это т.к. надо точно такие же поля
+            List<TestFinishAccess> model = new List<TestFinishAccess>(); //Использую это т.к. надо точно такие же поля
             foreach (var item in tempQuestions)
             {
-                SubjectAccess subject = new SubjectAccess();
+                TestFinishAccess subject = new TestFinishAccess();
                 if (!String.IsNullOrEmpty(searchString) && item.Text.ToLower().Contains(searchString.ToLower()))
                 {
                     subject.Id = item.Id;
                     subject.Name = item.Text;
+                    subject.Course = item.Course;
+                    subject.Subject = dbContext.Subjects.Find(item.Subject).Name + " /<br> <span style=\"color:rgb(255, 115, 0);\">" + dbContext.Qualifications.Find(item.Qualification).Name + "</span>";
                     if (subjects.Contains(item.Id.ToString()))
                         subject.Access = true;
                     else
@@ -894,6 +900,8 @@ namespace FireTest.Controllers
                 {
                     subject.Id = item.Id;
                     subject.Name = item.Text;
+                    subject.Course = item.Course;
+                    subject.Subject = dbContext.Subjects.Find(item.Subject).Name + " /<br> <span style=\"color:rgb(255, 115, 0);\">" + dbContext.Qualifications.Find(item.Qualification).Name + "</span>";
                     if (subjects.Contains(item.Id.ToString()))
                         subject.Access = true;
                     else
@@ -906,6 +914,7 @@ namespace FireTest.Controllers
             int pageSize = 10;
             int pageNumber = (page ?? 1);
             ViewBag.page = pageNumber;
+            ViewBag.NameQualification = dbContext.Qualifications.Find(test.IdQualification).Name;
             return PartialView(model.ToPagedList(pageNumber, pageSize));
         }
 

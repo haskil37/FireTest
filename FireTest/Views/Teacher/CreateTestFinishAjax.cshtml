@@ -1,4 +1,4 @@
-﻿@model PagedList.IPagedList<FireTest.Models.SubjectAccess>
+﻿@model PagedList.IPagedList<FireTest.Models.TestFinishAccess>
 @using PagedList.Mvc;
 @using (Ajax.BeginForm("CreateTestFinishAjax", new AjaxOptions
 {
@@ -12,6 +12,12 @@
         <div class="col-3"><h3>Название теста:</h3></div>
         <div class="col-9 left">
             <h3>@ViewBag.NameTest</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3"><h3>Уровень подготовки:</h3></div>
+        <div class="col-9 left">
+            <h3>"@ViewBag.NameQualification" и предыдущие</h3>
         </div>
     </div>
     <div class="row">
@@ -74,6 +80,12 @@
                     Вопросы
                 </th>
                 <th>
+                    Дисциплина /<br><span style="color:rgb(255, 115, 0);">уровень подготовки</span>
+                </th>
+                <th>
+                    Год обучения
+                </th>
+                <th>
                     В тесте?
                 </th>
             </tr>
@@ -83,6 +95,12 @@
                 <tr>
                     <td>
                         @item.Name
+                    </td>
+                    <td>
+                        @Html.Raw(@item.Subject)
+                    </td>
+                    <td>
+                        @item.Course
                     </td>
                     <td class="center" width="15%">
                         @if (item.Access == true)
