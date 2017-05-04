@@ -12,7 +12,12 @@ namespace FireTest.Controllers
     {
         ApplicationDbContext dbContext = new ApplicationDbContext();
         private static Random random = new Random();
-
+        private static int[,] relation = new int[5, 5]{
+                {100, 0, 0, 0, 0},
+                {40, 60, 0, 0, 0},
+                {20, 20, 60, 0, 0},
+                {10, 10, 20, 60, 0},
+                {10, 10, 10, 20, 50}};
         public ActionResult Index(int id = 5, int course = 5)
         {
             if (!ModelState.IsValid || id < 1 || id > 5 || course < 1 || course > 5)
