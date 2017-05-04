@@ -22,8 +22,9 @@
         <div class="row"><h3>@Model.QuestionText</h3></div>
         @if (@Model.QuestionImage != null)
         {
+
             <div class="questionImage">
-                <img src="@Model.QuestionImage" />
+                <img src="@Model.QuestionImage" class="img-responsive img-thumbnail zoomify">
             </div>
         }
         <div class="row answers">

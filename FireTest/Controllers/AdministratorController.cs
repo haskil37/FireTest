@@ -5,6 +5,7 @@ using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 
@@ -296,6 +297,28 @@ namespace FireTest.Controllers
             int pageNumber = (page ?? 1);
             ViewBag.Page = pageNumber;
             return PartialView(model.ToPagedList(pageNumber, pageSize));
+        }
+        public ActionResult DeleteUser(string id)
+        {
+            var user = dbContext.Users.Find(id);
+            if (user == null)
+            {
+                return HttpNotFound();
+            }
+            Decliner decliner = new Decliner();
+            string[] declineText = decliner.Decline(user.Family, user.Name, user.SubName, 4);//Меняем падеж
+            ViewBag.User = declineText[0] + " " + declineText[1] + " " + declineText[2];
+
+            return View();
+        }
+        [HttpPost, ActionName("DeleteUser")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteUserConfirmed(string id)
+        {
+            var user = dbContext.Users.Find(id);
+            dbContext.Users.Remove(user);
+            dbContext.SaveChanges();
+            return RedirectToAction("Users");
         }
     }
 }

@@ -31396,6 +31396,7 @@
     <Content Include="Scripts\MathJax\fonts\HTML-CSS\TeX\woff\MathJax_Size4-Regular.woff" />
     <Content Include="Scripts\MathJax\fonts\HTML-CSS\TeX\woff\MathJax_Typewriter-Regular.woff" />
     <None Include="Scripts\_references.js" />
+    <Content Include="Scripts\zoomify.min.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -31524,6 +31525,7 @@
     <Content Include="Views\Teacher\CreateTestFinishAjax.cshtml" />
     <Content Include="Views\Teacher\CreateTestFinishPrepare.cshtml" />
     <Content Include="Views\Home\Awards.cshtml" />
+    <Content Include="Views\Administrator\DeleteUser.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

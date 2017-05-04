@@ -23,6 +23,8 @@
                 <th>
                     Администратор
                 </th>
+                <th>
+                </th>
             </tr>
             @foreach (var item in Model)
             {
@@ -64,6 +66,11 @@
                                 <button type="submit" value="Administrator|@item.Id|true" name="submitButton"></button>
                             </div>
                         }
+                    </td>
+                    <td class="center">
+                        <div class="No">
+                            <a href="DeleteUser/@item.Id">Удалить</a>
+                        </div>
                     </td>
                 </tr>
             }

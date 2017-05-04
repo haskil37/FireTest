@@ -171,8 +171,11 @@ namespace FireTest.Controllers
                         {
                             var end = dbContext.TestQualification
                                 .Where(u => u.IdExamination == item.Id)
-                                .SingleOrDefault().End;
-                            if (!end)
+                                .SingleOrDefault();
+                            bool go = false;
+                            if (end != null)
+                                go = end.End;
+                            if (!go)
                             {
                                 if (countFinish > 1)
                                     tempFinishHeader = "У Вас сегодня итоговые тестирования:\n";

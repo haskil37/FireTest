@@ -151,7 +151,7 @@ namespace FireTest.Controllers
                  };
             ViewBag.Faculty = facultyList.ToList();
             List<bool> selectedR = new List<bool>();
-            for (int i = 0; i < 86; i++)
+            for (int i = 0; i < 87; i++)
             {
                 selectedR.Add(false);
             }
@@ -415,6 +415,9 @@ namespace FireTest.Controllers
                 case "95":
                     selectedR[85] = true;
                     break;
+                case "82":
+                    selectedR[86] = true;
+                    break;
             }
 
             var regionList = new[]{
@@ -429,6 +432,7 @@ namespace FireTest.Controllers
                     new SelectListItem{ Value="09",Text="Республика Карачаево-Черкессия", Selected=selectedR[8]},
                     new SelectListItem{ Value="10",Text="Республика Карелия", Selected=selectedR[9]},
                     new SelectListItem{ Value="11",Text="Республика Коми", Selected=selectedR[10]},
+                    new SelectListItem{ Value="82",Text="Республика Крым", Selected=selectedR[86]},
                     new SelectListItem{ Value="12",Text="Республика Марий Эл", Selected=selectedR[11]},
                     new SelectListItem{ Value="13, 113",Text="Республика Мордовия", Selected=selectedR[12]},
                     new SelectListItem{ Value="14",Text="Республика Саха (Якутия)", Selected=selectedR[13]},
@@ -501,7 +505,7 @@ namespace FireTest.Controllers
                     new SelectListItem{ Value="86",Text="Ханты-Мансийский автономный округ - Югра", Selected=selectedR[80]},
                     new SelectListItem{ Value="87",Text="Чукотский автономный округ", Selected=selectedR[81]},
                     new SelectListItem{ Value="89",Text="Ямало-Ненецкий автономный округ", Selected=selectedR[82]},
-                    new SelectListItem{ Value="92",Text="Резерв МВД Российской Федерации", Selected=selectedR[83]},
+                    new SelectListItem{ Value="92",Text="Севастополь", Selected=selectedR[83]},
                     new SelectListItem{ Value="94",Text="Территории, которые находятся вне РФ и обслуживаются Департаментом режимных объектов МВД. Пример – Байконур", Selected=selectedR[84]},
                     new SelectListItem{ Value="95",Text="Чеченская республика", Selected=selectedR[85]},
                  };
@@ -521,7 +525,7 @@ namespace FireTest.Controllers
                 ViewBag.Avatar = "/Images/Avatars/" + user.Avatar;
                 List<bool> selectedF = new List<bool>() { false, false, false };
                 List<bool> selectedR = new List<bool>();
-                for (int i = 0; i < 86; i++)
+                for (int i = 0; i < 87; i++)
                 {
                     selectedR.Add(false);
                 }
@@ -895,6 +899,9 @@ namespace FireTest.Controllers
                         case "95":
                             selectedR[85] = true;
                             break;
+                        case "82":
+                            selectedR[86] = true;
+                            break;
                     }
                 }
                 ViewBag.Region = new[]{
@@ -909,6 +916,7 @@ namespace FireTest.Controllers
                     new SelectListItem{ Value="09",Text="Республика Карачаево-Черкессия", Selected=selectedR[8]},
                     new SelectListItem{ Value="10",Text="Республика Карелия", Selected=selectedR[9]},
                     new SelectListItem{ Value="11",Text="Республика Коми", Selected=selectedR[10]},
+                    new SelectListItem{ Value="82",Text="Республика Крым", Selected=selectedR[86]},
                     new SelectListItem{ Value="12",Text="Республика Марий Эл", Selected=selectedR[11]},
                     new SelectListItem{ Value="13, 113",Text="Республика Мордовия", Selected=selectedR[12]},
                     new SelectListItem{ Value="14",Text="Республика Саха (Якутия)", Selected=selectedR[13]},
@@ -964,6 +972,7 @@ namespace FireTest.Controllers
                     new SelectListItem{ Value="64, 164",Text="Саратовская область", Selected=selectedR[63]},
                     new SelectListItem{ Value="65",Text="Сахалинская область", Selected=selectedR[64]},
                     new SelectListItem{ Value="66, 96",Text="Свердловская область", Selected=selectedR[65]},
+                    new SelectListItem{ Value="92",Text="Севастополь", Selected=selectedR[83]},
                     new SelectListItem{ Value="67",Text="Смоленская область", Selected=selectedR[66]},
                     new SelectListItem{ Value="68",Text="Тамбовская область", Selected=selectedR[67]},
                     new SelectListItem{ Value="69",Text="Тверская область", Selected=selectedR[68]},
@@ -981,7 +990,6 @@ namespace FireTest.Controllers
                     new SelectListItem{ Value="86",Text="Ханты-Мансийский автономный округ - Югра", Selected=selectedR[80]},
                     new SelectListItem{ Value="87",Text="Чукотский автономный округ", Selected=selectedR[81]},
                     new SelectListItem{ Value="89",Text="Ямало-Ненецкий автономный округ", Selected=selectedR[82]},
-                    new SelectListItem{ Value="92",Text="Резерв МВД Российской Федерации", Selected=selectedR[83]},
                     new SelectListItem{ Value="94",Text="Территории, которые находятся вне РФ и обслуживаются Департаментом режимных объектов МВД. Пример – Байконур", Selected=selectedR[84]},
                     new SelectListItem{ Value="95",Text="Чеченская республика", Selected=selectedR[85]},
                  }.ToList();

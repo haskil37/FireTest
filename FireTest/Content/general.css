@@ -171,9 +171,7 @@ h3 {
 .text-success {
     text-align: center;
 }
-.questionImage img{
-    width:70%;
-}
+
 .snils{
     font-size: 12px;
 }
@@ -1027,6 +1025,45 @@ li.sortable-placeholder {
 #users .content ul a:hover {
     background-color: rgba(255, 115, 0, 0.7);
 }
+/*Zoom*/
+.zoomify {
+    cursor: pointer;
+    cursor: -webkit-zoom-in;
+    cursor: zoom-in
+}
+
+    .zoomify.zoomed {
+        cursor: -webkit-zoom-out;
+        cursor: zoom-out;
+        padding: 0;
+        margin: 0;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        position: relative;
+        z-index: 1501
+    }
+
+.zoomify-shadow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    z-index: 1500;
+    background: rgba(0,0,0,.3);
+    opacity: 0
+}
+
+    .zoomify-shadow.zoomed {
+        opacity: 1;
+        cursor: pointer;
+        cursor: -webkit-zoom-out;
+        cursor: zoom-out
+    }
 /*Devices Display*/
 
 @media(min-width:1400px) {

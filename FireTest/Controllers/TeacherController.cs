@@ -2009,14 +2009,9 @@ namespace FireTest.Controllers
                 var user = dbContext.Users.Find(item);
                 user.Update = true;
             }
-            TestQualification testQualification = new TestQualification();
-            testQualification.IdExamination = exam.Id;
-            dbContext.TestQualification.Add(testQualification);
-            //TestQualification testQualification = new TestQualification()
-            //{
-            //    IdExamination= exam.Id,
-            //};
-
+            TestQualificationAccess testQualificationAccess = new TestQualificationAccess();
+            testQualificationAccess.IdExamination = exam.Id;
+            dbContext.TestQualificationAccess.Add(testQualificationAccess);
             dbContext.SaveChanges();
             return RedirectToAction("EditExams", new { id = exam.Id, message = "Экзамен успешно создан" });
         }
