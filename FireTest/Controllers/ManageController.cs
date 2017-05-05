@@ -96,6 +96,28 @@ namespace FireTest.Controllers
                 }
                 else
                     selectedF[1] = true;
+
+                List<bool> selectedS = new List<bool>() { false, false};
+                if (!string.IsNullOrEmpty(user.Speciality))
+                {
+                    switch (user.Speciality)
+                    {
+                        case "0":
+                            selectedS[0] = true;
+                            break;
+                        case "1":
+                            selectedS[1] = true;
+                            break;
+                    }
+                }
+                else
+                    selectedS[0] = true;
+
+                ViewBag.Speciality = new[]{
+                     new SelectListItem{ Value="0",Text="Пожарная безопасность", Selected=selectedS[0]},
+                     new SelectListItem{ Value="1",Text="Техносферная безопасность", Selected=selectedS[1]},
+                 };
+
                 if (user.Course != 100)
                 {
                     //if (user.Group.Substring(0, 1) == "2" && user.Course > 4)
@@ -115,7 +137,6 @@ namespace FireTest.Controllers
                     SubName = user.SubName,
                     Family = user.Family,
                     Year = year,
-                    //Group = user.Group.Remove(0, 1)
                     Group = user.Group,
                     Age = user.Age.ToString()
                 };
@@ -516,7 +537,7 @@ namespace FireTest.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Index(IndexViewModel model, string Faculty)
+        public async Task<ActionResult> Index(IndexViewModel model, string Faculty, string Speciality)
         {
 
             if (!ModelState.IsValid)
@@ -582,6 +603,26 @@ namespace FireTest.Controllers
                     }
                     else
                         selectedF[1] = true;
+                    List<bool> selectedS = new List<bool>() { false, false };
+                    if (!string.IsNullOrEmpty(user.Speciality))
+                    {
+                        switch (user.Speciality)
+                        {
+                            case "0":
+                                selectedS[0] = true;
+                                break;
+                            case "1":
+                                selectedS[1] = true;
+                                break;
+                        }
+                    }
+                    else
+                        selectedS[0] = true;
+
+                    ViewBag.Speciality = new[]{
+                     new SelectListItem{ Value="0",Text="Пожарная безопасность", Selected=selectedS[0]},
+                     new SelectListItem{ Value="1",Text="Техносферная безопасность", Selected=selectedS[1]},
+                 };
 
                     if (user.Course != 100)
                     {
@@ -999,7 +1040,7 @@ namespace FireTest.Controllers
             }
 
             string userId = User.Identity.GetUserId();
-            var result = await UpdateUserAsync(userId, model, Faculty);
+            var result = await UpdateUserAsync(userId, model, Faculty, Speciality);
             if (result.Succeeded)
             {
                 var update = UpdateCourse(userId);
@@ -1055,7 +1096,7 @@ namespace FireTest.Controllers
             return IdentityResult.Success;
         }
 
-        private async Task<IdentityResult> UpdateUserAsync(string userId, IndexViewModel model, string Faculty)
+        private async Task<IdentityResult> UpdateUserAsync(string userId, IndexViewModel model, string Faculty, string Speciality)
         {
             try
             {
@@ -1063,8 +1104,8 @@ namespace FireTest.Controllers
                 user.Name = model.Name.Trim();
                 user.SubName = model.SubName.Trim();
                 user.Family = model.Family.Trim();
-                user.Faculty = Faculty;
-                //user.Group = Faculty + model.Group.Trim();
+                user.Faculty = Faculty.Trim();
+                user.Speciality = Speciality.Trim();
                 user.Group = model.Group.Trim();
                 user.Year = Convert.ToInt32(model.Year.Trim());
                 model.Age = model.Age.Trim();

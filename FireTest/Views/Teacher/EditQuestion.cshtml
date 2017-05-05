@@ -57,8 +57,11 @@
                 <div class="col-2">
                     Изображение
                 </div>
-                <div class="col-6 questionImage center">
-                    <img src="~/Images/Questions/@ViewBag.QuestionImage" />
+                <div class="col-6 center">
+                    <div class="questionImageEdit">
+                        <img src="~/Images/Questions/@ViewBag.QuestionImage" />
+                        <p>Для увеличения изображения нажмите на него</p>
+                    </div>
                 </div>
                 <div class="col-4">
                     <input type="submit" value="Удалить" class="button" name="Delete" />
@@ -213,6 +216,7 @@
 {
     @Scripts.Render("~/bundles/jqueryval")
     <script>
+        $('.questionImageEdit img').zoomify();
         $(function () {
             var wrapper = $(".file-upload"),
                 inp = wrapper.find("input"),

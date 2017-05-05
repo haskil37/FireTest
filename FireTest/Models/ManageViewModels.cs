@@ -33,6 +33,9 @@ namespace FireTest.Models
         [Required]
         [Display(Name = "Регион поступления")]
         public string Region { get; set; }
+        [Required]
+        [Display(Name = "Специальность")]
+        public string Speciality { get; set; }
     }
 
     public class ChangePasswordViewModel

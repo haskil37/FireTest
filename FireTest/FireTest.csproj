@@ -248,6 +248,10 @@
     <Compile Include="Migrations\201703251216351_delTwoTable.Designer.cs">
       <DependentUpon>201703251216351_delTwoTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201705050947555_addSpec.cs" />
+    <Compile Include="Migrations\201705050947555_addSpec.Designer.cs">
+      <DependentUpon>201705050947555_addSpec.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Decliner.cs" />
@@ -31585,6 +31589,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201703251216351_delTwoTable.resx">
       <DependentUpon>201703251216351_delTwoTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705050947555_addSpec.resx">
+      <DependentUpon>201705050947555_addSpec.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

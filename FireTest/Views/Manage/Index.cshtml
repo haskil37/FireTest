@@ -117,12 +117,20 @@
                             @Html.DropDownList("Region", ViewBag.Region as SelectList)
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-4">Специальность</div>
+                        <div class="col-8">
+                            @Html.DropDownList("Speciality", ViewBag.Speciality as SelectList)
+                        </div>
+                    </div>
                 }
                 else
                 {
                     @Html.Hidden("Group", Model.Group)
                     @Html.Hidden("Region", "0")
                     @Html.Hidden("Faculty", "1")
+                    @Html.Hidden("Speciality", "Преподаватель")
+
                     <div class="row">
                         @Html.LabelFor(m => m.Group, new { @class = "col-4" })
                         <div class="col-8">
@@ -258,7 +266,7 @@
             }
             if (year >= @DateTime.Now.Year)  {
                 $("#Year").val(@DateTime.Now.Year);
-        }
+            }
         });
     </script>
 }

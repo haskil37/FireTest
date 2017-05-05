@@ -18,9 +18,12 @@ else
         <div class="row"><h3>@Model.QuestionText</h3></div>
         @if (@Model.QuestionImage != null)
         {
+            <br />
             <div class="questionImage">
-                <img src="@Model.QuestionImage" />
+                <img src="@Model.QuestionImage">
+                <p>Для увеличения изображения нажмите на него</p>
             </div>
+            <br />
         }
         <div class="row answers">
             @if (ViewBag.TypeQuestion == "standart")
@@ -101,6 +104,7 @@ else
     <input type="submit" class="button center" value="Ответить" id="Answer" />
     <script>
         MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'question']);
+        $('.questionImage img').zoomify();
         $(".sortable").sortable(height());
         $('.sortable').on('mousemove', function () {
             height();

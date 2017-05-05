@@ -1026,6 +1026,12 @@ li.sortable-placeholder {
     background-color: rgba(255, 115, 0, 0.7);
 }
 /*Zoom*/
+.questionImage img{
+    height:250px;
+}
+.questionImageEdit img{
+    height:150px;
+}
 .zoomify {
     cursor: pointer;
     cursor: -webkit-zoom-in;
