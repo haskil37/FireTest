@@ -10,9 +10,9 @@
 {
     @Html.AntiForgeryToken()
     <div class="row center">
-        <input type="submit" value="Удалить" class="button" />
+        <input type="submit" value="Удалить" class="button" name="Action" />
     </div>
     <div class="row center">
-        @Html.ActionLink("На главную", "Index", null, new { @class = "button-Cancel" })
+        <input type="submit" value="Назад" class="button-Cancel" name="Action" />
     </div>
 }

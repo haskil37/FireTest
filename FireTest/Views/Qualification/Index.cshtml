@@ -6,7 +6,7 @@
     @Html.AntiForgeryToken()
     if (ViewBag.Сompleted == true)
     {
-        <div class="row center"><h3>По данному уровню подготовки в базе @ViewBag.CountCurrent вопросов из @ViewBag.Count по всем предыдущим уровням подготовки на этом курсе</h3></div>
+        <div class="row center"><h3>По данному уровню подготовки в базе @ViewBag.CountCurrent вопросов</h3></div>
         <div class="row center"><h3>При выборе вопросов больше чем есть по данному уровню подготовки остальные вопросы будут взяты из предыдущих уровней подготовки</h3></div>
         <br />
         <div class="row center"><h3>Выберите количество вопросов</h3></div>
@@ -17,13 +17,7 @@
             <h4 id="countText">10</h4>
             <script>
                 function countQ() {
-                    var count = 10 * document.getElementById("count").value;
-                    if (count > @ViewBag.Count && @ViewBag.CountMax != 0){
-                        document.getElementById('countText').innerHTML = @ViewBag.Count;
-                    }
-                    else{
-                        document.getElementById('countText').innerHTML = count;
-                    }
+                    document.getElementById('countText').innerHTML = 10 * document.getElementById("count").value;
                 }
             </script>
         </div>

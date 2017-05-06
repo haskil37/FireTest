@@ -13,36 +13,21 @@ namespace FireTest.Controllers
         ApplicationDbContext dbContext = new ApplicationDbContext();
         private static Random random = new Random();
         private static int[,] relation = new int[5, 5]{
-                {100, 0, 0, 0, 0},
-                {40, 60, 0, 0, 0},
-                {20, 20, 60, 0, 0},
-                {10, 10, 20, 60, 0},
-                {10, 10, 10, 20, 50}};
+            {100, 0, 0, 0, 0},
+            {40, 60, 0, 0, 0},
+            {20, 20, 60, 0, 0},
+            {10, 10, 20, 60, 0},
+            {10, 10, 10, 20, 50}};
+
         public ActionResult Index(int id = 5, int course = 5)
         {
             if (!ModelState.IsValid || id < 1 || id > 5 || course < 1 || course > 5)
                 return RedirectToAction("Index", "Home");
 
-            if (id > course) //Чтоб курс был не больше квалификации
-                id = course;
+            if (id < course) //Чтоб курс был равен квалификации
+                course = id;
 
             ViewBag.QualificationName = dbContext.Qualifications.Find(id).Name;
-
-            int count = dbContext.Questions
-                        .Where(u => u.IdQualification > 0)
-                        .Where(u => u.IdQualification <= id)
-                        .Where(u => u.IdCourse <= course).Count();
-            ViewBag.Count = count;
-            int countCurrent = dbContext.Questions
-                        .Where(u => u.IdQualification == id)
-                        .Where(u => u.IdCourse <= course).Count();
-            ViewBag.CountCurrent = countCurrent;
-
-            //ViewBag.CountMax = 0;
-            //if (count < 100) //Если вопросов меньше 100, то изменяем максимум ползунка
-            //{
-            ViewBag.CountMax = Math.Ceiling(count / 10.0);
-            //}
 
             string user = User.Identity.GetUserId();
 
@@ -77,23 +62,40 @@ namespace FireTest.Controllers
             }
             else //Если нет, то создаем пустой
             {
-                SelfyTestQualification newTest = new SelfyTestQualification();
-                newTest.IdUser = user;
-                newTest.IdQualification = id;
-                newTest.Course = course;
-                newTest.TimeStart = DateTime.Now;
-                newTest.TimeEnd = DateTime.Now;
+                SelfyTestQualification newTest = new SelfyTestQualification()
+                {
+                    IdUser = user,
+                    IdQualification = id,
+                    Course = course,
+                    TimeStart = DateTime.Now,
+                    TimeEnd = DateTime.Now
+                };
                 dbContext.SelfyTestQualifications.Add(newTest);
                 dbContext.SaveChanges();
                 ViewBag.Id = newTest.Id;
+            }
+
+            //От квалификации считаем ползунок
+            int value = 0;
+            for (int i = 1; i <= id; i++)
+            {
+                var countQuestions2 = dbContext.Questions.Where(u => u.IdQualification == i).Count();
+                ViewBag.CountCurrent = countQuestions2;
+                if (value != 0)
+                    ViewBag.CountMax = Math.Truncate(Math.Min(value, countQuestions2 * 100 / relation[id - 1, i - 1]) / 10.0);
+                else
+                {
+                    value = countQuestions2 * 100 / relation[id - 1, i - 1];
+                    ViewBag.CountMax = Math.Truncate(value / 10.0);
+                }
             }
             return View();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Index(int? EndId, int? EndCourse, int id = 0, string submitButton = "Exit", int count = 10)
+        public ActionResult Index(int? EndId, int? EndCourse, int id = 0, string submitButton = "Exit", int count = 1)
         {
-            if (!ModelState.IsValid || id == 0 || submitButton == "Exit" || submitButton == "Cancel")
+            if (!ModelState.IsValid || id == 0 || submitButton == "Exit")
                 return RedirectToAction("Index", "Home");
 
             string user = User.Identity.GetUserId();
@@ -120,6 +122,19 @@ namespace FireTest.Controllers
 
             if (submitButton != "Accept") //Т.к. Cancel мы обработали, то если будет любой текст кроме согласия, то это фигня и мы выкидываем пользователя на главную
                 return RedirectToAction("Index", "Home");
+
+
+            int value = 0;//Проверяем что count не больше чем можно
+            for (int i = 1; i <= test.idQualification; i++)
+            {
+                var countQuestions2 = dbContext.Questions.Where(u => u.IdQualification == i).Count();
+                if (value != 0)
+                    value = Math.Min(value, countQuestions2 * 100 / relation[test.idQualification - 1, i - 1]);
+                else
+                    value = countQuestions2 * 100 / relation[test.idQualification - 1, i - 1];
+            }
+            if (count > Math.Truncate(value / 10.0))
+                count = Convert.ToInt32(Math.Truncate(value / 10.0));
 
             if (string.IsNullOrEmpty(test.questions)) //Создаем новый тест
             {
@@ -288,10 +303,11 @@ namespace FireTest.Controllers
                 countId = 0;
                 foreach (int item in idSubjects)
                 {
-                    TestWrongAnswers TestWrongAnswers = new TestWrongAnswers();
-                    TestWrongAnswers.Subject = dbContext.Subjects.Find(item).Name;
-                    TestWrongAnswers.Count = idSubjectsCount[countId];
-
+                    TestWrongAnswers TestWrongAnswers = new TestWrongAnswers()
+                    {
+                        Subject = dbContext.Subjects.Find(item).Name,
+                        Count = idSubjectsCount[countId]
+                    };
                     AllTestWrongAnswers.Add(TestWrongAnswers);
                     countId++;
                 }
@@ -343,8 +359,10 @@ namespace FireTest.Controllers
                 foreach (string item in wrong)
                 {
                     int temp = Convert.ToInt32(item);
-                    var wrongDetails = new TestWrongAnswersDetails();
-                    wrongDetails.Question = dbContext.Questions.Find(temp).QuestionText;
+                    var wrongDetails = new TestWrongAnswersDetails()
+                    {
+                        Question = dbContext.Questions.Find(temp).QuestionText
+                    };
                     List<string> idCorrect = dbContext.Questions.Find(temp).IdCorrect.Split(',').ToList();
                     
                     if (idCorrect[0][0] == '~') //Если вопрос на последовательность
@@ -426,76 +444,18 @@ namespace FireTest.Controllers
             try
             {
                 List<int> idQuestions = new List<int>();
-                var questionsId = dbContext.Questions //Берем сколько вопросов по данной квалификации
-                     .Where(u => u.IdQualification > 0)
-                     .Where(u => u.IdQualification == idQualification)
-                     .Where(u => u.IdCourse <= course)
-                     .Select(u => new
-                     {
-                         id = u.Id
-                     }).ToList();
-
-
-
-                if (count >= questionsId.Count) //Если выбрали вопросов больше или столько же сколько в базе, то делаем максимум что есть
-                {
-                    for (int i = 0; i < questionsId.Count; i++)
-                        idQuestions.Add(questionsId.ElementAt(i).id);
-                    Shuffle(idQuestions); //Берем все вопросы без рандома и перемешиваем.
-                                          //Теперь добиваем остальными наугад
-                    Random rnd = new Random();
-                    var otherQuestionsId = dbContext.Questions 
-                             .Where(u => u.IdQualification > 0)
-                             .Where(u => u.IdQualification < idQualification)
-                             .Where(u => u.IdCourse <= course)
-                             .Select(u => new
-                             {
-                                 id = u.Id
-                             }).ToList();
-                    while (idQuestions.Count != count)
-                    {
-                        int value = rnd.Next(otherQuestionsId.Count());
-                        int item = otherQuestionsId.ElementAt(value).id;
-
-                        if (!idQuestions.Contains(item))
-                            idQuestions.Add(item);
-                    }
-                }
-                else //Выбираем наугад, но только нужной квалификации
-                {
-                    Random rnd = new Random();
-                    while (idQuestions.Count != count)
-                    {
-                        int value = rnd.Next(questionsId.Count());
-                        int item = questionsId.ElementAt(value).id;
-
-                        if (!idQuestions.Contains(item))
-                            idQuestions.Add(item);
-                    }
-                }
-                //if (count >= questionsId.Count) //Если выбрали вопросов больше или столько же сколько в базе, то делаем максимум что есть
-                //{
-                //    for (int i = 0; i < questionsId.Count; i++)
-                //        idQuestions.Add(questionsId.ElementAt(i).id);
-                //    Shuffle(idQuestions); //Берем все вопросы без рандома и перемешиваем.
-                //}
-                //else //Иначе набираем рандомно вопросы
-                //{
-                //    Random rnd = new Random();
-                //    while (idQuestions.Count != count)
-                //    {
-                //        int value = rnd.Next(questionsId.Count());
-                //        int item = questionsId.ElementAt(value).id;
-
-                //        if (!idQuestions.Contains(item))
-                //            idQuestions.Add(item);
-                //    }
-                //}
-
                 string questions = ""; //Сохраняем вопросы в тест
-                foreach (int item in idQuestions)
+
+                for (int i = 1; i <= idQualification; i++)
                 {
-                    questions += item.ToString() + "|";
+                    var value = relation[idQualification - 1, i - 1] * count / 100;
+                    idQuestions = dbContext.Questions.
+                        Where(u => u.IdQualification == i).
+                        OrderBy(u => Guid.NewGuid()).
+                        Take(value).
+                        Select(u => u.Id).ToList();
+                    foreach (int item in idQuestions)
+                        questions += item.ToString() + "|";
                 }
                 questions = questions.Substring(0, questions.Length - 1);
                 var test = dbContext.SelfyTestQualifications.Find(id);
