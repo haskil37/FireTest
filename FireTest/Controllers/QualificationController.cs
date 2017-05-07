@@ -89,6 +89,7 @@ namespace FireTest.Controllers
                     ViewBag.CountMax = Math.Truncate(value / 10.0);
                 }
             }
+            ViewBag.TextQ = id;
             return View();
         }
         [HttpPost]
@@ -115,6 +116,8 @@ namespace FireTest.Controllers
             if (submitButton == "Cancel") //Удаляем пустой или незаконченный тесты при отмене
             {
                 var deleteTest = dbContext.SelfyTestQualifications.Find(id);
+                if (string.IsNullOrEmpty(deleteTest.Questions))
+                    return RedirectToAction("Index", "Home");
                 dbContext.SelfyTestQualifications.Remove(deleteTest);
                 dbContext.SaveChanges();
                 return RedirectToAction("Index", new { id = EndId, course = EndCourse });
