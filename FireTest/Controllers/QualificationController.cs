@@ -79,16 +79,14 @@ namespace FireTest.Controllers
             int value = 0;
             for (int i = 1; i <= id; i++)
             {
-                var countQuestions2 = dbContext.Questions.Where(u => u.IdQualification == i).Count();
-                ViewBag.CountCurrent = countQuestions2;
+                var countQuestions = dbContext.Questions.Where(u => u.IdQualification == i).Count();
+                ViewBag.CountCurrent = countQuestions;
                 if (value != 0)
-                    ViewBag.CountMax = Math.Truncate(Math.Min(value, countQuestions2 * 100 / relation[id - 1, i - 1]) / 10.0);
+                    value = Math.Min(value, countQuestions * 100 / relation[id - 1, i - 1]);
                 else
-                {
-                    value = countQuestions2 * 100 / relation[id - 1, i - 1];
-                    ViewBag.CountMax = Math.Truncate(value / 10.0);
-                }
+                    value = countQuestions * 100 / relation[id - 1, i - 1];
             }
+            ViewBag.CountMax = Math.Truncate(value / 10.0);
             ViewBag.TextQ = id;
             return View();
         }
