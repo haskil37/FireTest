@@ -1178,10 +1178,9 @@ namespace FireTest.Controllers
             }
             return RedirectToAction("NewQuestion", new { Message = "Вопрос был успешно добавлен", Department = newQuestion.IdDepartment, Subject = newQuestion.IdSubject, Course = newQuestion.IdCourse });
         }
-        public ActionResult EditQuestionSelect(string message, string Message, bool clear = true)
+        public ActionResult EditQuestionSelect(string message, string Message)
         {
-            if (clear)
-                Session.Clear();
+            Session.Clear();
 
             string userId = User.Identity.GetUserId();
             string temp = dbContext.TeachersAccess.Where(u => u.TeacherId == userId).Select(u => u.TeacherSubjects).SingleOrDefault();
@@ -1331,7 +1330,6 @@ namespace FireTest.Controllers
 
             if (dbContext.TeachersAccess.Where(u => u.TeacherId == userId).Select(u => u.TeacherQualifications).SingleOrDefault())
                 ViewBag.Access = true;
-
             return PartialView(model.ToPagedList(pageNumber, pageSize));
         }
         public ActionResult EditQuestion(int id)
@@ -1362,7 +1360,7 @@ namespace FireTest.Controllers
                         Selected = u.Id == question.IdSubject
                     }).ToList();
             ViewBag.Subjects = selectList;
-
+            ViewBag.OldSubjects = question.IdSubject;
             selectList = dbContext.Departments //Добавляем выпадающий список из кафедр
                .Select(u => new SelectListItem()
                {
@@ -1467,7 +1465,7 @@ namespace FireTest.Controllers
             return View(model);
         }
         [HttpPost]
-        public ActionResult EditQuestion(ViewEditQuestion Question, int Type, int id, int Subjects, int Departments, int Courses, string Delete, HttpPostedFileBase uploadfile)
+        public ActionResult EditQuestion(ViewEditQuestion Question, int Type, int id, int Subjects, int Departments, int Courses, string Delete, HttpPostedFileBase uploadfile, int OldSubjects, string OldTags)
         {
             if (!ModelState.IsValid)
                 return View(Question);
@@ -1717,7 +1715,8 @@ namespace FireTest.Controllers
                 question.QuestionImage = ImageName + extension;
             }
             dbContext.SaveChanges();
-            return RedirectToAction("EditQuestionSelect", new { clear = false, Message = "Вопрос был успешно изменен" });
+            return RedirectToAction("EditQuestionSelect", new { Message = "Вопрос был успешно изменен", Subjects = OldSubjects, Tags = OldTags });
+
 
             //return RedirectToAction("EditQuestion", new { id, Message = "Вопрос был успешно изменен" });
         }
@@ -1843,7 +1842,6 @@ namespace FireTest.Controllers
             model = model.OrderBy(u => u.Name).ToList();
             int pageSize = 10;
             int pageNumber = (page ?? 1);
-            ViewBag.page = pageNumber;
 
             return PartialView(model.ToPagedList(pageNumber, pageSize));
         }
@@ -1862,15 +1860,18 @@ namespace FireTest.Controllers
         }
         [HttpPost, ActionName("DeleteQuestion")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteQuestionConfirmed(int id)
+        public ActionResult DeleteQuestionConfirmed(int id, string Action)
         {
             Question question = dbContext.Questions.Find(id);
+            if (Action == "Назад")
+                return RedirectToAction("DeleteQuestionSelect", new { Subjects = question.IdSubject, Tags = question.Tag });
+
             dbContext.Questions.Remove(question);
             List<Answer> answers = dbContext.Answers.Where(u => u.IdQuestion == id).ToList();
-            foreach(Answer item in answers)
+            foreach (Answer item in answers)
                 dbContext.Answers.Remove(item);
             dbContext.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("DeleteQuestionSelect", new { Subjects = question.IdSubject, Tags = question.Tag });
         }
         public ActionResult QuestionQualification(int id)
         {
@@ -1892,23 +1893,27 @@ namespace FireTest.Controllers
                         }).ToList();
                 ViewBag.QualificationsList = selectList;
             }
+            Session["Subjects"] = question.IdSubject;
+            Session["Tags"] = question.Tag;
             return View();
         }
         [HttpPost]
-        public ActionResult QuestionQualification(int id, int? QualificationsList)
+        public ActionResult QuestionQualification(int id, int? QualificationsList, string Action)
         {
             var question = dbContext.Questions.Find(id);
             if (question == null)
                 return RedirectToAction("EditQuestionSelect");
+            if (Action == "Назад")
+                return RedirectToAction("EditQuestionSelect", new { Subjects = question.IdSubject, Tags = question.Tag });
             if (QualificationsList == null)
             {
                 question.IdQualification = 0;
                 dbContext.SaveChanges();
-                return RedirectToAction("EditQuestionSelect", new { message = "Вопрос был успешно убран из квалификации" });
+                return RedirectToAction("EditQuestionSelect", new { message = "Вопрос был успешно убран из квалификации", Subjects = question.IdSubject, Tags = question.Tag });
             }
             question.IdQualification = QualificationsList.Value;
             dbContext.SaveChanges();
-            return RedirectToAction("EditQuestionSelect", new { message = "Вопрос был успешно добавлен в квалификацию" });
+            return RedirectToAction("EditQuestionSelect", new { message = "Вопрос был успешно добавлен в квалификацию", Subjects = question.IdSubject, Tags = question.Tag });
         }
         public ActionResult CreateExam()
         {

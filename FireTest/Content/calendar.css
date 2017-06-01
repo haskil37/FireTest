@@ -8,7 +8,7 @@
     color: rgb(196, 189, 151);
     text-decoration: none;
 }
-.fc-unthemed .fc-today {
+.fc-unthemed td.fc-today {
     background-color: rgba(255, 115, 0, 0.3);
 }
 .fc-state-default.fc-corner-right {
