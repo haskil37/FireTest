@@ -26,6 +26,24 @@ namespace FireTest.Controllers
 
             if (id < course) //Чтоб курс был равен квалификации
                 course = id;
+            switch (course)
+            {
+                case 1:
+                    ViewBag.Course = "1";
+                    break;
+                case 2:
+                    ViewBag.Course = "1 и 2";
+                    break;
+                case 3:
+                    ViewBag.Course = "1, 2 и 3";
+                    break;
+                case 4:
+                    ViewBag.Course = "1, 2, 3 и 4";
+                    break;
+                case 5:
+                    ViewBag.Course = "1, 2, 3, 4 и 5";
+                    break;
+            }
 
             ViewBag.QualificationName = dbContext.Qualifications.Find(id).Name;
 

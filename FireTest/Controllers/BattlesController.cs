@@ -139,6 +139,7 @@ namespace FireTest.Controllers
             DateTime activity = DateTime.Now.AddSeconds(-30); //30 секунд небыло активности - значит оффлайн
             var otherUsers = dbContext.Users
                  .Where(u => u.Id != user)
+                 .Where(u => string.IsNullOrEmpty(u.Name) != true)
                  .Where(u => u.Busy != true)
                  .Where(u => u.LastActivity >= activity)
                  .Select(u => new {
