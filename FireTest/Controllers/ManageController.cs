@@ -143,6 +143,10 @@ namespace FireTest.Controllers
             }
             else
             {
+                ViewBag.Speciality = new[]{
+                     new SelectListItem{ Value="0",Text="Пожарная безопасность"},
+                     new SelectListItem{ Value="1",Text="Техносферная безопасность"},
+                 };
                 if (!string.IsNullOrEmpty(user.Group))
                 {
                     model = new IndexViewModel
