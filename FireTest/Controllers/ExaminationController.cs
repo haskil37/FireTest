@@ -248,6 +248,10 @@ namespace FireTest.Controllers
 
             if (count == number) //Если ответов столько же сколько и вопросов то идем на страницу статистики.
             {
+                //TestQualification testEnd = dbContext.TestQualification.Find(test.id); //Заканчиваем тест
+                //testEnd.End = true;
+                //dbContext.SaveChanges();
+
                 ViewBag.ExaminationEnd = true;
                 return PartialView();
             }
@@ -295,7 +299,8 @@ namespace FireTest.Controllers
                 {
                     idTest = u.IdTest,
                     Name = u.Name,
-                    Time = u.Time
+                    Time = u.Time,
+                    FinishTest = u.FinishTest
                 }).SingleOrDefault();
             if (test.start.AddMinutes(exam.Time) <= DateTime.Now)
                 ViewBag.Time = exam.Time;
@@ -348,17 +353,30 @@ namespace FireTest.Controllers
                     countId++;
                 }
             }
-
-            var eval = dbContext.TeacherTests.Find(exam.idTest);
+            int Eval5, Eval4, Eval3;
+            if (exam.FinishTest)
+            {
+                var tempEval = dbContext.TeacherFinishTests.Find(exam.idTest);
+                Eval5 = tempEval.Eval5;
+                Eval4 = tempEval.Eval4;
+                Eval3 = tempEval.Eval3;
+            }
+            else
+            {
+                var tempEval = dbContext.TeacherTests.Find(exam.idTest);
+                Eval5 = tempEval.Eval5;
+                Eval4 = tempEval.Eval4;
+                Eval3 = tempEval.Eval3;
+            }
             var rightP = right.Count() * 100 / (right.Count() + wrong.Count());
             testEnd.Score = rightP;
-            if (rightP >= eval.Eval5)
+            if (rightP >= Eval5)
                 ViewBag.Eval = "Оценка 5";
-            if (rightP < eval.Eval5)
+            if (rightP < Eval5)
                 ViewBag.Eval = "Оценка 4";
-            if (rightP < eval.Eval4)
+            if (rightP < Eval4)
                 ViewBag.Eval = "Оценка 3";
-            if (rightP < eval.Eval3)
+            if (rightP < Eval3)
                 ViewBag.Eval = "Оценка 2";
             ViewBag.RightP = rightP;
             ViewBag.Right = right.Count();
