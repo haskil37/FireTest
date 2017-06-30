@@ -33,10 +33,12 @@ namespace FireTest.Controllers
                 i++;
                 if (i > course)
                     break;
-                if (i < course)
-                    ViewBag.Course += ", ";
-                else
-                    ViewBag.Course += " и ";
+                //if (i < course)
+                //    ViewBag.Course += ", ";
+                //else
+                //    ViewBag.Course += " и ";
+                //Медленнее, но выглядит приятнее
+                ViewBag.Course += i < course ? ", " : " и ";
             }
 
             ViewBag.QualificationName = dbContext.Qualifications.Find(id).Name;
