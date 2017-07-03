@@ -448,41 +448,23 @@ namespace FireTest.Controllers
             }
 
             //Кубки за квалификации
-            var temp = dbContext.Examinations
-                .Where(u => u.Group == user.Group)
-                .Where(u => u.FinishTest)
-                .Select(u => new
-                {
-                    idTest = u.IdTest,
-                    id = u.Id
-                }).ToList();
+            var evals = user.QualificationPoint.Split('|');
             var Qualifications = new List<string>();
-            foreach (var item in temp)
+            var countQua = 0;
+            foreach (var item in evals)
             {
-                var score = dbContext.TestQualification
-                    .Where(u => u.IdExamination == item.id)
-                    .Where(u => u.End)
-                    .Select(u => u.Score).SingleOrDefault();
-
-                var idQualification = dbContext.TeacherFinishTests
-                    .Where(u => u.Id == item.idTest)
-                    .Select(u => new
-                    {
-                        IdQualification = u.IdQualification,
-                        eval3 = u.Eval3,
-                        eval4 = u.Eval4,
-                        eval5 = u.Eval5
-                    }).SingleOrDefault();
-                if (score > idQualification.eval3)
-                { 
+                countQua++;
+                if (item != "_")
+                {
+                    int eval = Convert.ToInt16(item);
                     var word = "";
-                    if (score >= idQualification.eval5)
+                    if (eval == 5)
                         word = "G.png";
-                    else if (score >= idQualification.eval4)
+                    if (eval == 4)
                         word = "S.png";
-                    else if (score >= idQualification.eval3)
+                    if (eval == 3)
                         word = "B.png";
-                    Qualifications.Add("Q" + idQualification.IdQualification + word);
+                    Qualifications.Add("Q" + countQua + word);
                 }
             }
             var model = new Awards()

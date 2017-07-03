@@ -105,11 +105,12 @@ namespace FireTest.Controllers
             int number = 0;
             if (end == null)//Если еще не начали экзамен, то создаем новый
             {
-                TestQualification newExam = new TestQualification();
-                newExam.IdUser = userId;
-                newExam.IdExamination = id.Value;
-                newExam.TimeStart = DateTime.Now;
-
+                TestQualification newExam = new TestQualification()
+                {
+                    IdUser = userId,
+                    IdExamination = id.Value,
+                    TimeStart = DateTime.Now
+                };
                 string examQuestions = "";
                 if (!exam.Finish)
                     examQuestions = dbContext.TeacherTests
@@ -345,21 +346,23 @@ namespace FireTest.Controllers
                 countId = 0;
                 foreach (int item in idSubjects)
                 {
-                    TestWrongAnswers TestWrongAnswers = new TestWrongAnswers();
-                    TestWrongAnswers.Subject = dbContext.Subjects.Find(item).Name;
-                    TestWrongAnswers.Count = idSubjectsCount[countId];
-
+                    TestWrongAnswers TestWrongAnswers = new TestWrongAnswers()
+                    {
+                        Subject = dbContext.Subjects.Find(item).Name,
+                        Count = idSubjectsCount[countId]
+                    };
                     AllTestWrongAnswers.Add(TestWrongAnswers);
                     countId++;
                 }
             }
-            int Eval5, Eval4, Eval3;
+            int Eval5, Eval4, Eval3, IdQua;
             if (exam.FinishTest)
             {
                 var tempEval = dbContext.TeacherFinishTests.Find(exam.idTest);
                 Eval5 = tempEval.Eval5;
                 Eval4 = tempEval.Eval4;
                 Eval3 = tempEval.Eval3;
+                IdQua = tempEval.IdQualification;
             }
             else
             {
@@ -367,25 +370,38 @@ namespace FireTest.Controllers
                 Eval5 = tempEval.Eval5;
                 Eval4 = tempEval.Eval4;
                 Eval3 = tempEval.Eval3;
+                IdQua = 0;
             }
             var rightP = right.Count() * 100 / (right.Count() + wrong.Count());
             testEnd.Score = rightP;
+            int Eval = 0;
             if (rightP >= Eval5)
-                ViewBag.Eval = "Оценка 5";
+                Eval = 5;
             if (rightP < Eval5)
-                ViewBag.Eval = "Оценка 4";
+                Eval = 4;
             if (rightP < Eval4)
-                ViewBag.Eval = "Оценка 3";
+                Eval = 3;
             if (rightP < Eval3)
-                ViewBag.Eval = "Оценка 2";
+                Eval = 2;
+            ViewBag.Eval = "Оценка " + Eval;
+
             ViewBag.RightP = rightP;
             ViewBag.Right = right.Count();
             ViewBag.Wrong = wrong.Count();
             ViewBag.Count = right.Count() + wrong.Count();
 
-            ApplicationUser userBusy = dbContext.Users.Find(User.Identity.GetUserId()); //Закончили тест - делаем юзера свободным
+            ApplicationUser userBusy = dbContext.Users.Find(user); //Закончили тест - делаем юзера свободным
             userBusy.Busy = false;
             userBusy.Rating += (right.Count() * 100 / (right.Count() + wrong.Count())) / 2.0 + right.Count() / 2.0;
+            if (IdQua != 0 && Eval != 2)
+            {
+                string quapoint = userBusy.QualificationPoint;
+                //От идКвалификации зависbт на какой позиции менять оценку. Маска _|_|_|_|_
+                //                                                                0 2 4 6 8                
+                var index = 2 * IdQua - 2; // 1->0; 2->2; 3->4; 4->6; 5->8
+                quapoint = quapoint.Remove(index, 1).Insert(index, Eval.ToString());
+                userBusy.QualificationPoint = quapoint;
+            }
             dbContext.SaveChanges();
             ViewBag.Avatar = "/Images/Avatars/" + userBusy.Avatar;
 

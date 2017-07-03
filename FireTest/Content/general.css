@@ -393,6 +393,11 @@ input[type=range]:focus::-ms-fill-upper {
 .left {
     text-align: left;
 }
+.chartSelfy {
+    position: relative;
+    width: 70%;
+    margin: 0 auto;
+}
 .row {
     display: table;
     width: 100%;
@@ -604,7 +609,7 @@ input[type=range]:focus::-ms-fill-upper {
     margin-left: 5%;
 }
 .awards img{
-    width: 40%;
+    width: 30%;
 }
 /*Avatar*/
 #avatar{

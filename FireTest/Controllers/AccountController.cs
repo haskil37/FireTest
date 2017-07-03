@@ -138,7 +138,7 @@ namespace FireTest.Controllers
                 if (confirmOrNo != null && !confirmOrNo.EmailConfirmed)
                     UserManager.Delete(confirmOrNo);
 
-                var user = new ApplicationUser { UserName = login, Email = model.Email, Snils = model.Snils, Avatar = "NoAvatar.png", LastActivity = DateTime.Now };
+                var user = new ApplicationUser { UserName = login, Email = model.Email, Snils = model.Snils, Avatar = "NoAvatar.png", LastActivity = DateTime.Now, QualificationPoint = "_|_|_|_|_" };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {

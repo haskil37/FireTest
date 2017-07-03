@@ -520,8 +520,8 @@ namespace FireTest.Controllers
                         ViewBag.BattlesWin = user.BattleWinCount;
                         return PartialView("UserBattles");
                     case 1:
-                        ViewBag.BattlesLose = user.AnswersCount - user.CorrectAnswersCount;
-                        ViewBag.BattlesWin = user.CorrectAnswersCount;
+                        ViewBag.Answers = user.AnswersCount - user.CorrectAnswersCount;
+                        ViewBag.AnswersCorrect = user.CorrectAnswersCount;
                         return PartialView("UserAnswers");
                     case 2:
                         return PartialView("SelectDateRangeUser");
