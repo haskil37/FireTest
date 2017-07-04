@@ -16,6 +16,7 @@ namespace FireTest.Controllers
     public class TeacherController : Controller
     {
         ApplicationDbContext dbContext = new ApplicationDbContext();
+        const int minimumQuestionsCount = 250;
         public ActionResult Index(string message)
         {
             var userId = User.Identity.GetUserId();
@@ -38,6 +39,7 @@ namespace FireTest.Controllers
         [ChildActionOnly]
         public ActionResult IndexQualification()
         {
+            ViewBag.Minimum = minimumQuestionsCount;
             var finishTest = dbContext.TeacherFinishTests.ToList().Where(u => u.TeacherId == User.Identity.GetUserId()).Where(u => !string.IsNullOrEmpty(u.NameTest));
             return PartialView(finishTest);
         }
@@ -49,13 +51,14 @@ namespace FireTest.Controllers
             if (teacherTest == null)
                 return HttpNotFound();
 
-            TeacherTestDetails testDetails = new TeacherTestDetails();
-            testDetails.Id = teacherTest.Id;
-            testDetails.NameTest = teacherTest.NameTest;
-            testDetails.Eval5 = teacherTest.Eval5;
-            testDetails.Eval4 = teacherTest.Eval4;
-            testDetails.Eval3 = teacherTest.Eval3;
-
+            TeacherTestDetails testDetails = new TeacherTestDetails()
+            {
+                Id = teacherTest.Id,
+                NameTest = teacherTest.NameTest,
+                Eval5 = teacherTest.Eval5,
+                Eval4 = teacherTest.Eval4,
+                Eval3 = teacherTest.Eval3
+            };
             if (!string.IsNullOrEmpty(teacherTest.Questions))
             {
                 List<string> questions = teacherTest.Questions.Split('|').ToList();
@@ -73,14 +76,15 @@ namespace FireTest.Controllers
             if (teacherFinishTest == null)
                 return HttpNotFound();
 
-            TeacherTestDetails testDetails = new TeacherTestDetails();
-            testDetails.Id = teacherFinishTest.Id;
-            testDetails.NameTest = teacherFinishTest.NameTest;
-            testDetails.Qualification = dbContext.Qualifications.Find(teacherFinishTest.IdQualification).Name;
-            testDetails.Eval5 = teacherFinishTest.Eval5;
-            testDetails.Eval4 = teacherFinishTest.Eval4;
-            testDetails.Eval3 = teacherFinishTest.Eval3;
-
+            TeacherTestDetails testDetails = new TeacherTestDetails()
+            {
+                Id = teacherFinishTest.Id,
+                NameTest = teacherFinishTest.NameTest,
+                Qualification = dbContext.Qualifications.Find(teacherFinishTest.IdQualification).Name,
+                Eval5 = teacherFinishTest.Eval5,
+                Eval4 = teacherFinishTest.Eval4,
+                Eval3 = teacherFinishTest.Eval3
+            };
             if (!string.IsNullOrEmpty(teacherFinishTest.Questions))
             {
                 List<string> questions = teacherFinishTest.Questions.Split('|').ToList();
@@ -148,8 +152,10 @@ namespace FireTest.Controllers
                 Session["Test"] = result;
                 return View();
             }
-            TeacherTest test = new TeacherTest();
-            test.TeacherId = userId;
+            TeacherTest test = new TeacherTest()
+            {
+                TeacherId = userId
+            };
             dbContext.TeacherTests.Add(test);
             dbContext.SaveChanges();
             Session["Test"] = test.Id;
@@ -232,16 +238,20 @@ namespace FireTest.Controllers
                 }
                 else
                 {
-                    TeacherTest newtest = new TeacherTest();
-                    newtest.TeacherId = userId;
-                    newtest.NameTest = "Без названия " + sessionId;
-                    newtest.Questions = newSubjects;
+                    TeacherTest newtest = new TeacherTest()
+                    {
+                        TeacherId = userId,
+                        NameTest = "Без названия " + sessionId,
+                        Questions = newSubjects
+                    };
                     dbContext.TeacherTests.Add(newtest);
                     Session["Test"] = newtest.Id;
                     ViewBag.NameTest = newtest.NameTest;
                 }
                 dbContext.SaveChanges();
             }
+
+            ViewBag.Count = "Количество вопросов: <span style=\"color:rgb(114, 191, 230);\">" + subjects.Count() + "</span>";
 
             if (!string.IsNullOrEmpty(searchString))
                 page = 1;
@@ -368,12 +378,14 @@ namespace FireTest.Controllers
             {
                 return HttpNotFound();
             }
-            TeacherTestDetails testDetails = new TeacherTestDetails();
-            testDetails.Id = teacherTest.Id;
-            testDetails.NameTest = teacherTest.NameTest;
-            testDetails.Eval5 = teacherTest.Eval5;
-            testDetails.Eval4 = teacherTest.Eval4;
-            testDetails.Eval3 = teacherTest.Eval3;
+            TeacherTestDetails testDetails = new TeacherTestDetails()
+            {
+                Id = teacherTest.Id,
+                NameTest = teacherTest.NameTest,
+                Eval5 = teacherTest.Eval5,
+                Eval4 = teacherTest.Eval4,
+                Eval3 = teacherTest.Eval3
+            };
             if (!string.IsNullOrEmpty(teacherTest.Questions))
             {
                 List<string> questions = teacherTest.Questions.Split('|').ToList();
@@ -443,6 +455,8 @@ namespace FireTest.Controllers
                 ViewBag.Submit = true; //Чтобы обновить таблицу с вопросами (не работает)
                 dbContext.SaveChanges();
             }
+
+            ViewBag.Count = "Количество вопросов: <span style=\"color:rgb(114, 191, 230);\">" + questions.Count() + "</span>";
 
             if (!string.IsNullOrEmpty(searchString))
                 page = 1;
@@ -661,13 +675,15 @@ namespace FireTest.Controllers
             }
 
             string userId = User.Identity.GetUserId();
-            TeacherFinishTest newtest = new TeacherFinishTest();
-            newtest.TeacherId = userId;
-            newtest.NameTest = model.NameTest;
-            newtest.Eval3 = model.Eval3;
-            newtest.Eval4 = model.Eval4;
-            newtest.Eval5 = model.Eval5;
-            newtest.IdQualification = model.Qualifications;
+            TeacherFinishTest newtest = new TeacherFinishTest()
+            {
+                TeacherId = userId,
+                NameTest = model.NameTest,
+                Eval3 = model.Eval3,
+                Eval4 = model.Eval4,
+                Eval5 = model.Eval5,
+                IdQualification = model.Qualifications
+            };
             dbContext.TeacherFinishTests.Add(newtest);
             dbContext.SaveChanges();
             //        return RedirectToAction("CreateTestFinish", new System.Web.Routing.RouteValueDictionary(
@@ -677,65 +693,21 @@ namespace FireTest.Controllers
         public ActionResult CreateTestFinish(int idTest)
         {
             Session.Clear();
-            //string userId = User.Identity.GetUserId();
-            //var result = dbContext.TeacherFinishTests
-            //    .Where(u => u.TeacherId == userId)
-            //    .Where(u => u.Id == idTest)
-            //    .Select(u => u.Id).SingleOrDefault();
-            //if (result != 0)
-            //{
-                Session["idFinishTest"] = idTest;
-            //    return View();
-            //}
-            //TeacherFinishTest test = new TeacherFinishTest();
-            //test.TeacherId = userId;
-            //dbContext.TeacherFinishTests.Add(test);
-            //dbContext.SaveChanges();
-            //Session["Test"] = test.Id;
+            Session["idFinishTest"] = idTest;
             return View();
         }
         public PartialViewResult CreateTestFinishAjax(string currentFilter, string searchString, int? page, int? submitButton, bool submitButtonAll = false)
         {
-            //if (Session["Subjects"] != null && Session["Tags"] != null)
-            //    if ((int)Session["Subjects"] != Subjects || (string)Session["Tags"] != Tags)
-            //        page = 1;
-            //Session["Subjects"] = Subjects;
-            //Session["Tags"] = Tags;
-
             string userId = User.Identity.GetUserId();
             int sessionId = (int)Session["idFinishTest"]; //Берем ид теста
             TeacherFinishTest test = dbContext.TeacherFinishTests.Find(sessionId);
             ViewBag.NameTest = test.NameTest;
-            //if (!string.IsNullOrEmpty(NameTest))
-            //{
-            //    if (test != null && test.NameTest != NameTest)
-            //    {
-            //        test.NameTest = NameTest; //Сохраняем название если оно изменилось
-            //        ViewBag.NameTest = NameTest;
-            //        dbContext.SaveChanges();
-            //    }
-            //}
-            //if (Eval != null)//Сохраняем оценки
-            //{
-            //    if (Eval.Count() == 3)
-            //    {
-            //        test.Eval5 = Eval[0];
-            //        test.Eval4 = Eval[1];
-            //        test.Eval3 = Eval[2];
-            //    }
-            //    else
-            //    {
-            //        test.Eval5 = 0;
-            //        test.Eval4 = 0;
-            //        test.Eval3 = 0;
-            //    }
-            //    dbContext.SaveChanges();
-            //}
             ViewBag.Eval5 = test.Eval5;
             ViewBag.Eval4 = test.Eval4;
             ViewBag.Eval3 = test.Eval3;
 
             List<string> subjects = new List<string>();
+            int count250 = 0; //Минимум вопросов в итоговом
             if (submitButtonAll)
             {
                 var Subjects = "";
@@ -749,6 +721,7 @@ namespace FireTest.Controllers
                     subjects.Add(item.Id.ToString());
                 }
                 test.Questions = Subjects;
+                count250 = allSubjects.Count();
                 dbContext.SaveChanges();
             }
             else
@@ -782,23 +755,7 @@ namespace FireTest.Controllers
                     test.Questions = newSubjects;
                     dbContext.SaveChanges();
                 }
-                //if (test != null)
-                //{
-                //    test.Questions = newSubjects;
-                //    if (string.IsNullOrEmpty(test.NameTest))
-                //        test.NameTest = "Без названия " + sessionId;
-                //    ViewBag.NameTest = test.NameTest;
-                //}
-                //else
-                //{
-                //    TeacherFinishTest newtest = new TeacherFinishTest();
-                //    newtest.TeacherId = userId;
-                //    newtest.NameTest = "Без названия " + sessionId;
-                //    newtest.Questions = newSubjects;
-                //    dbContext.TeacherFinishTests.Add(newtest);
-                //    Session["Test"] = newtest.Id;
-                //    ViewBag.NameTest = newtest.NameTest;
-                //}
+                count250 = subjects.Count();
             }
 
             if (!string.IsNullOrEmpty(searchString))
@@ -806,53 +763,6 @@ namespace FireTest.Controllers
             else
                 searchString = currentFilter;
             ViewBag.CurrentFilter = searchString;
-
-            //string temp = dbContext.TeachersAccess.Where(u => u.TeacherId == userId).Select(u => u.TeacherSubjects).SingleOrDefault();
-            //List<string> userSubjects = new List<string>(); //Берем в массив ид предметов у которых у нас доступ
-            //if (!string.IsNullOrEmpty(temp))
-            //    userSubjects = temp.Split('|').ToList();
-
-            //var tempSubjects = dbContext.Subjects.Where(u => userSubjects.Contains(u.Id.ToString())).Select(u => new
-            //{
-            //    Id = u.Id,
-            //    Name = u.Name
-            //}); //Записываем предметы в список
-            //var selectList = tempSubjects //Добавляем выпадающий список из разрешенных предметов
-            //        .Select(u => new SelectListItem()
-            //        {
-            //            Text = u.Name,
-            //            Value = u.Id.ToString(),
-            //            Selected = u.Id == Subjects
-            //        }).ToList();
-            //ViewBag.Subjects = selectList;
-
-            //List<string> tempTags;
-
-            //int sub; //Если выбран предмет то используем его, если нет, то выбираем первый в списке разрешенных
-            //if (Subjects != null)
-            //    sub = Subjects.Value;
-            //else
-            //{
-            //    userSubjects.Sort();
-            //    sub = Convert.ToInt32(userSubjects[0]);
-            //}
-
-            //tempTags = dbContext.Questions
-            //    .Where(u => u.IdSubject == sub)
-            //    .Select(u => u.Tag).Distinct().ToList(); //Берем все разделы
-            //if (tempTags.Count == 0)
-            //    tempTags.Add("Все разделы");
-            //else
-            //    tempTags[0] = "Все разделы";
-            //tempTags.Add("Без раздела");
-            //selectList = tempTags //Выпадающий список разделов
-            //    .Select(u => new SelectListItem()
-            //    {
-            //        Value = u,
-            //        Text = u,
-            //        Selected = u == Tags
-            //    }).ToList();
-            //ViewBag.Tags = selectList;
 
             var tempQuestions = dbContext.Questions //Берем все вопросы дисциплины
                 .Where(u => u.IdQualification > 0)
@@ -864,26 +774,6 @@ namespace FireTest.Controllers
                     Course = u.IdCourse,
                     Qualification = u.IdQualification
                 }).ToList();
-            //if (Tags != "Все разделы" && Tags != "Без раздела")
-            //{
-            //    tempQuestions = dbContext.Questions //Берем все вопросы дисциплины нужного раздела
-            //        .Where(u => u.IdSubject == sub)
-            //        .Where(u => u.Tag == Tags)
-            //        .Select(u => new {
-            //            Id = u.Id,
-            //            Text = u.QuestionText
-            //        }).ToList();
-            //}
-            //if (Tags == "Без раздела")
-            //{
-            //    tempQuestions = dbContext.Questions //Берем все вопросы дисциплины без раздела
-            //        .Where(u => u.IdSubject == sub)
-            //        .Where(u => string.IsNullOrEmpty(u.Tag))
-            //        .Select(u => new {
-            //            Id = u.Id,
-            //            Text = u.QuestionText
-            //        }).ToList();
-            //}
             List<TestFinishAccess> model = new List<TestFinishAccess>(); //Использую это т.к. надо точно такие же поля
             foreach (var item in tempQuestions)
             {
@@ -919,11 +809,9 @@ namespace FireTest.Controllers
             int pageNumber = (page ?? 1);
             ViewBag.page = pageNumber;
             ViewBag.NameQualification = dbContext.Qualifications.Find(test.IdQualification).Name;
+            ViewBag.Count250 = "Количество вопросов для тестирования по уровню подготовки должно быть не менее <span style=\"color:rgb(255, 115, 0);\">" + minimumQuestionsCount + "</span>. У Вас: <span style=\"color:rgb(114, 191, 230);\">" + count250+ "</span>";
             return PartialView(model.ToPagedList(pageNumber, pageSize));
         }
-
-
-
         
         public ActionResult NewQuestion(string Message, int? Department, int? Subject, int? Course)
         {
@@ -1054,12 +942,14 @@ namespace FireTest.Controllers
                 }
             }
 
-            Question newQuestion = new Question();
-            newQuestion.QuestionText = model.QuestionText;
-            newQuestion.IdCourse = Courses;
-            newQuestion.IdDepartment = Departments;
-            newQuestion.IdSubject = Subjects;
-            newQuestion.Tag = model.Tag;
+            Question newQuestion = new Question()
+            {
+                QuestionText = model.QuestionText,
+                IdCourse = Courses,
+                IdDepartment = Departments,
+                IdSubject = Subjects,
+                Tag = model.Tag
+            };
             if (uploadfile != null) //Загрузка картинки вопроса, если есть
             {
                 string extension = Path.GetExtension(uploadfile.FileName).ToLower();
@@ -1380,10 +1270,12 @@ namespace FireTest.Controllers
                }).ToList();
             ViewBag.Courses = selectList;
 
-            var model = new ViewEditQuestion();
-            model.QuestionText = question.QuestionText;
-            model.Tag = question.Tag;            
-            model.Answers = new List<Answer>();
+            var model = new ViewEditQuestion()
+            {
+                QuestionText = question.QuestionText,
+                Tag = question.Tag,
+                Answers = new List<Answer>()
+            };
             List<bool> tempAnswersCorrects = new List<bool>();
             string correct = question.IdCorrect;
             if (correct[0] != '~' && correct[0] != '#') //Если обычный вопрос
@@ -1410,9 +1302,11 @@ namespace FireTest.Controllers
                     }
                     else
                         tempAnswersCorrects.Add(false);
-                    Answer tempAnswer = new Answer();
-                    tempAnswer.Id = item.Id;
-                    tempAnswer.AnswerText = item.AnswerText;
+                    Answer tempAnswer = new Answer()
+                    {
+                        Id = item.Id,
+                        AnswerText = item.AnswerText
+                    };
                     model.Answers.Add(tempAnswer);
                 }
                 ViewBag.Corrects = tempAnswersCorrects;
@@ -1429,9 +1323,11 @@ namespace FireTest.Controllers
                     }).ToList();
                 foreach (var item in Answers)
                 {
-                    Answer tempAnswer = new Answer();
-                    tempAnswer.Id = item.Id;
-                    tempAnswer.AnswerText = item.AnswerText;
+                    Answer tempAnswer = new Answer()
+                    {
+                        Id = item.Id,
+                        AnswerText = item.AnswerText
+                    };
                     model.Answers.Add(tempAnswer);
                 }
             }
@@ -1454,9 +1350,11 @@ namespace FireTest.Controllers
                                 }).ToList();
                         foreach (var item3 in Answers)
                         {
-                            Answer tempAnswer = new Answer();
-                            tempAnswer.Id = item3.Id;
-                            tempAnswer.AnswerText = item3.AnswerText;
+                            Answer tempAnswer = new Answer()
+                            {
+                                Id = item3.Id,
+                                AnswerText = item3.AnswerText
+                            };
                             model.Answers.Add(tempAnswer);
                         }
                     }
@@ -1521,9 +1419,11 @@ namespace FireTest.Controllers
                     {
                         if (!string.IsNullOrEmpty(Question.Answers[j].AnswerText))
                         {
-                            Answer NewAnswers = new Answer();
-                            NewAnswers.IdQuestion = id;
-                            NewAnswers.AnswerText = Question.Answers[j].AnswerText;
+                            Answer NewAnswers = new Answer()
+                            {
+                                IdQuestion = id,
+                                AnswerText = Question.Answers[j].AnswerText
+                            };
                             dbContext.Answers.Add(NewAnswers);
                             dbContext.SaveChanges();
 
@@ -1622,9 +1522,11 @@ namespace FireTest.Controllers
                     {
                         if (!string.IsNullOrEmpty(Question.Answers[j].AnswerText))
                         {
-                            Answer NewAnswers = new Answer();
-                            NewAnswers.IdQuestion = id;
-                            NewAnswers.AnswerText = Question.Answers[j].AnswerText;
+                            Answer NewAnswers = new Answer()
+                            {
+                                IdQuestion = id,
+                                AnswerText = Question.Answers[j].AnswerText
+                            };
                             dbContext.Answers.Add(NewAnswers);
                             dbContext.SaveChanges();
                             tempNewAnswersCorrect += NewAnswers.Id + ",";
@@ -1927,11 +1829,12 @@ namespace FireTest.Controllers
                     Text = u.NameTest,
                     Value = u.Id.ToString(),
                 }).ToList();
-
+      
             var finishTests = dbContext.TeacherFinishTests
                 .Where(u => u.TeacherId == userId)
                 .Where(u => !string.IsNullOrEmpty(u.NameTest))
                 .Where(u => !string.IsNullOrEmpty(u.Questions))
+                .Where(u => u.Questions.Length >= minimumQuestionsCount + 2)
                 .Select(u => new SelectListItem()
                 {
                     Text = u.NameTest,
@@ -1984,8 +1887,6 @@ namespace FireTest.Controllers
                     .Where(u => u.Course != 100)
                     .Select(u => new SelectListItem()
                     {
-                        //Text = u.Course + u.Group,
-                        //Value = u.Course + u.Group,
                         Text = u.Group,
                         Value = u.Group,
                     })
@@ -1993,11 +1894,13 @@ namespace FireTest.Controllers
 
                 return View(model);
             }
-            Examination exam = new Examination();
-            exam.Name = model.Name;
-            exam.Annotations = model.Annotations;
-            exam.Classroom = model.Classroom;
-            exam.Group = Group;
+            Examination exam = new Examination()
+            {
+                Name = model.Name,
+                Annotations = model.Annotations,
+                Classroom = model.Classroom,
+                Group = Group
+            };
             if (Test.Contains("F"))
                 exam.FinishTest = true;
             exam.IdTest = Convert.ToInt32(Test.Replace("F", ""));
@@ -2014,8 +1917,10 @@ namespace FireTest.Controllers
                 var user = dbContext.Users.Find(item);
                 user.Update = true;
             }
-            TestQualificationAccess testQualificationAccess = new TestQualificationAccess();
-            testQualificationAccess.IdExamination = exam.Id;
+            TestQualificationAccess testQualificationAccess = new TestQualificationAccess()
+            {
+                IdExamination = exam.Id
+            };
             dbContext.TestQualificationAccess.Add(testQualificationAccess);
             dbContext.SaveChanges();
             return RedirectToAction("EditExams", new { id = exam.Id, message = "Экзамен успешно создан" });
@@ -2231,10 +2136,12 @@ namespace FireTest.Controllers
             }
             foreach (var item in users)
             {
-                UsersForAdmin temp = new UsersForAdmin();
-                temp.Id = item.Id;
-                temp.Avatar = item.Avatar;
-                temp.Name = item.Family + " " + item.Name + " " + item.SubName;
+                UsersForAdmin temp = new UsersForAdmin()
+                {
+                    Id = item.Id,
+                    Avatar = item.Avatar,
+                    Name = item.Family + " " + item.Name + " " + item.SubName
+                };
                 model.Add(temp);
             }
             var tempAccess = dbContext.TestQualificationAccess.

@@ -121,15 +121,17 @@ namespace FireTest.Controllers
                         .Where(u => u.Id == exam.Id)
                         .Select(u => u.Questions).SingleOrDefault();
 
+                //Перемешаем вопросы
+                var questionsShake = examQuestions.Split('|').OrderBy(u => random.Next());
+                examQuestions = "";
+                foreach (var item in questionsShake)
+                    examQuestions += item + "|";
+                examQuestions = examQuestions.Substring(0, examQuestions.Length - 1);
                 newExam.Questions = examQuestions;
                 dbContext.TestQualification.Add(newExam);
                 dbContext.SaveChanges();
 
                 Questions model = new Questions();
-                //if (exam.Finish)
-                //    model = SelectQuestion(newExam.Id, true);
-                //else
-                //    model = SelectQuestion(newExam.Id, false);
                 model = SelectQuestion(newExam.Id);
 
                 ViewBag.Count = examQuestions.Split('|').ToList().Count(); //Общее количество вопросов

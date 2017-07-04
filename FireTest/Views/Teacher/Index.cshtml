@@ -22,6 +22,10 @@
                 <tr>
                     <td>
                         @Html.DisplayFor(modelItem => item.NameTest)
+                        @{
+                            int count = item.Questions.Split('|').Count();
+                            <p>(Вопросов в тесте <span style="color:rgb(114, 191, 230);">@count</span>)</p>
+                        }
                     </td>
                     <td>
                         @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }) |
