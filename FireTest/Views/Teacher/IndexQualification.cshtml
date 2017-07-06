@@ -18,7 +18,11 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.NameTest)
                         @{ 
-                            int count = item.Questions.Split('|').Count();
+                            int count = 0;
+                            if (!string.IsNullOrEmpty(item.Questions) && item.Questions.Length != 0)
+                            {
+                                count = item.Questions.Split('|').Count();
+                            }
                             <p>(Вопросов в тесте <span style="color:rgb(114, 191, 230);">@count</span>. Минимум <span style="color:rgb(255, 115, 0);">@ViewBag.Minimum</span>)</p>
                         }
                     </td>

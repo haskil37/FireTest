@@ -40,7 +40,9 @@ namespace FireTest.Controllers
         public ActionResult IndexQualification()
         {
             ViewBag.Minimum = minimumQuestionsCount;
-            var finishTest = dbContext.TeacherFinishTests.ToList().Where(u => u.TeacherId == User.Identity.GetUserId()).Where(u => !string.IsNullOrEmpty(u.NameTest));
+            var finishTest = dbContext.TeacherFinishTests.ToList()
+                .Where(u => u.TeacherId == User.Identity.GetUserId())
+                .Where(u => !string.IsNullOrEmpty(u.NameTest));
             return PartialView(finishTest);
         }
         public ActionResult Details(int? id)
