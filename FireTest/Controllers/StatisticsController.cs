@@ -838,7 +838,6 @@ namespace FireTest.Controllers
                         var users1 = dbContext.Users
                            .Where(u => u.Course != 100)
                            .Where(u => u.Group.Substring(0, 1) == Course1)
-                                                     //.Where(u => u.Course + u.Group.Substring(0, 1) == Course1)
                            .Select(u => new
                            {
                                AnswersCount = u.AnswersCount,
@@ -846,7 +845,6 @@ namespace FireTest.Controllers
                            }).ToList();
                         var users2 = dbContext.Users
                            .Where(u => u.Course != 100)
-                           //.Where(u => u.Course + u.Group.Substring(0, 1) == Course2)
                            .Where(u => u.Group.Substring(0, 1) == Course2)
 
                            .Select(u => new
@@ -862,7 +860,7 @@ namespace FireTest.Controllers
                             answers += item.AnswersCount;
                             correctAnswers += item.CorrectAnswersCount;
                         }
-                        ViewBag.Answers1 = answers - correctAnswers;
+                        ViewBag.Answers1 = answers;
                         ViewBag.AnswersCorrect1 = correctAnswers;
                         answers = 0;
                         correctAnswers = 0;
@@ -871,7 +869,7 @@ namespace FireTest.Controllers
                             answers += item.AnswersCount;
                             correctAnswers += item.CorrectAnswersCount;
                         }
-                        ViewBag.Answers2 = answers - correctAnswers;
+                        ViewBag.Answers2 = answers;
                         ViewBag.AnswersCorrect2 = correctAnswers;
                         return PartialView("CompareCoursesAnswers");
                     case 2:
@@ -883,13 +881,11 @@ namespace FireTest.Controllers
                 var users1 = dbContext.Users
                     .Where(u => u.Course != 100)
                     .Where(u => u.Group.Substring(0, 1) == Course1)
-                                 //.Where(u => u.Course + u.Group.Substring(0, 1) == Course1)
-       .Select(u => u.Id).ToList();
+                    .Select(u => u.Id).ToList();
                 var users2 = dbContext.Users
                     .Where(u => u.Course != 100)
                     .Where(u => u.Group.Substring(0, 1) == Course2)
-                          //.Where(u => u.Course + u.Group.Substring(0, 1) == Course2)
-              .Select(u => u.Id).ToList();
+                    .Select(u => u.Id).ToList();
                 int range = 0;
 
                 List<bool> selected = new List<bool>() { false, false, false };
