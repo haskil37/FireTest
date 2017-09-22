@@ -498,8 +498,8 @@ namespace FireTest.Controllers
                 RedirectToAction("Index", "Home");
             ViewBag.Id = user.Id;
 
-            Decliner decliner = new Decliner();
-            string[] declineText = decliner.Decline(user.Family, user.Name, user.SubName, 4);//Меняем падеж
+            Decliner decliner = new Decliner();            
+            string[] declineText = decliner.Decline(user.Family, user.Name, user.SubName, 2);//Меняем падеж
             ViewBag.Name = declineText[0] + " " + declineText[1] + " " + declineText[2];
             return View();
         }
@@ -508,7 +508,7 @@ namespace FireTest.Controllers
         {
             Decliner decliner = new Decliner();
             var user = dbContext.Users.Find(Id);
-            string[] declineText = decliner.Decline(user.Family, user.Name, user.SubName, 4);//Меняем падеж
+            string[] declineText = decliner.Decline(user.Family, user.Name, user.SubName, 2);//Меняем падеж
             ViewBag.TitleChart = declineText[1];
 
             if (DateRange == null || Statistics != 2)

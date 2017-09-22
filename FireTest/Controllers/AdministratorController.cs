@@ -1,6 +1,7 @@
 ﻿using FireTest.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.Identity.Owin;
 using PagedList;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,10 @@ namespace FireTest.Controllers
         }
         public PartialViewResult UsersAjax(string currentFilter, string searchString, int? page, string submitButton, int? Page)
         {
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+            ViewBag.Page = pageNumber;
+
             if (!string.IsNullOrEmpty(submitButton))
             {
                 string[] value = submitButton.Split('|');
@@ -79,23 +84,26 @@ namespace FireTest.Controllers
                                        || u.Name.Contains(searchString)
                                        || u.SubName.Contains(searchString));
             }
+            users = users.OrderBy(u => u.Family + " " + u.Name + " " + u.SubName);
+            var emptycount = 1;
             foreach (var item in users)
             {
                 UsersForAdmin temp = new UsersForAdmin();
-                temp.Id = item.Id;
-                temp.Snils = item.Snils;
-                temp.Avatar = item.Avatar;
-                temp.Name = item.Family + " " + item.Name + " " + item.SubName;
-                temp.Teacher = userManager.IsInRole(item.Id, "TEACHER");
-                temp.Administrator = userManager.IsInRole(item.Id, "ADMIN");
+                if (emptycount >= (pageNumber - 1) * pageSize + 1 && emptycount <= pageNumber * pageSize)
+                {
+                    temp.Id = item.Id;
+                    temp.Snils = item.Snils;
+                    temp.Avatar = item.Avatar;
+                    temp.Name = item.Family + " " + item.Name + " " + item.SubName;
+                    temp.Teacher = userManager.IsInRole(item.Id, "TEACHER");
+                    temp.Administrator = userManager.IsInRole(item.Id, "ADMIN");
+                }
                 model.Add(temp);
+                emptycount++;
             }
 
-            model = model.OrderBy(u => u.Name).ToList();
+            model = model.ToList();
 
-            int pageSize = 10;
-            int pageNumber = (page ?? 1);
-            ViewBag.Page = pageNumber;
             return PartialView(model.ToPagedList(pageNumber, pageSize));
         }
         public ActionResult TeacherSubjects(string userId)
@@ -124,9 +132,11 @@ namespace FireTest.Controllers
                     TeacherQualificationsAccess = access.TeacherQualifications;
                     var delete = dbContext.TeachersAccess.Find(access.Id);
                     dbContext.TeachersAccess.Remove(delete);
-                    var newAccess = new TeacherAccess();
-                    newAccess.TeacherId = userId;
-                    newAccess.TeacherQualifications = TeacherQualificationsAccess;
+                    var newAccess = new TeacherAccess
+                    {
+                        TeacherId = userId,
+                        TeacherQualifications = TeacherQualificationsAccess
+                    };
 
                     var Subjects = "";
                     var allSubjects = dbContext.Subjects.ToList();
@@ -184,11 +194,12 @@ namespace FireTest.Controllers
                     }
                     else
                     {
-                        var temp = new TeacherAccess();
-                        temp.TeacherId = userId;
-                        temp.TeacherQualifications = false;
-                        temp.TeacherSubjects = newAccess;
-                        dbContext.TeachersAccess.Add(temp);
+                        dbContext.TeachersAccess.Add(new TeacherAccess
+                        {
+                            TeacherId = userId,
+                            TeacherQualifications = false,
+                            TeacherSubjects = newAccess
+                        });
                     }
                     dbContext.SaveChanges();
                 }
@@ -204,9 +215,11 @@ namespace FireTest.Controllers
             List<SubjectAccess> model = new List<SubjectAccess>();
             foreach (var item in subjects)
             {
-                SubjectAccess temp = new SubjectAccess();
-                temp.Id = item.Id;
-                temp.Name = item.Name;
+                SubjectAccess temp = new SubjectAccess
+                {
+                    Id = item.Id,
+                    Name = item.Name
+                };
                 if (subjectsAccess.Contains(item.Id.ToString()))
                     temp.Access = true;
                 else
@@ -227,6 +240,10 @@ namespace FireTest.Controllers
         }
         public PartialViewResult SelectTeacherAjax(string currentFilter, string searchString, int? page, int? Page, string submitButton)
         {
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+            ViewBag.Page = pageNumber;
+
             if (!string.IsNullOrEmpty(submitButton))
             {
                 var access = dbContext.TeachersAccess
@@ -247,10 +264,11 @@ namespace FireTest.Controllers
                 }
                 else
                 {
-                    var temp = new TeacherAccess();
-                    temp.TeacherId = submitButton;
-                    temp.TeacherQualifications = true;
-                    dbContext.TeachersAccess.Add(temp);
+                    dbContext.TeachersAccess.Add(new TeacherAccess
+                    {
+                        TeacherId = submitButton,
+                        TeacherQualifications = true
+                    });
                 }
                 dbContext.SaveChanges();
             }
@@ -259,23 +277,20 @@ namespace FireTest.Controllers
 
             string user = User.Identity.GetUserId();
             List<UsersForAdmin> model = new List<UsersForAdmin>();
-            var users = dbContext.Users.Where(u => u.Id != user);
-            if (!String.IsNullOrEmpty(searchString))
-            {
-                users = users.Where(u => u.Family.Contains(searchString)
-                                       || u.Name.Contains(searchString)
-                                       || u.SubName.Contains(searchString));
-            }
+
+            var users = dbContext.Users
+                     .Where(u => u.Roles.Any(r => r.RoleId != "3")) //3 - это USER
+                     .Where(u => u.Id != user)
+                     .ToList();
+
             foreach (var item in users)
             {
-                if (userManager.IsInRole(item.Id, "TEACHER") || userManager.IsInRole(item.Id, "ADMIN"))
+                model.Add(new UsersForAdmin
                 {
-                    UsersForAdmin temp = new UsersForAdmin();
-                    temp.Id = item.Id;
-                    temp.Avatar = item.Avatar;
-                    temp.Name = item.Family + " " + item.Name + " " + item.SubName;
-                    model.Add(temp);
-                }
+                    Id = item.Id,
+                    Avatar = item.Avatar,
+                    Name = item.Family + " " + item.Name + " " + item.SubName
+                });
             }
             foreach(var item in model)
             {
@@ -293,9 +308,6 @@ namespace FireTest.Controllers
 
             model = model.OrderBy(u => u.Name).ToList();
 
-            int pageSize = 10;
-            int pageNumber = (page ?? 1);
-            ViewBag.Page = pageNumber;
             return PartialView(model.ToPagedList(pageNumber, pageSize));
         }
         public ActionResult DeleteUser(string id)
