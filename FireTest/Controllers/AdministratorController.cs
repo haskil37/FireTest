@@ -1,13 +1,10 @@
 ﻿using FireTest.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.AspNet.Identity.Owin;
 using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Web;
 using System.Web.Mvc;
 
 namespace FireTest.Controllers
@@ -280,8 +277,14 @@ namespace FireTest.Controllers
 
             var users = dbContext.Users
                      .Where(u => u.Roles.Any(r => r.RoleId != "3")) //3 - это USER
-                     .Where(u => u.Id != user)
-                     .ToList();
+                     .Where(u => u.Id != user);
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                users = users.Where(u => u.Family.Contains(searchString)
+                                       || u.Name.Contains(searchString)
+                                       || u.SubName.Contains(searchString));
+            }
 
             foreach (var item in users)
             {
