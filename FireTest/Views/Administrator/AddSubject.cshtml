@@ -1,0 +1,24 @@
+﻿@{
+    ViewBag.Title = "Добавить дисциплину";
+}
+@using (Html.BeginForm("AddSubject", "Administrator", FormMethod.Post, new { role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <p class="text-success">@ViewBag.StatusMessage</p>
+    <div class="row">
+        <div class="col-2">Название дисциплины</div>
+        <div class="col-10">
+            <input name="NameSubject" type="text" class="input" value="@ViewBag.NameSubject">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2">Для какой кафедры новая дисциплина</div>
+        <div class="col-10">
+            @Html.DropDownList("Department", ViewBag.Department as SelectList)
+        </div>
+    </div>
+    <div class="row center">
+        <input type="submit" value="Добавить дисциплину" class="button" />
+    </div>
+}

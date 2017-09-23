@@ -1,0 +1,19 @@
+﻿@model List<string>
+@{
+    ViewBag.Title = "Удалить дисциплину";
+}
+<div class="row">
+    <h3>Действительно хотите удалить дисциплину "@Model[0]" и перенести @Model[2] вопросов в дисциплину "@Model[1]"?</h3>
+</div>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SubjectsDelete", Model[0])
+    @Html.Hidden("SubjectsTransfer", Model[1])
+ <div class="row center">
+        <input type="submit" value="Удалить" class="button" />
+    </div>
+    <div class="row center">
+        @Html.ActionLink("Назад", "DeleteSubject", null, new { @class = "button-Cancel" })
+    </div>
+}

@@ -335,5 +335,115 @@ namespace FireTest.Controllers
             dbContext.SaveChanges();
             return RedirectToAction("Users");
         }
+        public ActionResult AddSubject()
+        {
+            ViewBag.Department = dbContext.Departments //Выпадающий список кафедр
+                .Select(u => new SelectListItem()
+                {
+                    Value = u.Id.ToString(),
+                    Text = u.Name,
+                }).ToList();
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddSubject(string NameSubject, int Department)
+        {
+            ViewBag.StatusMessage = "Вы должны указать название новой дисциплины";
+            if (dbContext.Departments.Find(Department) == null)
+                Department = 1;
+
+            ViewBag.Department = dbContext.Departments //Выпадающий список кафедр
+               .Select(u => new SelectListItem()
+               {
+                   Value = u.Id.ToString(),
+                   Text = u.Name,
+                   Selected = u.Id == Department
+               }).ToList();
+
+            if (string.IsNullOrEmpty(NameSubject))
+                return View();
+
+            ViewBag.NameSubject = NameSubject;
+
+            dbContext.Subjects.Add(new Subject()
+            {
+                IdDepartment = Department,
+                Name = NameSubject
+            });
+            dbContext.SaveChanges();
+
+            ViewBag.StatusMessage = "Дисциплина успешно добавлена";
+            return View();
+        }
+        public ActionResult DeleteSubject(string StatusMessage)
+        {
+            ViewBag.StatusMessage = StatusMessage;
+            ViewBag.SubjectsDelete = dbContext.Subjects //Выпадающие списки дисциплин
+                .Select(u => new SelectListItem()
+                {
+                    Value = u.Id.ToString(),
+                    Text = u.Name,
+                }).ToList();
+            ViewBag.SubjectsTransfer = dbContext.Subjects 
+                .Select(u => new SelectListItem()
+                {
+                    Value = u.Id.ToString(),
+                    Text = u.Name,
+                }).ToList();
+            ViewBag.Count = dbContext.Questions
+                .Where(u => u.IdSubject == dbContext.Subjects.Select(s => s.Id).FirstOrDefault())
+                .Count();
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public PartialViewResult DeleteSubjectCount(int SubjectsDelete, int SubjectsTransfer, string submitButton)
+        {
+            ViewBag.Count = dbContext.Questions.Where(u => u.IdSubject == SubjectsDelete).Count();
+            if (submitButton != null)
+            {
+                ViewBag.Confrim = true;
+                ViewBag.SubjectsDelete = SubjectsDelete;
+                ViewBag.SubjectsTransfer = SubjectsTransfer;
+                return PartialView();
+            }
+            ViewBag.SubjectsDelete = dbContext.Subjects //Выпадающий список дисциплин
+                .Select(u => new SelectListItem()
+                {
+                    Value = u.Id.ToString(),
+                    Text = u.Name,
+                    Selected = u.Id == SubjectsDelete
+                }).ToList();
+            ViewBag.SubjectsTransfer = dbContext.Subjects //Выпадающий список дисциплин
+                .Select(u => new SelectListItem()
+                {
+                    Value = u.Id.ToString(),
+                    Text = u.Name,
+                    Selected = u.Id == SubjectsTransfer
+                }).ToList();
+            return PartialView();
+        }
+        public ActionResult DeleteSubjectConfirm(string value)
+        {
+            var temp = value.Split('|');
+            return View(new List<string>() { dbContext.Subjects.Find(Convert.ToInt32(temp[0])).Name, dbContext.Subjects.Find(Convert.ToInt32(temp[1])).Name, temp[2] });
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteSubjectConfirm(string SubjectsDelete, string SubjectsTransfer)
+        {
+            var SubjectDelete = dbContext.Subjects.Where(u => u.Name == SubjectsDelete).Select(u => u.Id).SingleOrDefault();
+            var SubjectTransfer = dbContext.Subjects.Where(u => u.Name == SubjectsTransfer).Select(u => u.Id).SingleOrDefault();
+
+            var allQ = dbContext.Questions.Where(u => u.IdSubject == SubjectDelete);
+            foreach (var item in allQ)
+            {
+                item.IdSubject = SubjectTransfer;
+            }
+            dbContext.Subjects.Remove(dbContext.Subjects.Find(SubjectDelete));
+            dbContext.SaveChanges();
+            return RedirectToAction("DeleteSubject", new { StatusMessage = "Дисциплина успешно удалена" });
+        }
     }
 }

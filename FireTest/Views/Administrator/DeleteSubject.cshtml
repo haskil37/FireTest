@@ -1,0 +1,31 @@
+﻿@{
+    ViewBag.Title = "Удалить дисциплину";
+}
+<p class="text-success">@ViewBag.StatusMessage</p>
+<div class="row">
+    <h3>Выберите дисциплину, которую хотите удалить:</h3>
+</div>
+@using (Ajax.BeginForm("DeleteSubjectCount", new AjaxOptions
+{
+    HttpMethod = "POST",
+    InsertionMode = InsertionMode.Replace,
+    UpdateTargetId = "countSubject",
+}))
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-10">
+            @Html.DropDownList("SubjectsDelete", ViewBag.SubjectsDelete as SelectList, new { @onchange = "$(this.form).submit();" })
+        </div>
+        <div class="col-2" id="countSubject">Вопросов: @ViewBag.Count</div>
+    </div>
+    <div class="row">
+        <h3>Выберите дисциплину, в которую хотите перенести вопросы:</h3>
+        <div class="col-10">
+            @Html.DropDownList("SubjectsTransfer", ViewBag.SubjectsTransfer as SelectList)
+        </div>
+    </div>
+    <div class="row center">
+        <input type="submit" value="Удалить дисциплину" class="button" name="submitButton" />
+    </div>
+}

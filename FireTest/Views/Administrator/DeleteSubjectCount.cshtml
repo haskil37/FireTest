@@ -1,0 +1,10 @@
+﻿@if (ViewBag.Confrim == true)
+{
+    <script type="text/javascript">
+            window.location = '@Url.Action("DeleteSubjectConfirm", "Administrator", new { value = ViewBag.SubjectsDelete + "|" + ViewBag.SubjectsTransfer + "|" + ViewBag.Count })';
+    </script>
+}
+else
+{
+    <span>Вопросов: @ViewBag.Count</span>
+}

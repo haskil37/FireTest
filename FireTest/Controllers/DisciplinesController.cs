@@ -15,7 +15,7 @@ namespace FireTest.Controllers
         private static Random random = new Random();
         public ActionResult Index(int id = 0)
         {
-            if (!ModelState.IsValid || id < 1 || id > dbContext.Subjects.Count())
+            if (!ModelState.IsValid || id < 1 || dbContext.Subjects.Find(id) == null)
                 return RedirectToAction("Index", "Home");
 
             ViewBag.DisciplineName = dbContext.Subjects.Find(id).Name;
@@ -51,11 +51,13 @@ namespace FireTest.Controllers
             }
             else //Если нет, то создаем пустой
             {
-                SelfyTestDiscipline newTest = new SelfyTestDiscipline();
-                newTest.IdUser = user;
-                newTest.IdSubject = id;
-                newTest.TimeStart = DateTime.Now;
-                newTest.TimeEnd = DateTime.Now;
+                SelfyTestDiscipline newTest = new SelfyTestDiscipline
+                {
+                    IdUser = user,
+                    IdSubject = id,
+                    TimeStart = DateTime.Now,
+                    TimeEnd = DateTime.Now
+                };
                 dbContext.SelfyTestDisciplines.Add(newTest);
                 dbContext.SaveChanges();
                 ViewBag.Id = newTest.Id;
@@ -309,8 +311,10 @@ namespace FireTest.Controllers
                 foreach (string item in wrong)
                 {
                     int temp = Convert.ToInt32(item);
-                    var wrongDetails = new TestWrongAnswersDetails();
-                    wrongDetails.Question = dbContext.Questions.Find(temp).QuestionText;
+                    var wrongDetails = new TestWrongAnswersDetails
+                    {
+                        Question = dbContext.Questions.Find(temp).QuestionText
+                    };
                     List<string> idCorrect = dbContext.Questions.Find(temp).IdCorrect.Split(',').ToList();
 
                     if (idCorrect[0][0] == '~') //Если вопрос на последовательность

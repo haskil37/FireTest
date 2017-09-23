@@ -26,6 +26,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -2539,6 +2540,10 @@
     <Content Include="Views\Teacher\CreateTestFinishPrepare.cshtml" />
     <Content Include="Views\Home\Awards.cshtml" />
     <Content Include="Views\Administrator\DeleteUser.cshtml" />
+    <Content Include="Views\Administrator\AddSubject.cshtml" />
+    <Content Include="Views\Administrator\DeleteSubject.cshtml" />
+    <Content Include="Views\Administrator\DeleteSubjectCount.cshtml" />
+    <Content Include="Views\Administrator\DeleteSubjectConfirm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
