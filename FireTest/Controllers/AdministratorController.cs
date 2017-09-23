@@ -429,7 +429,7 @@ namespace FireTest.Controllers
             var temp = value.Split('|');
             ViewBag.SubjectDelete = dbContext.Subjects.Find(Convert.ToInt32(temp[0])).Name;
             ViewBag.SubjectTransfer = dbContext.Subjects.Find(Convert.ToInt32(temp[1])).Name;
-            return View(new List<string>() { temp[0], temp[1], temp[2] });
+            return View(temp);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
