@@ -3,7 +3,7 @@
     ViewBag.Title = "Удалить дисциплину";
 }
 <div class="row">
-    <h3>Действительно хотите удалить дисциплину "@Model[0]" и перенести @Model[2] вопросов в дисциплину "@Model[1]"?</h3>
+    <h3>Действительно хотите удалить дисциплину "@ViewBag.SubjectDelete" и перенести @Model[2] вопросов в дисциплину "@ViewBag.SubjectTransfer"?</h3>
 </div>
 @using (Html.BeginForm())
 {

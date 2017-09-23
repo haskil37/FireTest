@@ -427,14 +427,16 @@ namespace FireTest.Controllers
         public ActionResult DeleteSubjectConfirm(string value)
         {
             var temp = value.Split('|');
-            return View(new List<string>() { dbContext.Subjects.Find(Convert.ToInt32(temp[0])).Name, dbContext.Subjects.Find(Convert.ToInt32(temp[1])).Name, temp[2] });
+            ViewBag.SubjectDelete = dbContext.Subjects.Find(Convert.ToInt32(temp[0])).Name;
+            ViewBag.SubjectTransfer = dbContext.Subjects.Find(Convert.ToInt32(temp[1])).Name;
+            return View(new List<string>() { temp[0], temp[1], temp[2] });
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteSubjectConfirm(string SubjectsDelete, string SubjectsTransfer)
+        public ActionResult DeleteSubjectConfirm(int SubjectsDelete, int SubjectsTransfer)
         {
-            var SubjectDelete = dbContext.Subjects.Where(u => u.Name == SubjectsDelete).Select(u => u.Id).SingleOrDefault();
-            var SubjectTransfer = dbContext.Subjects.Where(u => u.Name == SubjectsTransfer).Select(u => u.Id).SingleOrDefault();
+            var SubjectDelete = dbContext.Subjects.Find(SubjectsDelete).Id;
+            var SubjectTransfer = dbContext.Subjects.Find(SubjectsTransfer).Id;
 
             var allQ = dbContext.Questions.Where(u => u.IdSubject == SubjectDelete);
             foreach (var item in allQ)
