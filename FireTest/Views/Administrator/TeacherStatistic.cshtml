@@ -1,0 +1,42 @@
+﻿@model List<FireTest.Models.TeacherStatistics>
+@{
+    ViewBag.Title = "Статистика преподавателя";
+}
+@Styles.Render("~/Content/administrator")
+<h3>Статистика <span><img class="avatar-mini" src="~/Images/Avatars/@ViewBag.Avatar" /></span> @ViewBag.Name</h3>
+<div class="row">
+    <table>
+        <tr>
+            <th>
+                Дата тестирования
+            </th>
+            <th>
+                Группа
+            </th>
+            <th>
+                Уровень подготовки
+            </th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr class="center">
+                <td>
+                    @item.Date
+                </td>
+                <td>
+                    @item.Group
+                </td>
+                <td>
+                    @if (string.IsNullOrEmpty(item.Qualification))
+                {
+                        <span>Обычное тестирование</span>
+                    }
+                    else
+                    {
+                        @item.Qualification;
+                }
+                </td>
+            </tr>
+        }
+    </table>
+</div>

@@ -1,0 +1,54 @@
+﻿@model PagedList.IPagedList<FireTest.Models.UsersForAdmin>
+@using PagedList.Mvc;
+@using (Ajax.BeginForm("SelectTeacherStatisticAjax", new AjaxOptions
+{
+    HttpMethod = "Get",
+    InsertionMode = InsertionMode.Replace,
+    UpdateTargetId = "Users",
+}))
+{
+    @Html.Hidden("Page", (int)ViewBag.Page)
+    <div>
+        Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
+
+        @Html.PagedListPager(Model, page => Url.Action("SelectTeacherStatisticAjax",
+        new { page, currentFilter = ViewBag.CurrentFilter }),
+        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "Users" }))
+    </div>
+    <div class="row">
+        <table>
+            <tr>
+                <th>
+                    Фото
+                </th>
+                <th>
+                    Имя
+                </th>
+                <th>
+                    Статистика
+                </th>
+            </tr>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="center" min-width="100">
+                        <img class="avatar-mini" src="~/Images/Avatars/@Html.DisplayFor(modelItem => item.Avatar)" />
+                    </td>
+                    <td>
+                        @item.Name
+                    </td>
+                    <td class="center" min-width="250">
+                        <a href="TeacherStatistic?userId=@item.Id" class="button">Перейти к просмотру</a>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+    <div>
+        Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
+
+        @Html.PagedListPager(Model, page => Url.Action("SelectTeacherStatisticAjax",
+        new { page, currentFilter = ViewBag.CurrentFilter }),
+        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "Users" }))
+    </div>
+}

@@ -18,6 +18,9 @@
                     Имя
                 </th>
                 <th>
+                    Группа
+                </th>
+                <th>
                     Преподаватель
                 </th>
                 <th>
@@ -35,6 +38,9 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Name)
                         <div class="snils">(Снилс: @Html.DisplayFor(modelItem => item.Snils))</div>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Group)
                     </td>
                     <td class="center">
                         @if (item.Administrator != true)

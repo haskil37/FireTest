@@ -2544,6 +2544,9 @@
     <Content Include="Views\Administrator\DeleteSubject.cshtml" />
     <Content Include="Views\Administrator\DeleteSubjectCount.cshtml" />
     <Content Include="Views\Administrator\DeleteSubjectConfirm.cshtml" />
+    <Content Include="Views\Administrator\SelectTeacherStatistic.cshtml" />
+    <Content Include="Views\Administrator\SelectTeacherStatisticAjax.cshtml" />
+    <Content Include="Views\Administrator\TeacherStatistic.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

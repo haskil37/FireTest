@@ -79,7 +79,8 @@ namespace FireTest.Controllers
             {
                 users = users.Where(u => u.Family.Contains(searchString)
                                        || u.Name.Contains(searchString)
-                                       || u.SubName.Contains(searchString));
+                                       || u.SubName.Contains(searchString)
+                                       || u.Group.Contains(searchString));
             }
             users = users.OrderBy(u => u.Family + " " + u.Name + " " + u.SubName);
             var emptycount = 1;
@@ -94,6 +95,11 @@ namespace FireTest.Controllers
                     temp.Name = item.Family + " " + item.Name + " " + item.SubName;
                     temp.Teacher = userManager.IsInRole(item.Id, "TEACHER");
                     temp.Administrator = userManager.IsInRole(item.Id, "ADMIN");
+                    temp.Group = item.Group;
+                    if (temp.Teacher)
+                        temp.Group = "Преподаватель";
+                    if (temp.Administrator)
+                        temp.Group = "Администратор";
                 }
                 model.Add(temp);
                 emptycount++;
@@ -285,32 +291,26 @@ namespace FireTest.Controllers
                                        || u.Name.Contains(searchString)
                                        || u.SubName.Contains(searchString));
             }
+            users = users.OrderBy(u => u.Family + " " + u.Name + " " + u.SubName);
 
+            var emptycount = 1;
             foreach (var item in users)
             {
-                model.Add(new UsersForAdmin
+                UsersForAdmin temp = new UsersForAdmin();
+                if (emptycount >= (pageNumber - 1) * pageSize + 1 && emptycount <= pageNumber * pageSize)
                 {
-                    Id = item.Id,
-                    Avatar = item.Avatar,
-                    Name = item.Family + " " + item.Name + " " + item.SubName
-                });
+                    temp.Id = item.Id;
+                    temp.Avatar = item.Avatar;
+                    temp.Name = item.Family + " " + item.Name + " " + item.SubName;
+                }
+                model.Add(temp);
+                emptycount++;
             }
-            foreach(var item in model)
-            {
-                var access = dbContext.TeachersAccess
-                    .Where(u => u.TeacherId == item.Id)
-                    .Select(u => new
-                    {
-                        TeacherQualifications = u.TeacherQualifications
-                    }).SingleOrDefault();
-                if (access != null)
-                    item.Qualification = access.TeacherQualifications;
-                else
-                    item.Qualification = false;
-            }
+            foreach (var item in model)
+               if(!string.IsNullOrEmpty(item.Name))
+                    item.Qualification = dbContext.TeachersAccess.SingleOrDefault(u => u.TeacherId == item.Id).TeacherQualifications;
 
-            model = model.OrderBy(u => u.Name).ToList();
-
+            model = model.ToList();
             return PartialView(model.ToPagedList(pageNumber, pageSize));
         }
         public ActionResult DeleteUser(string id)
@@ -446,6 +446,115 @@ namespace FireTest.Controllers
             dbContext.Subjects.Remove(dbContext.Subjects.Find(SubjectDelete));
             dbContext.SaveChanges();
             return RedirectToAction("DeleteSubject", new { StatusMessage = "Дисциплина успешно удалена" });
+        }
+        public ActionResult SelectTeacherStatistic()
+        {
+            return View();
+        }
+        public PartialViewResult SelectTeacherStatisticAjax(string currentFilter, string searchString, int? page, int? Page, string submitButton)
+        {
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+            ViewBag.Page = pageNumber;
+
+            if (!string.IsNullOrEmpty(submitButton))
+            {
+                var access = dbContext.TeachersAccess
+                    .Where(u => u.TeacherId == submitButton)
+                    .Select(u => new
+                    {
+                        Id = u.Id,
+                        TeacherQualifications = u.TeacherQualifications
+                    }).SingleOrDefault();
+
+                if (access != null)
+                {
+                    var temp = dbContext.TeachersAccess.Find(access.Id);
+                    if (temp.TeacherQualifications)
+                        temp.TeacherQualifications = false;
+                    else
+                        temp.TeacherQualifications = true;
+                }
+                else
+                {
+                    dbContext.TeachersAccess.Add(new TeacherAccess
+                    {
+                        TeacherId = submitButton,
+                        TeacherQualifications = true
+                    });
+                }
+                dbContext.SaveChanges();
+            }
+            currentFilter = searchString;
+            ViewBag.CurrentFilter = searchString;
+
+            string user = User.Identity.GetUserId();
+            List<UsersForAdmin> model = new List<UsersForAdmin>();
+
+            var users = dbContext.Users
+                     .Where(u => u.Roles.Any(r => r.RoleId != "3")) //3 - это USER
+                     .Where(u => u.Id != user);
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                users = users.Where(u => u.Family.Contains(searchString)
+                                       || u.Name.Contains(searchString)
+                                       || u.SubName.Contains(searchString));
+            }
+
+            users = users.OrderBy(u => u.Family + " " + u.Name + " " + u.SubName);
+
+            var emptycount = 1;
+            foreach (var item in users)
+            {
+                UsersForAdmin temp = new UsersForAdmin();
+                if (emptycount >= (pageNumber - 1) * pageSize + 1 && emptycount <= pageNumber * pageSize)
+                {
+                    temp.Id = item.Id;
+                    temp.Avatar = item.Avatar;
+                    temp.Name = item.Family + " " + item.Name + " " + item.SubName;
+                }
+                model.Add(temp);
+                emptycount++;
+            }
+            model = model.ToList();
+
+            return PartialView(model.ToPagedList(pageNumber, pageSize));
+        }
+        public ActionResult TeacherStatistic(string userId)
+        {
+            var tests = dbContext.Examinations.Where(u => u.TeacherId == userId).
+                Select(u => new {
+                    Date = u.Date,
+                    Group = u.Group,
+                    FinishTest = u.FinishTest,
+                    IdTest = u.IdTest
+                }).OrderBy(u => u.Date);
+            var model = new List<TeacherStatistics>();
+            foreach (var item in tests)
+                model.Add(new TeacherStatistics
+                {
+                    Date = item.Date,
+                    Group = item.Group,
+                    Qualification = item.FinishTest ? item.IdTest.ToString() : ""
+                });
+
+            foreach (var item in model)
+            {
+                if (!string.IsNullOrEmpty(item.Qualification))
+                {
+                    item.Qualification = dbContext.Qualifications
+                        .Find(dbContext.TeacherFinishTests
+                                    .Find(Convert.ToInt32(item.Qualification)).IdQualification)
+                        .Name;
+                }
+            }
+            var userValue = dbContext.Users.Find(userId);
+            ViewBag.Avatar = userValue.Avatar;
+            Decliner decliner = new Decliner();
+            string[] declineText = decliner.Decline(userValue.Family, userValue.Name, userValue.SubName, 2);//Меняем падеж
+            ViewBag.Name = declineText[0] + " " + declineText[1] + " " + declineText[2];
+            return View(model);
         }
     }
 }

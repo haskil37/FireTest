@@ -61,6 +61,7 @@ namespace FireTest.Models
         public string Avatar { get; set; }
         public string Name { get; set; }
         public string Snils { get; set; }
+        public string Group { get; set; }
         public bool Teacher { get; set; }
         public bool Administrator { get; set; }
         public bool Qualification { get; set; }
@@ -347,6 +348,12 @@ namespace FireTest.Models
         [Required(ErrorMessage = "Нужно указать время тестирования")]
         [Display(Name = "Время тестирования, мин")]
         public int Time { get; set; }
+    }
+    public class TeacherStatistics
+    {
+        public System.DateTime Date { get; set; }
+        public string Group { get; set; }
+        public string Qualification { get; set; }
     }
     #endregion
     #region Тестирование
