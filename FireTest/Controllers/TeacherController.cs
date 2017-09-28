@@ -20,21 +20,18 @@ namespace FireTest.Controllers
         public ActionResult Index(string message)
         {
             var userId = User.Identity.GetUserId();
-            var tests = dbContext.TeacherTests.ToList().Where(u => u.TeacherId == userId).Where(u => !string.IsNullOrEmpty(u.NameTest));
+            var tests = dbContext.TeacherTests.Where(u => u.TeacherId == userId).Where(u => !string.IsNullOrEmpty(u.NameTest));
             ViewBag.Message = message;
 
-            var access = dbContext.TeachersAccess.Where(u => u.TeacherId == userId).Select(u => u.TeacherQualifications).SingleOrDefault();
-            ViewBag.Access = false;
-            if (access)
-                ViewBag.Access = true;
+            ViewBag.Access = dbContext.TeachersAccess.SingleOrDefault(u => u.TeacherId == userId).TeacherQualifications;
 
             return View(tests);
         }
         [ChildActionOnly]
         public ActionResult IndexExams()
         {
-            var exams = dbContext.Examinations.ToList().Where(u => u.TeacherId == User.Identity.GetUserId());
-            return PartialView(exams);
+            var teacherID = User.Identity.GetUserId();
+            return PartialView(dbContext.Examinations.Where(u => u.TeacherId == teacherID).Where(u => !u.Hide));
         }
         [ChildActionOnly]
         public ActionResult IndexQualification()
@@ -156,7 +153,10 @@ namespace FireTest.Controllers
             }
             TeacherTest test = new TeacherTest()
             {
-                TeacherId = userId
+                TeacherId = userId,
+                Eval5 = 90,
+                Eval4 = 75,
+                Eval3 = 60
             };
             dbContext.TeacherTests.Add(test);
             dbContext.SaveChanges();
@@ -194,9 +194,9 @@ namespace FireTest.Controllers
                 }
                 else
                 {
-                    test.Eval5 = 0;
-                    test.Eval4 = 0;
-                    test.Eval3 = 0;
+                    test.Eval5 = 90;
+                    test.Eval4 = 75;
+                    test.Eval3 = 60;
                 }
                 dbContext.SaveChanges();
             }
@@ -427,9 +427,9 @@ namespace FireTest.Controllers
                 }
                 else
                 {
-                    test.Eval5 = 0;
-                    test.Eval4 = 0;
-                    test.Eval3 = 0;
+                    test.Eval5 = 90;
+                    test.Eval4 = 75;
+                    test.Eval3 = 60;
                 }
                 dbContext.SaveChanges();
             }
@@ -1859,6 +1859,7 @@ namespace FireTest.Controllers
             ViewBag.Test = tests;
             ViewBag.Group = dbContext.Users
                 .Where(u => u.Course != 100)
+                .Where(u => u.Group != null)
                 .Select(u => new SelectListItem()
                 {
                     //Text = u.Course + u.Group,
@@ -1868,10 +1869,11 @@ namespace FireTest.Controllers
 
                 })
                 .Distinct().ToList();
+            ViewBag.Group.Add(new SelectListItem { Value = "-1", Text = "Преподаватели" });
             return View(new ExaminationViewModel() { Date = DateTime.Now });
         }
         [HttpPost]
-        public ActionResult CreateExam(ExaminationViewModel model, string Group, string Test, int Time)
+        public ActionResult CreateExam(ExaminationViewModel model, string Group, string Test)
         {
             string userId = User.Identity.GetUserId();
 
@@ -1908,7 +1910,7 @@ namespace FireTest.Controllers
             exam.IdTest = Convert.ToInt32(Test.Replace("F", ""));
             exam.TeacherId = userId;
             exam.Date = model.Date;
-            exam.Time = Time;
+            exam.Time = model.Time != null ? Convert.ToInt32(model.Time) : 90;
             dbContext.Examinations.Add(exam);
             dbContext.SaveChanges();
             var allUsers = dbContext.Users.
@@ -1939,7 +1941,7 @@ namespace FireTest.Controllers
             model.Classroom = exam.Classroom;
             model.Date = exam.Date;
             model.Name = exam.Name;
-            model.Time = exam.Time;
+            model.Time = exam.Time.ToString();
 
 
             var tests = dbContext.TeacherTests
@@ -1976,8 +1978,9 @@ namespace FireTest.Controllers
             }
 
             ViewBag.Test = tests;
-
             ViewBag.Group = dbContext.Users
+                .Where(u => u.Course != 100)
+                .Where(u => u.Group != null)
                 .Select(u => new SelectListItem()
                 {
                     Text = u.Group,
@@ -1985,6 +1988,7 @@ namespace FireTest.Controllers
                     Selected = u.Group == exam.Group
                 })
                 .Distinct().ToList();
+            ViewBag.Group.Add(new SelectListItem { Value = "-1", Text = "Преподаватели", Selected = exam.Group == "-1" ? true : false });
             ViewBag.Id = exam.Id;
             ViewBag.Message = message;
             return View(model);
@@ -2026,7 +2030,7 @@ namespace FireTest.Controllers
             exam.IdTest = Convert.ToInt32(Test.Replace("F", ""));
             exam.TeacherId = userId;
             exam.Date = model.Date;
-            exam.Time = model.Time;
+            exam.Time = model.Time != null ? Convert.ToInt32(model.Time) : 90;
 
             var teacher = dbContext.Users.Find(userId);
             teacher.Update = true;
@@ -2063,8 +2067,13 @@ namespace FireTest.Controllers
             TestQualificationAccess testQualificationAccess = dbContext.TestQualificationAccess.Where(u => u.IdExamination == id).SingleOrDefault();
             if (testQualificationAccess == null)
                 return RedirectToAction("Index");
-            dbContext.TestQualificationAccess.Remove(testQualificationAccess);
-            dbContext.Examinations.Remove(exam);
+            if (exam.Date < DateTime.Today)
+                exam.Hide = true;
+            else
+            {
+                dbContext.TestQualificationAccess.Remove(testQualificationAccess);
+                dbContext.Examinations.Remove(exam);
+            }
             dbContext.SaveChanges();
             return RedirectToAction("Index");
         }

@@ -250,6 +250,10 @@
     <Compile Include="Migrations\201705050947555_addSpec.Designer.cs">
       <DependentUpon>201705050947555_addSpec.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201709271126333_addHideExam.cs" />
+    <Compile Include="Migrations\201709271126333_addHideExam.Designer.cs">
+      <DependentUpon>201709271126333_addHideExam.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Decliner.cs" />
@@ -2609,6 +2613,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201705050947555_addSpec.resx">
       <DependentUpon>201705050947555_addSpec.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201709271126333_addHideExam.resx">
+      <DependentUpon>201709271126333_addHideExam.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

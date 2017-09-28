@@ -142,7 +142,7 @@ namespace FireTest.Controllers
                             Annotations = u.Annotations,
                             Finish = u.FinishTest
                         }).ToList();
-                    ViewBag.User = "user";
+                    //ViewBag.User = "user";
                     var role = dbContext.Users.Find(userId).Roles.SingleOrDefault();
                     ViewBag.Access = dbContext.Roles.Find(role.RoleId).Name;
                     if (ViewBag.Access != "USER")
@@ -157,10 +157,10 @@ namespace FireTest.Controllers
                                 Annotations = u.Annotations,
                                 Finish = u.FinishTest
                             }).ToList();
-                        ViewBag.User = "nouser";
+                        //ViewBag.User = "nouser";
                     }
-                    if (ViewBag.User == "nouser" || user.Course != 100)
-                    {
+                    //if (ViewBag.User == "nouser" || user.Course != 100)
+                    //{
                         string tempExamHeader = "";
                         string tempFinishHeader = "";
                         string tempExam = "";
@@ -169,9 +169,7 @@ namespace FireTest.Controllers
                         int countFinish = 0;
                         foreach (var item in exams)
                         {
-                            var end = dbContext.TestQualification
-                                .Where(u => u.IdExamination == item.Id)
-                                .SingleOrDefault();
+                            var end = dbContext.TestQualification.SingleOrDefault(u => u.IdExamination == item.Id);
                             bool go = false;
                             if (end != null)
                                 go = end.End;
@@ -213,34 +211,7 @@ namespace FireTest.Controllers
                             ViewBag.Exam = tempFinishHeader + tempFinish;
                         else
                             ViewBag.Exam = tempExamHeader + tempExam;
-
-                        //if (exams.Count != 0)
-                        //{
-                        //    string temp = "У Вас сегодня экзамен";
-                        //    if (exams.Count == 1)
-                        //    {
-                        //        foreach (var item in exams)
-                        //        {
-                        //            temp += ": \"" + item.Name + "\" в аудитории: " + item.Classroom;
-                        //            if (!string.IsNullOrEmpty(item.Annotations))
-                        //                temp += " (" + item.Annotations + ")";
-                        //        }
-                        //    }
-                        //    else
-                        //    {
-                        //        temp += "ы:\n";
-                        //        foreach (var item in exams)
-                        //        {
-                        //            temp += "\"" + item.Name + "\" в аудитории: " + item.Classroom;
-                        //            if (!string.IsNullOrEmpty(item.Annotations))
-                        //                temp += " (" + item.Annotations + ")\n";
-                        //            else
-                        //                temp += "\n";
-                        //        }
-                        //    }
-                        //    ViewBag.Exam = temp;
-                        //}
-                    }
+                    //}
                     ViewBag.Images = new SIC().SelectImagesCache(SIC.type.img);
                     return View();
             }

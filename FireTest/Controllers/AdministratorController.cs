@@ -40,10 +40,12 @@ namespace FireTest.Controllers
                         temp = userManager.RemoveFromRoles(userEdit.Id, "USER");
                         userManager.AddToRole(userEdit.Id, "ADMIN");
                         userEdit.Course = 100;
+                        userEdit.Group = "-1";
                     }
                     else
                     {
                         var temp = userManager.RemoveFromRole(userEdit.Id, "ADMIN");
+                        userEdit.Group = "";
                         userManager.AddToRole(userEdit.Id, "USER");
                     }
                 }
@@ -55,10 +57,12 @@ namespace FireTest.Controllers
                        var temp = userManager.RemoveFromRoles(userEdit.Id, "USER");
                         userManager.AddToRole(userEdit.Id, "TEACHER");
                         userEdit.Course = 100;
+                        userEdit.Group = "-1";
                     }
                     else
                     {
                         var temp = userManager.RemoveFromRoles(userEdit.Id, "TEACHER");
+                        userEdit.Group = "";
                         userManager.AddToRole(userEdit.Id, "USER");
                     }
                 }
@@ -249,22 +253,9 @@ namespace FireTest.Controllers
 
             if (!string.IsNullOrEmpty(submitButton))
             {
-                var access = dbContext.TeachersAccess
-                    .Where(u => u.TeacherId == submitButton)
-                    .Select(u => new
-                    {
-                        Id = u.Id,
-                        TeacherQualifications = u.TeacherQualifications
-                    }).SingleOrDefault();
-
+                var access = dbContext.TeachersAccess.SingleOrDefault(u => u.TeacherId == submitButton);
                 if (access != null)
-                {
-                    var temp = dbContext.TeachersAccess.Find(access.Id);
-                    if (temp.TeacherQualifications)
-                        temp.TeacherQualifications = false;
-                    else
-                        temp.TeacherQualifications = true;
-                }
+                    access.TeacherQualifications = !access.TeacherQualifications;
                 else
                 {
                     dbContext.TeachersAccess.Add(new TeacherAccess
@@ -292,9 +283,8 @@ namespace FireTest.Controllers
                                        || u.SubName.Contains(searchString));
             }
             users = users.OrderBy(u => u.Family + " " + u.Name + " " + u.SubName);
-
             var emptycount = 1;
-            foreach (var item in users)
+            foreach (var item in users.ToList())
             {
                 UsersForAdmin temp = new UsersForAdmin();
                 if (emptycount >= (pageNumber - 1) * pageSize + 1 && emptycount <= pageNumber * pageSize)
@@ -302,13 +292,15 @@ namespace FireTest.Controllers
                     temp.Id = item.Id;
                     temp.Avatar = item.Avatar;
                     temp.Name = item.Family + " " + item.Name + " " + item.SubName;
+                    var teacherQ = dbContext.TeachersAccess.SingleOrDefault(u => u.TeacherId == item.Id);
+                    if (teacherQ != null)
+                        temp.Qualification = teacherQ.TeacherQualifications;
+                    else
+                        temp.Qualification = false;
                 }
                 model.Add(temp);
                 emptycount++;
             }
-            foreach (var item in model)
-               if(!string.IsNullOrEmpty(item.Name))
-                    item.Qualification = dbContext.TeachersAccess.SingleOrDefault(u => u.TeacherId == item.Id).TeacherQualifications;
 
             model = model.ToList();
             return PartialView(model.ToPagedList(pageNumber, pageSize));
@@ -525,30 +517,76 @@ namespace FireTest.Controllers
         {
             var tests = dbContext.Examinations.Where(u => u.TeacherId == userId).
                 Select(u => new {
+                    Id = u.Id,
                     Date = u.Date,
                     Group = u.Group,
                     FinishTest = u.FinishTest,
                     IdTest = u.IdTest
-                }).OrderBy(u => u.Date);
+                }).OrderBy(u => u.Date).ToList();
             var model = new List<TeacherStatistics>();
             foreach (var item in tests)
-                model.Add(new TeacherStatistics
+            {
+                var stats = new TeacherStatistics
                 {
                     Date = item.Date,
                     Group = item.Group,
-                    Qualification = item.FinishTest ? item.IdTest.ToString() : ""
-                });
-
-            foreach (var item in model)
-            {
-                if (!string.IsNullOrEmpty(item.Qualification))
+                };
+                if (item.FinishTest)
                 {
-                    item.Qualification = dbContext.Qualifications
+                    stats.Qualification = dbContext.Qualifications
                         .Find(dbContext.TeacherFinishTests
-                                    .Find(Convert.ToInt32(item.Qualification)).IdQualification)
+                                    .Find(item.IdTest).IdQualification)
                         .Name;
+                    if (!string.IsNullOrEmpty(dbContext.TestQualificationAccess.SingleOrDefault(u => u.IdExamination == item.Id).IdUsers))
+                        stats.IsOver = "Тестирование прошло";
+                    else
+                    {
+                        if (stats.Date > DateTime.Today)
+                            stats.IsOver = "Тестирование запланировано";
+                        else
+                            stats.IsOver = "Тестирование просрочено";
+                    }
                 }
+                else
+                {
+                    var questions = dbContext.TeacherTests.Find(item.IdTest).Questions.Split('|');
+                    List<int> subj = new List<int>();
+                    foreach (var i in questions)
+                    {
+                        int idSubj = dbContext.Questions.Find(Convert.ToInt32(i)).IdSubject;
+                        if (!subj.Contains(idSubj))
+                            subj.Add(idSubj);
+                    }
+                    for (int i = 1; i <= subj.Count; i++)
+                    {
+                        stats.Qualification += dbContext.Subjects.Find(i).Name;
+                        if (subj.Count > 1 && i != subj.Count)
+                            stats.Qualification += ", ";
+                    }
+                    if (!string.IsNullOrEmpty(dbContext.TestQualificationAccess.SingleOrDefault(u => u.IdExamination == item.Id).IdUsers))
+                        stats.IsOver = "Тестирование прошло";
+                    else
+                    {
+                        if (stats.Date > DateTime.Today)
+                            stats.IsOver = "Тестирование запланировано";
+                        else
+                            stats.IsOver = "Тестирование просрочено";
+                    }
+                }
+                model.Add(stats);
             }
+
+
+
+
+
+
+
+
+
+
+
+
             var userValue = dbContext.Users.Find(userId);
             ViewBag.Avatar = userValue.Avatar;
             Decliner decliner = new Decliner();

@@ -242,7 +242,7 @@ namespace FireTest.Models
 
             if (validationContext.MemberName == "Qualification")
                 if ((int)value < 1 || (int)value > 5)
-                    return new ValidationResult("Не выбрана квалификация");
+                    return new ValidationResult("Не выбран уровень подготовки");
 
             if (validationContext.MemberName == "Course")
                 if ((int)value < 1 || (int)value > 5)
@@ -331,6 +331,7 @@ namespace FireTest.Models
         public string Classroom { get; set; }
         public string Annotations { get; set; }
         public int Time { get; set; }
+        public bool Hide { get; set; }
     }
     public class ExaminationViewModel
     {
@@ -345,15 +346,19 @@ namespace FireTest.Models
         public string Classroom { get; set; }
         [Display(Name = "Комментарий")]
         public string Annotations { get; set; }
-        [Required(ErrorMessage = "Нужно указать время тестирования")]
         [Display(Name = "Время тестирования, мин")]
-        public int Time { get; set; }
+        public string Time { get; set; }
+        public ExaminationViewModel()
+        {
+            Time = "90";
+        }
     }
     public class TeacherStatistics
     {
         public System.DateTime Date { get; set; }
         public string Group { get; set; }
         public string Qualification { get; set; }
+        public string IsOver { get; set; }
     }
     #endregion
     #region Тестирование

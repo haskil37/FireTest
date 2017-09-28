@@ -14,10 +14,19 @@
         </tr>
         <tr>
             <td><b>Группа:</b></td>
-            <td>@Model.Group</td>
+            <td>
+                @if (Model.Group == "-1")
+                {
+                    <span>Преподаватели</span>
+                }
+                else
+                {
+                    @Model.Group
+                }
+            </td>
         </tr>
         <tr>
-            <td><b>Время тестирования:</b></td>
+            <td><b>Время тестирования:&nbsp;</b></td>
             <td>@Model.Time</td>
         </tr>
         <tr>
@@ -34,7 +43,7 @@
         </tr>
     </table>
     <p>
-        @Html.ActionLink("Редактировать", "Edit", new { id = Model.Id }, new { @class = "button-Cancel" }) |
+        @Html.ActionLink("Редактировать", "EditExams", new { id = Model.Id }, new { @class = "button-Cancel" }) |
         @Html.ActionLink("На главную", "Index", null, new { @class = "button-Cancel" })
     </p>
 </div>

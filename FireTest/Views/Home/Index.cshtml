@@ -10,13 +10,10 @@
         {
             <div class="ExamWarning">
                 @Html.Raw(ViewBag.Exam.Replace("\n", "</br>"))
-                @if (ViewBag.User == "user")
-                {
-                    <div id="exam"></div>
-                    <script>
-                        ExamInterval = setInterval(function () { $('#exam').load('/Examination/Access', { type: 'POST' }); }, 3000);
-                    </script>
-                }
+                <div id="exam"></div>
+                <script>
+                    ExamInterval = setInterval(function () { $('#exam').load('/Examination/Access', { type: 'POST' }); }, 3000);
+                </script>
             </div>
         }
     </div>
