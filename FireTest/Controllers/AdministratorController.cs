@@ -451,22 +451,9 @@ namespace FireTest.Controllers
 
             if (!string.IsNullOrEmpty(submitButton))
             {
-                var access = dbContext.TeachersAccess
-                    .Where(u => u.TeacherId == submitButton)
-                    .Select(u => new
-                    {
-                        Id = u.Id,
-                        TeacherQualifications = u.TeacherQualifications
-                    }).SingleOrDefault();
-
+                var access = dbContext.TeachersAccess.SingleOrDefault(u => u.TeacherId == submitButton);
                 if (access != null)
-                {
-                    var temp = dbContext.TeachersAccess.Find(access.Id);
-                    if (temp.TeacherQualifications)
-                        temp.TeacherQualifications = false;
-                    else
-                        temp.TeacherQualifications = true;
-                }
+                    access.TeacherQualifications = !access.TeacherQualifications;
                 else
                 {
                     dbContext.TeachersAccess.Add(new TeacherAccess
@@ -575,18 +562,7 @@ namespace FireTest.Controllers
                 }
                 model.Add(stats);
             }
-
-
-
-
-
-
-
-
-
-
-
-
+            
             var userValue = dbContext.Users.Find(userId);
             ViewBag.Avatar = userValue.Avatar;
             Decliner decliner = new Decliner();
