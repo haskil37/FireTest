@@ -543,19 +543,25 @@ namespace FireTest.Controllers
                 }
                 else
                 {
-                    var questions = dbContext.TeacherTests.Find(item.IdTest).Questions.Split('|');
-                    List<int> subj = new List<int>();
-                    foreach (var i in questions)
+                    var test = dbContext.TeacherTests.Find(item.IdTest);
+                    if (test == null)
+                        stats.Qualification = "Тест удален";
+                    else
                     {
-                        int idSubj = dbContext.Questions.Find(Convert.ToInt32(i)).IdSubject;
-                        if (!subj.Contains(idSubj))
-                            subj.Add(idSubj);
-                    }
-                    for (int i = 1; i <= subj.Count; i++)
-                    {
-                        stats.Qualification += dbContext.Subjects.Find(i).Name;
-                        if (subj.Count > 1 && i != subj.Count)
-                            stats.Qualification += ", ";
+                        var questions = test.Questions.Split('|');
+                        List<int> subj = new List<int>();
+                        foreach (var i in questions)
+                        {
+                            int idSubj = dbContext.Questions.Find(Convert.ToInt32(i)).IdSubject;
+                            if (!subj.Contains(idSubj))
+                                subj.Add(idSubj);
+                        }
+                        for (int i = 1; i <= subj.Count; i++)
+                        {
+                            stats.Qualification += dbContext.Subjects.Find(i).Name;
+                            if (subj.Count > 1 && i != subj.Count)
+                                stats.Qualification += ", ";
+                        }
                     }
                     if (!string.IsNullOrEmpty(dbContext.TestQualificationAccess.SingleOrDefault(u => u.IdExamination == item.Id).IdUsers))
                         stats.IsOver = "Тестирование прошло";
