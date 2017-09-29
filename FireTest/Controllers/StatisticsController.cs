@@ -106,8 +106,7 @@ namespace FireTest.Controllers
         }
         public ActionResult Groups()
         {
-            //var groups = dbContext.Users.Where(u => u.Course != 100).Select(u => u.Course + u.Group).Distinct().ToList();
-            var groups = dbContext.Users.Where(u => u.Course != 100).Select(u => u.Group).Distinct().ToList();
+            var groups = dbContext.Users.Where(u => u.Course != 100).Where(u => u.Group != "-1").Where(u => u.Group != null).Select(u => u.Group).Distinct().ToList();
             if (groups == null)
                 RedirectToAction("Index", "Home");
             ViewBag.Groups = groups //Выпадающий список групп
@@ -612,8 +611,7 @@ namespace FireTest.Controllers
         }
         public ActionResult CompareGroups()
         {
-            //var groups = dbContext.Users.Where(u => u.Course != 100).Select(u => u.Course + u.Group).Distinct().ToList();
-            var groups = dbContext.Users.Where(u => u.Course != 100).Select(u => u.Group).Distinct().ToList();
+            var groups = dbContext.Users.Where(u => u.Course != 100).Where(u => u.Group != "-1").Where(u => u.Group != null).Select(u => u.Group).Distinct().ToList();
             if (groups == null)
                 RedirectToAction("Index", "Home");
             ViewBag.Group1 = groups //Выпадающий список групп

@@ -77,7 +77,7 @@ namespace FireTest.Controllers
         }
         private bool NewUser(string userID)
         {
-            ApplicationUser user = dbContext.Users.Find(User.Identity.GetUserId());
+            ApplicationUser user = dbContext.Users.Find(userID);
             if (string.IsNullOrEmpty(user.Name) ||
                 string.IsNullOrEmpty(user.Family) ||
                 string.IsNullOrEmpty(user.SubName) ||
@@ -88,7 +88,8 @@ namespace FireTest.Controllers
         }
         public PartialViewResult UserInfo()
         {
-            switch (NewUser(User.Identity.GetUserId()))
+            string userId = User.Identity.GetUserId();
+            switch (NewUser(userId))
             {
                 case true:
                     ViewBag.Name = "Регистрация";
@@ -96,7 +97,7 @@ namespace FireTest.Controllers
                     ViewBag.New = true;
                     break;
                 default:
-                    ApplicationUser user = dbContext.Users.Find(User.Identity.GetUserId());
+                    ApplicationUser user = dbContext.Users.Find(userId);
                     ViewBag.New = false;
                     ViewBag.Name = user.Name;
                     ViewBag.Avatar = "/Images/Avatars/" + user.Avatar;
@@ -120,131 +121,62 @@ namespace FireTest.Controllers
 
         public ActionResult Index(ManageController.ManageMessageId? message)
         {
-            switch (NewUser(User.Identity.GetUserId()))
+            string userId = User.Identity.GetUserId();
+            switch (NewUser(userId))
             {
                 case true:
                     return RedirectToAction("Index", "Manage", new { Message = ManageController.ManageMessageId.NewUser });
                 default:
-                    string userId = User.Identity.GetUserId();
                     ApplicationUser user = dbContext.Users.Find(userId);
                     if (user == null)
                         return RedirectToAction("Login", "Account");
                     user.Busy = false;
                     dbContext.SaveChanges();
 
-                    var exams = dbContext.Examinations.
-                        Where(u => u.Date == DateTime.Today)
-                        //Where(u => u.Group == user.Group).
-                        //Select(u => new {
-                        //    Id = u.Id,
-                        //    Name = u.Name,
-                        //    Classroom = u.Classroom,
-                        //    Annotations = u.Annotations,
-                        //    Finish = u.FinishTest,
-                        //    TeacherId = u.TeacherId
-                        //}).
-                        .ToList();
-
-                    //if(exams.TeacherId== userId)
-                    //{
-
-                    //}
-                    //ViewBag.User = "user";
-                    //var role = dbContext.Users.Find(userId).Roles.SingleOrDefault();
-                    //ViewBag.Access = dbContext.Roles.Find(role.RoleId).Name;
-               //     if (ViewBag.Access != "USER")
-               //     {
-                        
-                        //exams = dbContext.Examinations.
-                        //    Where(u => u.Date == DateTime.Today).
-                        //    Where(u => u.TeacherId == userId).
-                        //    Select(u => new {
-                        //        Id=u.Id,
-                        //        Name = u.Name,
-                        //        Classroom = u.Classroom,
-                        //        Annotations = u.Annotations,
-                        //        Finish = u.FinishTest
-                        //    }).ToList();
-                        //ViewBag.User = "nouser";
-              //      }
-                    //if (ViewBag.User == "nouser" || user.Course != 100)
-                    //{
-                        string tempExamHeader = "";
-                        string tempFinishHeader = "";
-                        string tempExam = "";
-                        string tempFinish = "";
-                        int countExam = 0;
-                        int countFinish = 0;
-                    for (int i = 0; i < exams.Count(); ++i)
-                    {
-                        //if (item.Group == user.Group || item.TeacherId == user.Id)
-                        //{
-
-                        //}
-
-
-
-
-                        // Возврат к первому элементу коллекции:
-                       // i = -1;   // Обратите внимание, именно -1, т.к. перед следующей
-                        //continue; // итерацией будет выполнено выражение в разделе итератора
-
-                        // код...                 
-                    }
+                    var exams = dbContext.Examinations.Where(u => u.Date == DateTime.Today).ToList();
+                    string tempExam = "";
+                    string tempFinish = "";
+                    int countExam = 0;
+                    int countFinish = 0;
                     foreach (var item in exams)
-                        {
-                            if(item.Group!=user.Group && item.TeacherId != user.Id)
-                        {
+                    {
+                        if (item.Group != user.Group && item.TeacherId != user.Id)
                             continue;
-                        }
-  
-
-
-
-
-                            var end = dbContext.TestQualification.SingleOrDefault(u => u.IdExamination == item.Id);
-                            //bool go = false;
-                            //if (end != null)
-                            //    go = end.End;
-                            if (end == null || !end.End)
+                        var end = dbContext.TestQualification.SingleOrDefault(u => u.IdExamination == item.Id);
+                        if (end == null || !end.End)
+                        {
+                            if (item.FinishTest)
                             {
-                                if (countFinish > 1)
-                                    tempFinishHeader = "У Вас сегодня итоговые тестирования:\n";
-                                else
-                                    tempFinishHeader = "У Вас сегодня итоговое тестирование:\n";
-
-                                if (countExam > 1)
-                                    tempExamHeader = "У Вас сегодня экзамены:\n";
-                                else
-                                    tempExamHeader = "У Вас сегодня экзамен:\n";
-
-                                if (item.FinishTest)
-                                {
-                                    countFinish++;
-                                    tempFinish += "\"" + item.Name + "\" в аудитории: " + item.Classroom;
-                                    if (!string.IsNullOrEmpty(item.Annotations))
-                                        tempFinish += " (" + item.Annotations + ")\n";
-                                    else
-                                        tempFinish += "\n";
-                                }
-                                else
-                                {
-                                    countExam++;
-                                    tempExam += "\"" + item.Name + "\" в аудитории: " + item.Classroom;
-                                    if (!string.IsNullOrEmpty(item.Annotations))
-                                        tempExam += " (" + item.Annotations + ")\n";
-                                    else
-                                        tempExam += "\n";
-                                }
+                                countFinish++;
+                                tempFinish += "\"" + item.Name + "\" в аудитории: " + item.Classroom;
+                                if (!string.IsNullOrEmpty(item.Annotations))
+                                    tempFinish += " (" + item.Annotations + ")";
+                                tempFinish += "\n";
+                            }
+                            else
+                            {
+                                countExam++;
+                                tempExam += "\"" + item.Name + "\" в аудитории: " + item.Classroom;
+                                if (!string.IsNullOrEmpty(item.Annotations))
+                                    tempExam += " (" + item.Annotations + ")";
+                                tempExam += "\n";
                             }
                         }
-                        if (tempExam.Length != 0 && tempFinish.Length != 0)
-                            ViewBag.Exam = tempExamHeader + tempExam + "<hr/>" + tempFinishHeader + tempFinish;
-                        else if (tempExam.Length == 0)
-                            ViewBag.Exam = tempFinishHeader + tempFinish;
-                        else
-                            ViewBag.Exam = tempExamHeader + tempExam;
-                    //}
+                    }
+                    string tempFinishHeader = "У Вас сегодня итоговое тестирование:\n";
+                    if (countFinish > 1)
+                        tempFinishHeader = "У Вас сегодня итоговые тестирования:\n";
+                    string tempExamHeader = "У Вас сегодня экзамен:\n";
+                    if (countExam > 1)
+                        tempExamHeader = "У Вас сегодня экзамены:\n";
+
+                    if (tempExam.Length != 0)
+                        ViewBag.Exam += tempExamHeader + tempExam;
+                    if (ViewBag.Exam != null && tempFinish.Length != 0)
+                        ViewBag.Exam += "<hr/>";
+                    if (tempFinish.Length != 0)
+                        ViewBag.Exam += tempFinishHeader + tempFinish;
+                    
                     ViewBag.Images = new SIC().SelectImagesCache(SIC.type.img);
                     return View();
             }
