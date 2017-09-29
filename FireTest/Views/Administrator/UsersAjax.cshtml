@@ -48,13 +48,13 @@
                             if (item.Teacher == true)
                             {
                                 <div class="Yes">
-                                    <button type="submit" value="Teacher|@item.Id|false" name="submitButton"></button>
+                                    <button type="submit" value="Teacher|@item.Id|false|@ViewBag.CurrentFilter" name="submitButton"></button>
                                 </div>
                             }
                             else
                             {
                                 <div class="No">
-                                    <button type="submit" value="Teacher|@item.Id|true" name="submitButton"></button>
+                                    <button type="submit" value="Teacher|@item.Id|true|@ViewBag.CurrentFilter" name="submitButton"></button>
                                 </div>
                             }
                         }
@@ -63,13 +63,13 @@
                         @if (item.Administrator == true)
                         {
                             <div class="Yes">
-                                <button type="submit" value="Administrator|@item.Id|false" name="submitButton"></button>
+                                <button type="submit" value="Administrator|@item.Id|false|@ViewBag.CurrentFilter" name="submitButton"></button>
                             </div>
                         }
                         else
                         {
                             <div class="No">
-                                <button type="submit" value="Administrator|@item.Id|true" name="submitButton"></button>
+                                <button type="submit" value="Administrator|@item.Id|true|@ViewBag.CurrentFilter" name="submitButton"></button>
                             </div>
                         }
                     </td>

@@ -35,7 +35,14 @@
                     </div>
                 </td>
                 <td>
-                    @item.Group
+                    @if (item.Group == "-1")
+                    {
+                        <span>Преподаватели</span>
+                    }
+                    else
+                    {
+                        @item.Group
+                    }
                 </td>
                 <td>
                     @item.Qualification

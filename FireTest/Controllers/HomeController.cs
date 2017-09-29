@@ -133,32 +133,40 @@ namespace FireTest.Controllers
                     dbContext.SaveChanges();
 
                     var exams = dbContext.Examinations.
-                        Where(u => u.Date == DateTime.Today).
-                        Where(u => u.Group == user.Group).
-                        Select(u => new {
-                            Id = u.Id,
-                            Name = u.Name,
-                            Classroom = u.Classroom,
-                            Annotations = u.Annotations,
-                            Finish = u.FinishTest
-                        }).ToList();
+                        Where(u => u.Date == DateTime.Today)
+                        //Where(u => u.Group == user.Group).
+                        //Select(u => new {
+                        //    Id = u.Id,
+                        //    Name = u.Name,
+                        //    Classroom = u.Classroom,
+                        //    Annotations = u.Annotations,
+                        //    Finish = u.FinishTest,
+                        //    TeacherId = u.TeacherId
+                        //}).
+                        .ToList();
+
+                    //if(exams.TeacherId== userId)
+                    //{
+
+                    //}
                     //ViewBag.User = "user";
-                    var role = dbContext.Users.Find(userId).Roles.SingleOrDefault();
-                    ViewBag.Access = dbContext.Roles.Find(role.RoleId).Name;
-                    if (ViewBag.Access != "USER")
-                    {
-                        exams = dbContext.Examinations.
-                            Where(u => u.Date == DateTime.Today).
-                            Where(u => u.TeacherId == userId).
-                            Select(u => new {
-                                Id=u.Id,
-                                Name = u.Name,
-                                Classroom = u.Classroom,
-                                Annotations = u.Annotations,
-                                Finish = u.FinishTest
-                            }).ToList();
+                    //var role = dbContext.Users.Find(userId).Roles.SingleOrDefault();
+                    //ViewBag.Access = dbContext.Roles.Find(role.RoleId).Name;
+               //     if (ViewBag.Access != "USER")
+               //     {
+                        
+                        //exams = dbContext.Examinations.
+                        //    Where(u => u.Date == DateTime.Today).
+                        //    Where(u => u.TeacherId == userId).
+                        //    Select(u => new {
+                        //        Id=u.Id,
+                        //        Name = u.Name,
+                        //        Classroom = u.Classroom,
+                        //        Annotations = u.Annotations,
+                        //        Finish = u.FinishTest
+                        //    }).ToList();
                         //ViewBag.User = "nouser";
-                    }
+              //      }
                     //if (ViewBag.User == "nouser" || user.Course != 100)
                     //{
                         string tempExamHeader = "";
@@ -167,13 +175,38 @@ namespace FireTest.Controllers
                         string tempFinish = "";
                         int countExam = 0;
                         int countFinish = 0;
-                        foreach (var item in exams)
+                    for (int i = 0; i < exams.Count(); ++i)
+                    {
+                        //if (item.Group == user.Group || item.TeacherId == user.Id)
+                        //{
+
+                        //}
+
+
+
+
+                        // Возврат к первому элементу коллекции:
+                       // i = -1;   // Обратите внимание, именно -1, т.к. перед следующей
+                        //continue; // итерацией будет выполнено выражение в разделе итератора
+
+                        // код...                 
+                    }
+                    foreach (var item in exams)
                         {
+                            if(item.Group!=user.Group && item.TeacherId != user.Id)
+                        {
+                            continue;
+                        }
+  
+
+
+
+
                             var end = dbContext.TestQualification.SingleOrDefault(u => u.IdExamination == item.Id);
-                            bool go = false;
-                            if (end != null)
-                                go = end.End;
-                            if (!go)
+                            //bool go = false;
+                            //if (end != null)
+                            //    go = end.End;
+                            if (end == null || !end.End)
                             {
                                 if (countFinish > 1)
                                     tempFinishHeader = "У Вас сегодня итоговые тестирования:\n";
@@ -185,7 +218,7 @@ namespace FireTest.Controllers
                                 else
                                     tempExamHeader = "У Вас сегодня экзамен:\n";
 
-                                if (item.Finish)
+                                if (item.FinishTest)
                                 {
                                     countFinish++;
                                     tempFinish += "\"" + item.Name + "\" в аудитории: " + item.Classroom;

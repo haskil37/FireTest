@@ -2106,7 +2106,10 @@ namespace FireTest.Controllers
 
             if (!string.IsNullOrEmpty(submitButton))
             {
-                var exam = dbContext.TestQualificationAccess.Where(u => u.IdExamination == id).SingleOrDefault();
+                var search = submitButton.Split('|');
+                currentFilter = search[1];
+                submitButton = search[0];
+                var exam = dbContext.TestQualificationAccess.SingleOrDefault(u => u.IdExamination == id);
                 if (!string.IsNullOrEmpty(exam.IdUsers) && exam.IdUsers.Contains(submitButton))
                 {
                     List<string> temp = exam.IdUsers.Split(',').ToList();
@@ -2135,9 +2138,8 @@ namespace FireTest.Controllers
             ViewBag.CurrentFilter = searchString;
 
             List<UsersForAdmin> model = new List<UsersForAdmin>();
-            string examGroup = dbContext.Examinations.Find(id).Group;
-            //var users = dbContext.Users.Where(u => u.Course + u.Group == examGroup);
-            var users = dbContext.Users.Where(u => u.Group == examGroup);
+            var group = dbContext.Examinations.Find(id).Group;
+            var users = dbContext.Users.Where(u => u.Group == group);
 
             if (!String.IsNullOrEmpty(searchString))
             {
@@ -2147,17 +2149,14 @@ namespace FireTest.Controllers
             }
             foreach (var item in users)
             {
-                UsersForAdmin temp = new UsersForAdmin()
+                model.Add(new UsersForAdmin()
                 {
-                    Id = item.Id,
+                    Id = item.Id + "|" + searchString,
                     Avatar = item.Avatar,
                     Name = item.Family + " " + item.Name + " " + item.SubName
-                };
-                model.Add(temp);
+                });
             }
-            var tempAccess = dbContext.TestQualificationAccess.
-                Where(u => u.IdExamination == id).
-                Select(u => u.IdUsers).SingleOrDefault();
+            var tempAccess = dbContext.TestQualificationAccess.Where(u => u.IdExamination == id).Select(u => u.IdUsers).SingleOrDefault();
             List<string> usersAccess = new List<string>();
             if (tempAccess != null)
                 usersAccess = tempAccess.Split(',').ToList();

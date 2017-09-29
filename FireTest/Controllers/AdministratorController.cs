@@ -31,6 +31,7 @@ namespace FireTest.Controllers
             if (!string.IsNullOrEmpty(submitButton))
             {
                 string[] value = submitButton.Split('|');
+                currentFilter = value[3];
                 if (value[0] == "Administrator")
                 {
                     var userEdit = dbContext.Users.Find(value[1]);
@@ -245,7 +246,7 @@ namespace FireTest.Controllers
         {
             return View();
         }
-        public PartialViewResult SelectTeacherAjax(string currentFilter, string searchString, int? page, int? Page, string submitButton)
+        public PartialViewResult SelectTeacherAjax(string currentFilter, string searchString, int? page, string submitButton)
         {
             int pageSize = 10;
             int pageNumber = (page ?? 1);
@@ -253,6 +254,9 @@ namespace FireTest.Controllers
 
             if (!string.IsNullOrEmpty(submitButton))
             {
+                var search = submitButton.Split('|');
+                currentFilter = search[1];
+                submitButton = search[0];
                 var access = dbContext.TeachersAccess.SingleOrDefault(u => u.TeacherId == submitButton);
                 if (access != null)
                     access.TeacherQualifications = !access.TeacherQualifications;
@@ -266,7 +270,10 @@ namespace FireTest.Controllers
                 }
                 dbContext.SaveChanges();
             }
-            currentFilter = searchString;
+            if (searchString != null)
+                page = 1;
+            else
+                searchString = currentFilter;
             ViewBag.CurrentFilter = searchString;
 
             string user = User.Identity.GetUserId();
@@ -289,7 +296,7 @@ namespace FireTest.Controllers
                 UsersForAdmin temp = new UsersForAdmin();
                 if (emptycount >= (pageNumber - 1) * pageSize + 1 && emptycount <= pageNumber * pageSize)
                 {
-                    temp.Id = item.Id;
+                    temp.Id = item.Id + "|" + searchString;
                     temp.Avatar = item.Avatar;
                     temp.Name = item.Family + " " + item.Name + " " + item.SubName;
                     var teacherQ = dbContext.TeachersAccess.SingleOrDefault(u => u.TeacherId == item.Id);
