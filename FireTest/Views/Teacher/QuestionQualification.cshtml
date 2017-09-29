@@ -6,7 +6,7 @@
     <div class="row">
         <h3>Действительно хотите убрать вопрос:</h3>
         <div class="textback">@ViewBag.Question</div>
-        <h3>из квалификации: "@ViewBag.Qualification"?</h3>
+        <h3>из уровня подготовки: "@ViewBag.Qualification"?</h3>
     </div>
     using (Html.BeginForm())
     {
@@ -25,7 +25,7 @@ else
         ViewBag.Title = "Добавить вопрос в уровень подготовки";
     }
     <div class="row">
-        <h3>Выберите квалификацию, в которую добавить вопрос:</h3>
+        <h3>Выберите уровень подготовки, в которую добавить вопрос:</h3>
         <div class="textback">@ViewBag.Question</div>
     </div>
     using (Html.BeginForm())
