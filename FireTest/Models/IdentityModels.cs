@@ -142,6 +142,7 @@ namespace FireTest.Models
         public int CountAll { get; set; }
         public int CountCorrect { get; set; }
         public string Tag { get; set; }
+        public int CountTest { get; set; }
     }
     public class Answer
     {
@@ -332,6 +333,7 @@ namespace FireTest.Models
         public string Annotations { get; set; }
         public int Time { get; set; }
         public bool Hide { get; set; }
+        public string SubjQua { get; set; }
     }
     public class ExaminationViewModel
     {

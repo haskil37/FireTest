@@ -9,6 +9,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using System.Security.Cryptography;
+using EntityFramework.Extensions;
 
 namespace FireTest.Controllers
 {
@@ -110,10 +111,23 @@ namespace FireTest.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            TeacherTest teacherTest = dbContext.TeacherTests.Find(id);
+            var exam = dbContext.Examinations.Where(u => u.IdTest == id).Where(u => !u.FinishTest).Where(u => !u.Hide);
+
+            if (exam != null && exam.Count() > 0)
+                return RedirectToAction("Index", new { message = "Тест удалить невозможно, он используется в тестировании" });
+
+            var teacherTest = dbContext.TeacherTests.Find(id);
+
+            if (!string.IsNullOrEmpty(teacherTest.Questions))
+                foreach (var item in teacherTest.Questions.Split('|'))
+                {
+                    var qCount = dbContext.Questions.Find(Convert.ToInt32(item));
+                    qCount.CountTest -= 1;
+                }
+
             dbContext.TeacherTests.Remove(teacherTest);
             dbContext.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { message = "Тест был успешно удален" });
         }
         public ActionResult DeleteFinish(int? id)
         {
@@ -132,10 +146,23 @@ namespace FireTest.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmedFinish(int id)
         {
+            var exam = dbContext.Examinations.Where(u => u.IdTest == id).Where(u => u.FinishTest).Where(u => !u.Hide);
+
+            if (exam != null && exam.Count() > 0)
+                return RedirectToAction("Index", new { message = "Итоговый тест удалить невозможно, он используется в тестировании" });
+
+            var teacherTest = dbContext.TeacherFinishTests.Find(id);
+            if (!string.IsNullOrEmpty(teacherTest.Questions))
+                foreach (var item in teacherTest.Questions.Split('|'))
+                {
+                    var qCount = dbContext.Questions.Find(Convert.ToInt32(item));
+                    qCount.CountTest -= 1;
+                }
+
             TeacherFinishTest teacherFinishTest = dbContext.TeacherFinishTests.Find(id);
             dbContext.TeacherFinishTests.Remove(teacherFinishTest);
             dbContext.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { message = "Итоговый тест был успешно удален" });
         }
         public ActionResult CreateTest()
         {
@@ -205,15 +232,17 @@ namespace FireTest.Controllers
             ViewBag.Eval3 = test.Eval3;
 
             List<string> subjects = new List<string>();
-            if (test != null && test.Questions != null)
+            if (test != null && !string.IsNullOrEmpty(test.Questions))
                 subjects = test.Questions.Split('|').ToList();
 
             if (submitButton != null)
             {
+                var question = dbContext.Questions.Find(submitButton);
                 string newSubjects = "";
                 int index = subjects.IndexOf(submitButton.ToString());
                 if (index == -1)
                 {
+                    question.CountTest += 1;
                     subjects.Add(submitButton.ToString());
                     if (test != null && test.Questions != null && test.Questions.Count() != 0)
                         newSubjects = test.Questions + "|" + submitButton.ToString();
@@ -222,6 +251,7 @@ namespace FireTest.Controllers
                 }
                 else
                 {
+                    question.CountTest -= 1;
                     subjects.RemoveAt(index);
                     foreach (string item in subjects)
                     {
@@ -443,6 +473,8 @@ namespace FireTest.Controllers
             ViewBag.Submit = false;
             if (submitButton != null)
             {
+                var question = dbContext.Questions.Find(submitButton);
+                question.CountTest -= 1;
                 int index = questions.IndexOf(submitButton.Value);
                 questions.RemoveAt(index);
                 string newQuestions = "";
@@ -455,9 +487,29 @@ namespace FireTest.Controllers
                 }
                 test.Questions = newQuestions;
                 ViewBag.Submit = true; //Чтобы обновить таблицу с вопросами (не работает)
-                dbContext.SaveChanges();
             }
 
+            //Если этот тест есть в запланированных экзаменах - обновим там названия предметов
+            var exam = dbContext.Examinations.Where(u => u.IdTest == IdTest).Where(u => !u.Hide).ToList();
+            foreach (var item in exam)
+            {
+                List<int> subj = new List<int>();
+                foreach (var i in questions)
+                {
+                    int idSubj = dbContext.Questions.Find(i).IdSubject;
+                    if (!subj.Contains(idSubj))
+                        subj.Add(idSubj);
+                }
+                item.SubjQua = "";
+                for (int i = 0; i < subj.Count; i++)
+                {
+                    item.SubjQua += dbContext.Subjects.Find(subj[i]).Name;
+                    if (subj.Count > 1 && i != subj.Count - 1)
+                        item.SubjQua += ", ";
+                }
+            }
+            dbContext.SaveChanges();
+            //
             ViewBag.Count = "Количество вопросов: <span style=\"color:rgb(114, 191, 230);\">" + questions.Count() + "</span>";
 
             if (!string.IsNullOrEmpty(searchString))
@@ -512,6 +564,9 @@ namespace FireTest.Controllers
             ViewBag.Submit = false;
             if (submitButton != null)
             {
+                var question = dbContext.Questions.Find(submitButton);
+                question.CountTest += 1;
+
                 if (test.Questions != null && test.Questions.Count() != 0)
                     test.Questions += "|" + submitButton;
                 else
@@ -521,9 +576,9 @@ namespace FireTest.Controllers
                 dbContext.SaveChanges();
             }
 
-            List<string> questions = new List<string>();
+            List<int> questions = new List<int>();
             if (test != null && test.Questions != null)
-                questions = test.Questions.Split('|').ToList();
+                questions = test.Questions.Split('|').Select(int.Parse).ToList();
 
             if (!string.IsNullOrEmpty(searchString))
                 page = 1;
@@ -541,14 +596,13 @@ namespace FireTest.Controllers
                 Id = u.Id,
                 Name = u.Name
             }); //Записываем предметы в список
-            var selectList = tempSubjects //Добавляем выпадающий список из разрешенных предметов
+            ViewBag.Subjects = tempSubjects //Добавляем выпадающий список из разрешенных предметов
                     .Select(u => new SelectListItem()
                     {
                         Text = u.Name,
                         Value = u.Id.ToString(),
                         Selected = u.Id == Subjects
                     }).ToList();
-            ViewBag.Subjects = selectList;
 
             List<string> tempTags;
 
@@ -571,18 +625,17 @@ namespace FireTest.Controllers
             tempTags.Add("Без раздела");
             if (!tempTags.Contains(Tags))
                 Tags = "Все разделы";
-            selectList = tempTags //Выпадающий список разделов
+            ViewBag.Tags = tempTags //Выпадающий список разделов
                 .Select(u => new SelectListItem()
                 {
                     Value = u,
                     Text = u,
                     Selected = u == Tags
                 }).ToList();
-            ViewBag.Tags = selectList;
 
             var tempQuestions = dbContext.Questions //Берем все вопросы дисциплины, которых нет в тесте
                 .Where(u => u.IdSubject == sub)
-                .Where(u => !questions.Contains(u.Id.ToString()))
+                .Where(u => !questions.Contains(u.Id))
                 .Select(u => new {
                     Id = u.Id,
                     Text = u.QuestionText,
@@ -617,7 +670,7 @@ namespace FireTest.Controllers
                 {
                     subject.Id = item.Id;
                     subject.Name = item.Text;
-                    if (questions.Contains(item.Id.ToString()))
+                    if (questions.Contains(item.Id))
                         subject.Access = true;
                     else
                         subject.Access = false;
@@ -627,7 +680,7 @@ namespace FireTest.Controllers
                 {
                     subject.Id = item.Id;
                     subject.Name = item.Text;
-                    if (questions.Contains(item.Id.ToString()))
+                    if (questions.Contains(item.Id))
                         subject.Access = true;
                     else
                         subject.Access = false;
@@ -647,10 +700,6 @@ namespace FireTest.Controllers
 
             return PartialView(model.ToPagedList(pageNumber, pageSize));
         }
-
-
-
-
         public ActionResult CreateTestFinishPrepare()
         {
             ViewBag.Qualifications = dbContext.Qualifications //Добавляем выпадающий список квалификаций
@@ -712,31 +761,43 @@ namespace FireTest.Controllers
             int count250 = 0; //Минимум вопросов в итоговом
             if (submitButtonAll)
             {
-                var Subjects = "";
-                var allSubjects = dbContext.Questions.Where(u => u.IdQualification <= test.IdQualification).Where(u => u.IdQualification > 0).ToList();
+                test.Questions = "";
+                var allSubjects = dbContext.Questions
+                                    .Where(u => u.IdQualification <= test.IdQualification)
+                                    .Where(u => u.IdQualification > 0)
+                                    .Select(u => u.Id).ToList();
                 foreach (var item in allSubjects)
                 {
-                    if (Subjects.Length > 0)
-                        Subjects += "|" + item.Id;
+                    //var question = dbContext.Questions.Find(item);
+                    //question.CountTest += 1;
+
+                    if (test.Questions.Length > 0)
+                        test.Questions += "|" + item;
                     else
-                        Subjects += item.Id;
-                    subjects.Add(item.Id.ToString());
+                        test.Questions += item;
+                    subjects.Add(item.ToString());
                 }
-                test.Questions = Subjects;
                 count250 = allSubjects.Count();
                 dbContext.SaveChanges();
+
+                //Используется EntityFramework.Extensions для быстрого обновления БД
+                var update = dbContext.Questions
+                                    .Where(u => u.IdQualification <= test.IdQualification)
+                                    .Where(u => u.IdQualification > 0).Update(u => new Question { CountTest = u.CountTest + 1 });
             }
             else
             {
-                if (test != null && test.Questions != null)
+                if (test != null && !string.IsNullOrEmpty(test.Questions))
                     subjects = test.Questions.Split('|').ToList();
 
                 if (submitButton != null)
                 {
+                    var question = dbContext.Questions.Find(submitButton);
                     string newSubjects = "";
                     int index = subjects.IndexOf(submitButton.ToString());
                     if (index == -1)
                     {
+                        question.CountTest += 1;
                         subjects.Add(submitButton.ToString());
                         if (test != null && test.Questions != null && test.Questions.Count() != 0)
                             newSubjects = test.Questions + "|" + submitButton.ToString();
@@ -745,6 +806,7 @@ namespace FireTest.Controllers
                     }
                     else
                     {
+                        question.CountTest -= 1;
                         subjects.RemoveAt(index);
                         foreach (string item in subjects)
                         {
@@ -1752,13 +1814,47 @@ namespace FireTest.Controllers
         public ActionResult DeleteQuestion(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+
             Question question = dbContext.Questions.Find(id);
             if (question == null)
-            {
                 return HttpNotFound();
+            ViewBag.DoNotDelete = "";
+            if (question.CountTest != 0)
+            {
+                var tests = dbContext.TeacherTests.Where(u => u.Questions.Contains(id.ToString())).ToList();
+                foreach (var item in tests)
+                {
+                    var subjects = item.Questions.Split('|').ToList();
+                    foreach (var i in subjects)
+                    {
+                        if (i == id.ToString())
+                        {
+                            var teacher = dbContext.Users.Find(item.TeacherId);
+                            Decliner decliner = new Decliner();
+                            string[] declineText = decliner.Decline(teacher.Family, teacher.Name, teacher.SubName, 2);//Меняем падеж
+                            ViewBag.DoNotDelete += "У преподавателя " + declineText[0] + " " + declineText[1] + " " + declineText[2] + " в тесте под названием \"" + item.NameTest + "\".\n";
+                            break;
+                        }
+                    }
+                }
+
+                var finishTests = dbContext.TeacherFinishTests.Where(u => u.Questions.Contains(id.ToString())).ToList();
+                foreach (var item in finishTests)
+                {
+                    var subjects = item.Questions.Split('|').ToList();
+                    foreach (var i in subjects)
+                    {
+                        if (i == id.ToString())
+                        {
+                            var teacher = dbContext.Users.Find(item.TeacherId);
+                            Decliner decliner = new Decliner();
+                            string[] declineText = decliner.Decline(teacher.Family, teacher.Name, teacher.SubName, 2);//Меняем падеж
+                            ViewBag.DoNotDelete += "У преподавателя " + declineText[0] + " " + declineText[1] + " " + declineText[2] + " в итоговом тесте под названием \"" + item.NameTest + "\".\n";
+                            break;
+                        }
+                    }
+                }
             }
             return View(question);
         }
@@ -1862,11 +1958,8 @@ namespace FireTest.Controllers
                 .Where(u => u.Group != null)
                 .Select(u => new SelectListItem()
                 {
-                    //Text = u.Course + u.Group,
-                    //Value = u.Course + u.Group,
                     Text = u.Group,
-                    Value = u.Group,
-
+                    Value = u.Group
                 })
                 .Distinct().ToList();
             ViewBag.Group.Add(new SelectListItem { Value = "-1", Text = "Преподаватели" });
@@ -1905,9 +1998,34 @@ namespace FireTest.Controllers
                 Classroom = model.Classroom,
                 Group = Group
             };
-            if (Test.Contains("F"))
-                exam.FinishTest = true;
+
             exam.IdTest = Convert.ToInt32(Test.Replace("F", ""));
+            if (Test.Contains("F"))
+            {
+                exam.FinishTest = true;
+                exam.SubjQua = dbContext.Qualifications.Find(
+                    dbContext.TeacherFinishTests.Find(exam.IdTest).IdQualification)
+                    .Name;
+            }
+            else
+            {
+                exam.FinishTest = false;
+                var test = dbContext.TeacherTests.Find(exam.IdTest);
+                var questions = test.Questions.Split('|');
+                List<int> subj = new List<int>();
+                foreach (var i in questions)
+                {
+                    int idSubj = dbContext.Questions.Find(Convert.ToInt32(i)).IdSubject;
+                    if (!subj.Contains(idSubj))
+                        subj.Add(idSubj);
+                }
+                for (int i = 0; i < subj.Count; i++)
+                {
+                    exam.SubjQua += dbContext.Subjects.Find(subj[i]).Name;
+                    if (subj.Count > 1 && i != subj.Count - 1)
+                        exam.SubjQua += ", ";
+                }
+            }
             exam.TeacherId = userId;
             exam.Date = model.Date;
             exam.Time = model.Time != null ? Convert.ToInt32(model.Time) : 90;
@@ -1952,6 +2070,7 @@ namespace FireTest.Controllers
                 {
                     Text = u.NameTest,
                     Value = u.Id.ToString(),
+                    Selected = u.Id == exam.IdTest
                 }).ToList();
 
             var finishTests = dbContext.TeacherFinishTests
@@ -1962,6 +2081,7 @@ namespace FireTest.Controllers
                 {
                     Text = u.NameTest,
                     Value = u.Id.ToString() + "F",
+                    Selected = u.Id == exam.IdTest
                 }).ToList();
             if (finishTests == null || finishTests.Count == 0)
             {
@@ -2023,11 +2143,35 @@ namespace FireTest.Controllers
             exam.Annotations = model.Annotations;
             exam.Classroom = model.Classroom;
             exam.Group = Group;
-            if (Test.Contains("F"))
-                exam.FinishTest = true;
-            else
-                exam.FinishTest = false;
+
             exam.IdTest = Convert.ToInt32(Test.Replace("F", ""));
+            if (Test.Contains("F"))
+            {
+                exam.FinishTest = true;
+                exam.SubjQua = dbContext.Qualifications.Find(
+                    dbContext.TeacherFinishTests.Find(exam.IdTest).IdQualification)
+                    .Name;
+            }
+            else
+            {
+                exam.FinishTest = false;
+                var test = dbContext.TeacherTests.Find(exam.IdTest);
+                var questions = test.Questions.Split('|');
+                List<int> subj = new List<int>();
+                foreach (var i in questions)
+                {
+                    int idSubj = dbContext.Questions.Find(Convert.ToInt32(i)).IdSubject;
+                    if (!subj.Contains(idSubj))
+                        subj.Add(idSubj);
+                }
+                for (int i = 0; i < subj.Count; i++)
+                {
+                    exam.SubjQua += dbContext.Subjects.Find(subj[i]).Name;
+                    if (subj.Count > 1 && i != subj.Count - 1)
+                        exam.SubjQua += ", ";
+                }
+            }
+
             exam.TeacherId = userId;
             exam.Date = model.Date;
             exam.Time = model.Time != null ? Convert.ToInt32(model.Time) : 90;

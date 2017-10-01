@@ -515,7 +515,8 @@ namespace FireTest.Controllers
                     Date = u.Date,
                     Group = u.Group,
                     FinishTest = u.FinishTest,
-                    IdTest = u.IdTest
+                    IdTest = u.IdTest,
+                    SubjQua = u.SubjQua
                 }).OrderBy(u => u.Date).ToList();
             var model = new List<TeacherStatistics>();
             foreach (var item in tests)
@@ -524,55 +525,14 @@ namespace FireTest.Controllers
                 {
                     Date = item.Date,
                     Group = item.Group,
+                    Qualification = item.SubjQua
                 };
-                if (item.FinishTest)
-                {
-                    stats.Qualification = dbContext.Qualifications
-                        .Find(dbContext.TeacherFinishTests
-                                    .Find(item.IdTest).IdQualification)
-                        .Name;
-                    if (!string.IsNullOrEmpty(dbContext.TestQualificationAccess.SingleOrDefault(u => u.IdExamination == item.Id).IdUsers))
-                        stats.IsOver = "Тестирование прошло";
-                    else
-                    {
-                        if (stats.Date > DateTime.Today)
-                            stats.IsOver = "Тестирование запланировано";
-                        else
-                            stats.IsOver = "Тестирование просрочено";
-                    }
-                }
+                if (string.IsNullOrEmpty(stats.Qualification))
+                    stats.Qualification = "Тест удален";
+                if (!string.IsNullOrEmpty(dbContext.TestQualificationAccess.SingleOrDefault(u => u.IdExamination == item.Id).IdUsers))
+                    stats.IsOver = "Тестирование прошло";
                 else
-                {
-                    var test = dbContext.TeacherTests.Find(item.IdTest);
-                    if (test == null)
-                        stats.Qualification = "Тест удален";
-                    else
-                    {
-                        var questions = test.Questions.Split('|');
-                        List<int> subj = new List<int>();
-                        foreach (var i in questions)
-                        {
-                            int idSubj = dbContext.Questions.Find(Convert.ToInt32(i)).IdSubject;
-                            if (!subj.Contains(idSubj))
-                                subj.Add(idSubj);
-                        }
-                        for (int i = 1; i <= subj.Count; i++)
-                        {
-                            stats.Qualification += dbContext.Subjects.Find(i).Name;
-                            if (subj.Count > 1 && i != subj.Count)
-                                stats.Qualification += ", ";
-                        }
-                    }
-                    if (!string.IsNullOrEmpty(dbContext.TestQualificationAccess.SingleOrDefault(u => u.IdExamination == item.Id).IdUsers))
-                        stats.IsOver = "Тестирование прошло";
-                    else
-                    {
-                        if (stats.Date > DateTime.Today)
-                            stats.IsOver = "Тестирование запланировано";
-                        else
-                            stats.IsOver = "Тестирование просрочено";
-                    }
-                }
+                    stats.IsOver = stats.Date > DateTime.Today.AddDays(-1) ? "Тестирование запланировано" : "Тестирование просрочено";
                 model.Add(stats);
             }
             
