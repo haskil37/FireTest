@@ -10,6 +10,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Security.Cryptography;
 using EntityFramework.Extensions;
+using System.Data.Entity;
 
 namespace FireTest.Controllers
 {
@@ -119,11 +120,13 @@ namespace FireTest.Controllers
             var teacherTest = dbContext.TeacherTests.Find(id);
 
             if (!string.IsNullOrEmpty(teacherTest.Questions))
-                foreach (var item in teacherTest.Questions.Split('|'))
-                {
-                    var qCount = dbContext.Questions.Find(Convert.ToInt32(item));
-                    qCount.CountTest -= 1;
-                }
+            {
+                var idList = teacherTest.Questions.Split('|').Select(int.Parse);
+                //Используется EntityFramework.Extensions для быстрого обновления БД
+                var update = dbContext.Questions
+                                    .Where(u => idList.Contains(u.Id))
+                                    .Update(u => new Question { CountTest = u.CountTest - 1 });
+            }
 
             dbContext.TeacherTests.Remove(teacherTest);
             dbContext.SaveChanges();
@@ -153,11 +156,19 @@ namespace FireTest.Controllers
 
             var teacherTest = dbContext.TeacherFinishTests.Find(id);
             if (!string.IsNullOrEmpty(teacherTest.Questions))
-                foreach (var item in teacherTest.Questions.Split('|'))
-                {
-                    var qCount = dbContext.Questions.Find(Convert.ToInt32(item));
-                    qCount.CountTest -= 1;
-                }
+            {    
+                var idList = teacherTest.Questions.Split('|').Select(int.Parse);
+
+                //Медленный вариант
+                //var items = dbContext.Questions
+                //                      .Where(f => idList.Contains(f.Id.ToString())).ToList();
+                //items.ForEach(a => a.CountTest += 1);
+
+                //Используется EntityFramework.Extensions для быстрого обновления БД
+                var update = dbContext.Questions
+                                    .Where(u => idList.Contains(u.Id))
+                                    .Update(u => new Question { CountTest = u.CountTest - 1 });
+            }
 
             TeacherFinishTest teacherFinishTest = dbContext.TeacherFinishTests.Find(id);
             dbContext.TeacherFinishTests.Remove(teacherFinishTest);
