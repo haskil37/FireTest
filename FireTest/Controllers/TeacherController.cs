@@ -2318,7 +2318,8 @@ namespace FireTest.Controllers
 
             foreach (var item in model)
             {
-                if (usersAccess.Contains(item.Id))
+                var itemId= item.Id.Split('|');
+                if (usersAccess.Contains(itemId[0]))
                     item.Qualification = true;
                 else
                     item.Qualification = false;

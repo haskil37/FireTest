@@ -10,13 +10,13 @@
 }))
 {
     <div class="row">
-        <div class="col-4">Выберите первую группу</div>
+        <div class="col-4">Выберите первый курс</div>
         <div class="col-8">
             @Html.DropDownList("Course1", ViewBag.Course1 as SelectList, new { @onchange = "$(this.form).submit();" })
         </div>
     </div>
     <div class="row">
-        <div class="col-4">Выберите вторую группу</div>
+        <div class="col-4">Выберите второй курс</div>
         <div class="col-8">
             @Html.DropDownList("Course2", ViewBag.Course2 as SelectList, new { @onchange = "$(this.form).submit();" })
         </div>

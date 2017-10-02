@@ -8,10 +8,13 @@
     var options = {
         responsive: true,
         legend: {
-            display: false
+            display: true,
+            labels: {
+                fontColor: 'rgb(196, 189, 151)'
+            }
         },
         tooltips: {
-            enabled: false
+            enabled: true
         },
         scales: {
             xAxes: [{
@@ -38,7 +41,7 @@
         labels: [@Html.Raw(ViewBag.osXQ)],
         datasets: [
             {
-                label: " ",
+                label: "Пользователь @ViewBag.TitleChart",
                 fill: false,
                 lineTension: 0.1,
                 borderColor: "rgb(255, 115, 0)",
@@ -59,7 +62,7 @@
         labels: [@Html.Raw(ViewBag.osXD)],
         datasets: [
             {
-                label: " ",
+                label: "Пользователь @ViewBag.TitleChart",
                 fill: false,
                 lineTension: 0.1,
                 borderColor: "rgb(255, 115, 0)",

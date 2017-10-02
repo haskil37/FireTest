@@ -37,7 +37,7 @@
         labels: [@Html.Raw(ViewBag.osXQ)],
         datasets: [
             {
-                label: "Группа @ViewBag.Course1",
+                label: "Курс @ViewBag.Course1",
                 fill: false,
                 lineTension: 0.1,
                 borderColor: "rgb(255, 115, 0)",
@@ -53,7 +53,7 @@
                 data: [@ViewBag.osYQ1]
             },
             {
-                label: "Группа @ViewBag.Course2",
+                label: "Курс @ViewBag.Course2",
                 fill: false,
                 lineTension: 0.1,
                 borderColor: "rgb(114, 191, 230)",
@@ -74,7 +74,7 @@
         labels: [@Html.Raw(ViewBag.osXD)],
         datasets: [
             {
-                label: "Группа @ViewBag.Course1",
+                label: "Курс @ViewBag.Course1",
                 fill: false,
                 lineTension: 0.1,
                 borderColor: "rgb(255, 115, 0)",
@@ -90,7 +90,7 @@
                 data: [@ViewBag.osYD1]
             },
             {
-                label: "Группа @ViewBag.Course2",
+                label: "Курс @ViewBag.Course2",
                 fill: false,
                 lineTension: 0.1,
                 borderColor: "rgb(114, 191, 230)",
@@ -119,13 +119,13 @@
     });
 </script>
 <div class="row">
-    <div class="textback">Сколько человек из @ViewBag.Course1 группы проходили тесты по уровню подготовки @ViewBag.Range</div>
+    <div class="textback">Сколько человек из @ViewBag.Course1 курса проходили тесты по уровню подготовки @ViewBag.Range</div>
 </div>
 <div class="row centerChart">
     <canvas id="lineChartQ" />
 </div>
 <div class="row">
-    <div class="textback">Сколько человек из @ViewBag.Course2 группы проходили тесты по отдельным дисциплинам @ViewBag.Range</div>
+    <div class="textback">Сколько человек из @ViewBag.Course2 курса проходили тесты по отдельным дисциплинам @ViewBag.Range</div>
 </div>
 <div class="row centerChart">
     <canvas id="lineChartD" />

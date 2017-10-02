@@ -123,6 +123,7 @@ namespace FireTest.Controllers
         public PartialViewResult TeacherSubjectsAjax(string currentFilter, string searchString, int? page, int? submitButton, int? Page, string userId, bool submitButtonAll = false)
         {
             ViewBag.userId = userId;
+            userId = userId.Split('|')[0];
             List<string> subjectsAccess = new List<string>();
             if (submitButtonAll)
             {

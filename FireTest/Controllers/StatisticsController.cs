@@ -120,6 +120,7 @@ namespace FireTest.Controllers
         [HttpPost]
         public PartialViewResult Groups(string Groups, int Statistics, int? DateRange)
         {
+            ViewBag.TitleChart = Groups;
             if (DateRange == null || Statistics != 2)
             {
                 switch (Statistics)
@@ -142,7 +143,6 @@ namespace FireTest.Controllers
                             winCount += item.BattleWinCount;
                         }
 
-                        ViewBag.TitleChart = Groups;
                         ViewBag.BattlesLose = count - winCount;
                         ViewBag.BattlesWin = winCount;
                         return PartialView("GroupsBattles");
