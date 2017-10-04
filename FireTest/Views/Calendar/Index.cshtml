@@ -45,7 +45,7 @@
             viewDisplay: function () {
                 tooltip.hide()
             },
-            events: [@Html.Raw(ViewBag.Dates)]
+            events: [@Html.Raw(ViewBag.Dates.Replace("\r\n", "\\r\\n"))]
         });        
     </script>
 }

@@ -85,7 +85,8 @@ namespace FireTest.Controllers
                 users = users.Where(u => u.Family.Contains(searchString)
                                        || u.Name.Contains(searchString)
                                        || u.SubName.Contains(searchString)
-                                       || u.Group.Contains(searchString));
+                                       || u.Group.Contains(searchString)
+                                       || (u.Family + " " + u.Name + " " + u.SubName).Contains(searchString));
             }
             users = users.OrderBy(u => u.Family + " " + u.Name + " " + u.SubName);
             var emptycount = 1;
@@ -288,7 +289,8 @@ namespace FireTest.Controllers
             {
                 users = users.Where(u => u.Family.Contains(searchString)
                                        || u.Name.Contains(searchString)
-                                       || u.SubName.Contains(searchString));
+                                       || u.SubName.Contains(searchString)
+                                       || (u.Family + " " + u.Name + " " + u.SubName).Contains(searchString));
             }
             users = users.OrderBy(u => u.Family + " " + u.Name + " " + u.SubName);
             var emptycount = 1;
@@ -486,7 +488,8 @@ namespace FireTest.Controllers
             {
                 users = users.Where(u => u.Family.Contains(searchString)
                                        || u.Name.Contains(searchString)
-                                       || u.SubName.Contains(searchString));
+                                       || u.SubName.Contains(searchString)
+                                       || (u.Family + " " + u.Name + " " + u.SubName).Contains(searchString));
             }
 
             users = users.OrderBy(u => u.Family + " " + u.Name + " " + u.SubName);
