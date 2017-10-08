@@ -2,14 +2,20 @@
     ViewBag.Title = "Удаление вопроса";
 }
 @Styles.Render("~/Content/administrator")
+@using (Ajax.BeginForm("DeleteQuestionSelectAjax", new AjaxOptions
+{
+    HttpMethod = "Get",
+    InsertionMode = InsertionMode.Replace,
+    UpdateTargetId = "Questions",
+}))
+{
+    <div class="row">
+        <div class="col-2">Поиск</div>
+        <div class="col-10">
+            <input name="SearchString" type="text" oninput="$(this.form).submit();">
+        </div>
+    </div>
+}
 <div id="Questions">
     @{ Html.RenderAction("DeleteQuestionSelectAjax", new { Page = 1 }); }
 </div>
-@section scripts
-{
-    <script>
-    $('#SearchString').keyup(function () {
-        $(this.form).submit();
-    });
-    </script>
-}

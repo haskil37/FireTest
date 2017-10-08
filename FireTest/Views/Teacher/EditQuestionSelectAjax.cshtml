@@ -7,6 +7,7 @@
     UpdateTargetId = "Questions",
 }))
 {
+    @Html.Hidden("currentFilter", (string)ViewBag.CurrentFilter)
     <div class="row">
         <div class="col-2">Дисциплина</div>
         <div class="col-10">
@@ -17,14 +18,6 @@
         <div class="col-2">Название раздела</div>
         <div class="col-10">
             @Html.DropDownList("Tags", ViewBag.Tags as SelectList, new { @onchange = "$(this.form).submit();" })
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-1">
-            <h3>Поиск</h3>
-        </div>
-        <div class="col-3">
-            <span class="search"></span><input id="SearchString" name="SearchString" type="text" value="@ViewBag.CurrentFilter" />
         </div>
     </div>
     <div>
@@ -87,16 +80,5 @@
     </div>
     <script>
         MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'question']);
-        (function ($) {
-            $.fn.setCursorToTextEnd = function () {
-                var $initialVal = this.val();
-                this.val($initialVal);
-        };
-        })(jQuery);
-        $('#SearchString').focus();
-        $('#SearchString').setCursorToTextEnd();
-        $('#SearchString').keyup(function () {
-            $(this.form).submit();
-        });
     </script>
 }

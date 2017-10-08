@@ -7,14 +7,7 @@
     UpdateTargetId = "Questions",
 }))
 {
-    @Html.Hidden("page", (int)ViewBag.page)
-    <div class="row">
-        <div class="col-2">Название теста</div>
-        <div class="col-10">
-            <input name="NameTest" type="text" class="input" value="@ViewBag.NameTest">
-            <button type="submit" class="save">Сохранить</button>
-        </div>
-    </div>
+    @Html.Hidden("currentFilter", (string)ViewBag.CurrentFilter)
     <div class="row">
         <div class="col-2">Дисциплина</div>
         <div class="col-10">
@@ -54,14 +47,6 @@
     </div>
     <div class="row">
         @Html.Raw(ViewBag.Count)
-    </div>
-    <div class="row">
-        <div class="col-1">
-            <h3>Поиск</h3>
-        </div>
-        <div class="col-3">
-            <span class="search"></span><input id="SearchString" name="SearchString" type="text" value="@ViewBag.CurrentFilter" />
-        </div>
     </div>
     <div>
         Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
@@ -114,16 +99,6 @@
     </div>
     <script>
         MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'question']);
-        (function ($) {
-            $.fn.setCursorToTextEnd = function () {
-                var $initialVal = this.val();
-                this.val($initialVal);
-            };
-        })(jQuery);
-        $('#SearchString').focus();
-        $('#SearchString').setCursorToTextEnd();
-        $('#SearchString').keyup(function () {
-            $(this.form).submit();
-        });
+        $('#NameTest').val('@ViewBag.NameTest');
     </script>
 }

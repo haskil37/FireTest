@@ -2,14 +2,27 @@
     ViewBag.Title = "Создание теста";
 }
 @Styles.Render("~/Content/administrator")
+@using (Ajax.BeginForm("CreateTestAjax", new AjaxOptions
+{
+    HttpMethod = "Get",
+    InsertionMode = InsertionMode.Replace,
+    UpdateTargetId = "Questions",
+}))
+{
+    <div class="row">
+        <div class="col-2">Название теста</div>
+        <div class="col-10">
+            <input name="NameTest" type="text" class="input" id="NameTest">
+            <button type="submit" class="save">Сохранить</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2">Поиск</div>
+        <div class="col-10">
+            <input name="SearchString" type="text" oninput="$(this.form).submit();">
+        </div>
+    </div>
+}
 <div id="Questions">
     @{ Html.RenderAction("CreateTestAjax", new { Page = 1 }); }
 </div>
-@section scripts
-{
-    <script>
-    $('#SearchString').keyup(function () {
-        $(this.form).submit();
-    });
-    </script>
-}

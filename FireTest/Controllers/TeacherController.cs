@@ -206,11 +206,25 @@ namespace FireTest.Controllers
         }
         public PartialViewResult CreateTestAjax(string currentFilter, string searchString, int? page, string NameTest, int? Subjects, string Tags, int? submitButton, List<int> Eval)
         {
-            if (Session["Subjects"] != null && Session["Tags"] != null)
-                if ((int)Session["Subjects"] != Subjects || (string)Session["Tags"] != Tags)
-                    page = 1;
-            Session["Subjects"] = Subjects;
-            Session["Tags"] = Tags;
+            //if (Session["Subjects"] != null && Session["Tags"] != null)
+            //    if ((int)Session["Subjects"] != Subjects || (string)Session["Tags"] != Tags)
+            //        page = 1;
+            //Session["Subjects"] = Subjects;
+            //Session["Tags"] = Tags;
+            if (Subjects != null)
+                Session["Subjects"] = Subjects;
+            else
+            {
+                if (Session["Subjects"] != null)
+                    Subjects = (int)Session["Subjects"];
+            }
+            if (!string.IsNullOrEmpty(Tags))
+                Session["Tags"] = Tags;
+            else
+            {
+                if (Session["Tags"] != null)
+                    Tags = (string)Session["Tags"];
+            }
 
             string userId = User.Identity.GetUserId();
             int sessionId = (int)Session["Test"]; //Берем ид теста
@@ -330,8 +344,6 @@ namespace FireTest.Controllers
                         Selected = u.Id == Subjects
                     }).ToList();
 
-            List<string> tempTags;
-
             int sub; //Если выбран предмет то используем его, если нет, то выбираем первый в списке разрешенных
             if (Subjects != null)
                 sub = Subjects.Value;
@@ -341,7 +353,7 @@ namespace FireTest.Controllers
                 sub = Convert.ToInt32(userSubjects[0]);
             }
 
-            tempTags = dbContext.Questions
+            List<string> tempTags = dbContext.Questions
                 .Where(u => u.IdSubject == sub)
                 .Select(u => u.Tag).Distinct().ToList(); //Берем все разделы
             if (tempTags.Count == 0)
@@ -363,52 +375,31 @@ namespace FireTest.Controllers
                 .Where(u => u.IdSubject == sub)
                 .Select(u => new {
                     Id = u.Id,
-                    Text = u.QuestionText
+                    Text = u.QuestionText,
+                    Tag = u.Tag,
                 }).ToList();
+
+            //Оставляем вопросы дисциплины нужного раздела
             if (Tags != "Все разделы" && Tags != "Без раздела" && !string.IsNullOrEmpty(Tags))
-            {
-                tempQuestions = dbContext.Questions //Берем все вопросы дисциплины нужного раздела
-                    .Where(u => u.IdSubject == sub)
-                    .Where(u => u.Tag == Tags)
-                    .Select(u => new {
-                        Id = u.Id,
-                        Text = u.QuestionText
-                    }).ToList();
-            }
+                tempQuestions = tempQuestions.Where(u => u.Tag == Tags).ToList();
+
+            //Оставляем вопросы дисциплины без раздела
             if (Tags == "Без раздела")
-            {
-                tempQuestions = dbContext.Questions //Берем все вопросы дисциплины без раздела
-                    .Where(u => u.IdSubject == sub)
-                    .Where(u => string.IsNullOrEmpty(u.Tag))
-                    .Select(u => new {
-                        Id = u.Id,
-                        Text = u.QuestionText
-                    }).ToList();
-            }
+                tempQuestions = tempQuestions.Where(u => string.IsNullOrEmpty(u.Tag)).ToList();
+
+            //Оставляем вопросы согласно строке поиска
+            if (!String.IsNullOrEmpty(searchString))
+                tempQuestions = tempQuestions.Where(u => u.Text.ToLower().Contains(searchString.ToLower())).ToList();
+
             List<SubjectAccess> model = new List<SubjectAccess>(); //Использую это т.к. надо точно такие же поля
             foreach (var item in tempQuestions)
             {
-                SubjectAccess subject = new SubjectAccess();
-                if (!String.IsNullOrEmpty(searchString) && item.Text.ToLower().Contains(searchString.ToLower()))
+                model.Add(new SubjectAccess
                 {
-                    subject.Id = item.Id;
-                    subject.Name = item.Text;
-                    if (subjects.Contains(item.Id.ToString()))
-                        subject.Access = true;
-                    else
-                        subject.Access = false;
-                    model.Add(subject);
-                }
-                if (String.IsNullOrEmpty(searchString))
-                {
-                    subject.Id = item.Id;
-                    subject.Name = item.Text;
-                    if (subjects.Contains(item.Id.ToString()))
-                        subject.Access = true;
-                    else
-                        subject.Access = false;
-                    model.Add(subject);
-                }
+                    Id = item.Id,
+                    Name = item.Text,
+                    Access = subjects.Contains(item.Id.ToString()) ? true : false
+                });
             }
 
             model = model.OrderBy(u => u.Name).ToList();
@@ -1187,12 +1178,20 @@ namespace FireTest.Controllers
         public PartialViewResult EditQuestionSelectAjax(string currentFilter, string searchString, int? page, string NameTest, int? Subjects, string Tags)
         {
             string userId = User.Identity.GetUserId();
-            if (Session["Subjects"] != null && Session["Tags"] != null)
-                if ((int)Session["Subjects"] != Subjects || (string)Session["Tags"] != Tags)
-                    page = 1;
-            Session["Subjects"] = Subjects;
-            Session["Tags"] = Tags;
-
+            if (Subjects != null)
+                Session["Subjects"] = Subjects;
+            else
+            {
+                if (Session["Subjects"] != null)
+                    Subjects = (int)Session["Subjects"];
+            }
+            if (!string.IsNullOrEmpty(Tags))
+                Session["Tags"] = Tags;
+            else
+            {
+                if (Session["Tags"] != null)
+                    Tags = (string)Session["Tags"];
+            }
 
             if (!string.IsNullOrEmpty(searchString))
                 page = 1;
@@ -1219,16 +1218,13 @@ namespace FireTest.Controllers
                 Id = u.Id,
                 Name = u.Name
             }); //Записываем предметы в список
-            var selectList = tempSubjects //Добавляем выпадающий список из разрешенных предметов
+            ViewBag.Subjects = tempSubjects //Добавляем выпадающий список из разрешенных предметов
                     .Select(u => new SelectListItem()
                     {
                         Text = u.Name,
                         Value = u.Id.ToString(),
                         Selected = u.Id == Subjects
                     }).ToList();
-            ViewBag.Subjects = selectList;
-
-            List<string> tempTags;
 
             int sub; //Если выбран предмет то используем его, если нет, то выбираем первый в списке разрешенных
             if (Subjects != null)
@@ -1239,7 +1235,7 @@ namespace FireTest.Controllers
                 sub = Convert.ToInt32(userSubjects[0]);
             }
 
-            tempTags = dbContext.Questions
+            List<string> tempTags = dbContext.Questions
                 .Where(u => u.IdSubject == sub)
                 .Select(u => u.Tag).Distinct().ToList(); //Берем все разделы
             if (tempTags.Count == 0)
@@ -1249,67 +1245,47 @@ namespace FireTest.Controllers
             tempTags.Add("Без раздела");
             if (!tempTags.Contains(Tags))
                 Tags = "Все разделы";
-            selectList = tempTags //Выпадающий список разделов
+            ViewBag.Tags = tempTags //Выпадающий список разделов
                 .Select(u => new SelectListItem()
                 {
                     Value = u,
                     Text = u,
                     Selected = u == Tags
                 }).ToList();
-            ViewBag.Tags = selectList;
 
             var tempQuestions = dbContext.Questions //Берем все вопросы дисциплины
                 .Where(u => u.IdSubject == sub)
                 .Select(u => new {
                     Id = u.Id,
                     Text = u.QuestionText,
+                    Tag = u.Tag,
                     Qualification = u.IdQualification
                 }).ToList();
+
+            //Оставляем вопросы дисциплины нужного раздела
             if (Tags != "Все разделы" && Tags != "Без раздела" && !string.IsNullOrEmpty(Tags))
-            {
-                tempQuestions = dbContext.Questions //Берем все вопросы дисциплины нужного раздела
-                    .Where(u => u.IdSubject == sub)
-                    .Where(u => u.Tag == Tags)
-                    .Select(u => new {
-                        Id = u.Id,
-                        Text = u.QuestionText,
-                        Qualification = u.IdQualification
-                    }).ToList();
-            }
+                tempQuestions = tempQuestions.Where(u => u.Tag == Tags).ToList();
+
+            //Оставляем вопросы дисциплины без раздела
             if (Tags == "Без раздела")
-            {
-                tempQuestions = dbContext.Questions //Берем все вопросы дисциплины без раздела
-                    .Where(u => u.IdSubject == sub)
-                    .Where(u => string.IsNullOrEmpty(u.Tag))
-                    .Select(u => new {
-                        Id = u.Id,
-                        Text = u.QuestionText,
-                        Qualification = u.IdQualification
-                    }).ToList();
-            }
+                tempQuestions = tempQuestions.Where(u => string.IsNullOrEmpty(u.Tag)).ToList();
+
+            //Оставляем вопросы согласно строке поиска
+            if (!String.IsNullOrEmpty(searchString))
+                tempQuestions = tempQuestions.Where(u => u.Text.ToLower().Contains(searchString.ToLower())).ToList();
 
             List<SubjectsAndQualification> model = new List<SubjectsAndQualification>();
             foreach (var item in tempQuestions)
             {
-                SubjectsAndQualification subject = new SubjectsAndQualification();
-                if (!String.IsNullOrEmpty(searchString) && item.Text.ToLower().Contains(searchString.ToLower()))
+                SubjectsAndQualification subject = new SubjectsAndQualification
                 {
-                    subject.Id = item.Id;
-                    subject.Name = item.Text;
-                    subject.Qualification = item.Qualification;
-                    if (item.Qualification != 0)
-                        subject.QualificationName = dbContext.Qualifications.Find(item.Qualification).Name;
-                    model.Add(subject);
-                }
-                if (String.IsNullOrEmpty(searchString))
-                {
-                    subject.Id = item.Id;
-                    subject.Name = item.Text;
-                    subject.Qualification = item.Qualification;
-                    if (item.Qualification != 0)
-                        subject.QualificationName = dbContext.Qualifications.Find(item.Qualification).Name;
-                    model.Add(subject);
-                }
+                    Id = item.Id,
+                    Name = item.Text,
+                    Qualification = item.Qualification
+                };
+                if (item.Qualification != 0)
+                    subject.QualificationName = dbContext.Qualifications.Find(item.Qualification).Name;
+                model.Add(subject);
             }
 
             model = model.OrderBy(u => u.Name).ToList();
@@ -1723,21 +1699,34 @@ namespace FireTest.Controllers
             Session.Clear();
 
             string userId = User.Identity.GetUserId();
-            string temp = dbContext.TeachersAccess.Where(u => u.TeacherId == userId).Select(u => u.TeacherSubjects).SingleOrDefault();
-            if (string.IsNullOrEmpty(temp))
-                return RedirectToAction("Error");
-
+            var role = dbContext.Users.Find(userId).Roles.SingleOrDefault();
+            if (dbContext.Roles.Find(role.RoleId).Name != "ADMIN")
+            {
+                string temp = dbContext.TeachersAccess.Where(u => u.TeacherId == userId).Select(u => u.TeacherSubjects).SingleOrDefault();
+                if (string.IsNullOrEmpty(temp))
+                    return RedirectToAction("Error");
+            }
             return View();
         }
         public PartialViewResult DeleteQuestionSelectAjax(string currentFilter, string searchString, int? page, string NameTest, int? Subjects, string Tags)
         {
             string userId = User.Identity.GetUserId();
-            if (Session["Subjects"] != null && Session["Tags"] != null)
-                if ((int)Session["Subjects"] != Subjects || (string)Session["Tags"] != Tags)
-                    page = 1;
-            Session["Subjects"] = Subjects;
-            Session["Tags"] = Tags;
-            if (!string.IsNullOrEmpty(searchString))
+            if (Subjects != null)
+                Session["Subjects"] = Subjects;
+            else
+            {
+                if (Session["Subjects"] != null)
+                    Subjects = (int)Session["Subjects"];
+            }
+            if (!string.IsNullOrEmpty(Tags))
+                Session["Tags"] = Tags;
+            else
+            {
+                if (Session["Tags"] != null)
+                    Tags = (string)Session["Tags"];
+            }
+
+            if (searchString != null)
                 page = 1;
             else
                 searchString = currentFilter;
@@ -1759,16 +1748,13 @@ namespace FireTest.Controllers
                 Id = u.Id,
                 Name = u.Name
             }); //Записываем предметы в список
-            var selectList = tempSubjects //Добавляем выпадающий список из разрешенных предметов
+            ViewBag.Subjects = tempSubjects //Добавляем выпадающий список из разрешенных предметов
                     .Select(u => new SelectListItem()
                     {
                         Text = u.Name,
                         Value = u.Id.ToString(),
                         Selected = u.Id == Subjects
                     }).ToList();
-            ViewBag.Subjects = selectList;
-
-            List<string> tempTags;
 
             int sub; //Если выбран предмет то используем его, если нет, то выбираем первый в списке разрешенных
             if (Subjects != null)
@@ -1779,7 +1765,7 @@ namespace FireTest.Controllers
                 sub = Convert.ToInt32(userSubjects[0]);
             }
 
-            tempTags = dbContext.Questions
+            List<string> tempTags = dbContext.Questions
                 .Where(u => u.IdSubject == sub)
                 .Select(u => u.Tag).Distinct().ToList(); //Берем все разделы
             if (tempTags.Count == 0)
@@ -1789,59 +1775,41 @@ namespace FireTest.Controllers
             tempTags.Add("Без раздела");
             if (!tempTags.Contains(Tags))
                 Tags = "Все разделы";
-            selectList = tempTags //Выпадающий список разделов
+            ViewBag.Tags = tempTags //Выпадающий список разделов
                 .Select(u => new SelectListItem()
                 {
                     Value = u,
                     Text = u,
                     Selected = u == Tags
                 }).ToList();
-            ViewBag.Tags = selectList;
 
             var tempQuestions = dbContext.Questions //Берем все вопросы дисциплины
                 .Where(u => u.IdSubject == sub)
                 .Select(u => new {
                     Id = u.Id,
-                    Text = u.QuestionText
+                    Text = u.QuestionText,
+                    Tag = u.Tag
                 }).ToList();
+
+            //Оставляем вопросы дисциплины нужного раздела
             if (Tags != "Все разделы" && Tags != "Без раздела" && !string.IsNullOrEmpty(Tags))
-            {
-                tempQuestions = dbContext.Questions //Берем все вопросы дисциплины нужного раздела
-                    .Where(u => u.IdSubject == sub)
-                    .Where(u => u.Tag == Tags)
-                    .Select(u => new {
-                        Id = u.Id,
-                        Text = u.QuestionText
-                    }).ToList();
-            }
+                tempQuestions = tempQuestions.Where(u => u.Tag == Tags).ToList();
+
+            //Оставляем вопросы дисциплины без раздела
             if (Tags == "Без раздела")
-            {
-                tempQuestions = dbContext.Questions //Берем все вопросы дисциплины без раздела
-                    .Where(u => u.IdSubject == sub)
-                    .Where(u => string.IsNullOrEmpty(u.Tag))
-                    .Select(u => new {
-                        Id = u.Id,
-                        Text = u.QuestionText
-                    }).ToList();
-            }
+                tempQuestions = tempQuestions.Where(u => string.IsNullOrEmpty(u.Tag)).ToList();
+
+            //Оставляем вопросы согласно строке поиска
+            if (!String.IsNullOrEmpty(searchString))
+                tempQuestions = tempQuestions.Where(u => u.Text.ToLower().Contains(searchString.ToLower())).ToList();
 
             List<SubjectAccess> model = new List<SubjectAccess>(); //Использую это т.к. надо точно такие же поля
             foreach (var item in tempQuestions)
-            {
-                SubjectAccess subject = new SubjectAccess();
-                if (!String.IsNullOrEmpty(searchString) && item.Text.ToLower().Contains(searchString.ToLower()))
+                model.Add(new SubjectAccess
                 {
-                    subject.Id = item.Id;
-                    subject.Name = item.Text;
-                    model.Add(subject);
-                }
-                if (String.IsNullOrEmpty(searchString))
-                {
-                    subject.Id = item.Id;
-                    subject.Name = item.Text;
-                    model.Add(subject);
-                }
-            }
+                    Id = item.Id,
+                    Name = item.Text
+                });
 
             model = model.OrderBy(u => u.Name).ToList();
             int pageSize = 10;
@@ -2324,18 +2292,12 @@ namespace FireTest.Controllers
             var users = dbContext.Users.Where(u => u.Group == group);
 
             if (!String.IsNullOrEmpty(searchString))
-            {
-                var search = searchString.Split(' ');
-                //users = users
-                //    .Where(u => search.Contains(u.Family)
-                //            || search.Contains(u.Name)
-                //            || search.Contains(u.SubName)
-                //            );
-                users = users.Where(u => u.Family.Contains(searchString)
-                                       || u.Name.Contains(searchString)
-                                       || u.SubName.Contains(searchString)
-                                       );
-            }
+                foreach (var item in searchString.Split(' '))
+                    if (!String.IsNullOrEmpty(item))
+                        users = users.Where(u => u.Family.Contains(item)
+                                           || u.Name.Contains(item)
+                                           || u.SubName.Contains(item));
+
             foreach (var item in users)
             {
                 model.Add(new UsersForAdmin()

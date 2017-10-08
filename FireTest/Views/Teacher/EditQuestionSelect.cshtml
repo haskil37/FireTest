@@ -2,15 +2,21 @@
     ViewBag.Title = "Редактирование вопроса";
 }
 @Styles.Render("~/Content/administrator")
-<div class="text-success">@ViewBag.StatusMessage</div>
+@using (Ajax.BeginForm("EditQuestionSelectAjax", new AjaxOptions
+{
+    HttpMethod = "Get",
+    InsertionMode = InsertionMode.Replace,
+    UpdateTargetId = "Questions",
+}))
+{
+    <div class="text-success">@ViewBag.StatusMessage</div>
+    <div class="row">
+        <div class="col-2">Поиск</div>
+        <div class="col-10">
+            <input name="SearchString" type="text" oninput="$(this.form).submit();">
+        </div>
+    </div>
+}
 <div id="Questions">
     @{ Html.RenderAction("EditQuestionSelectAjax", new { Page = 1 }); }
 </div>
-@section scripts
-{
-    <script>
-    $('#SearchString').keyup(function () {
-        $(this.form).submit();
-    });
-    </script>
-}
