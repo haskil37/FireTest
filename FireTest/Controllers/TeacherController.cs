@@ -206,11 +206,6 @@ namespace FireTest.Controllers
         }
         public PartialViewResult CreateTestAjax(string currentFilter, string searchString, int? page, string NameTest, int? Subjects, string Tags, int? submitButton, List<int> Eval)
         {
-            //if (Session["Subjects"] != null && Session["Tags"] != null)
-            //    if ((int)Session["Subjects"] != Subjects || (string)Session["Tags"] != Tags)
-            //        page = 1;
-            //Session["Subjects"] = Subjects;
-            //Session["Tags"] = Tags;
             if (Subjects != null)
                 Session["Subjects"] = Subjects;
             else
@@ -1700,12 +1695,44 @@ namespace FireTest.Controllers
 
             string userId = User.Identity.GetUserId();
             var role = dbContext.Users.Find(userId).Roles.SingleOrDefault();
+            List<string> userSubjects = new List<string>(); //Берем в массив ид предметов у которых у нас доступ
             if (dbContext.Roles.Find(role.RoleId).Name != "ADMIN")
             {
                 string temp = dbContext.TeachersAccess.Where(u => u.TeacherId == userId).Select(u => u.TeacherSubjects).SingleOrDefault();
-                if (string.IsNullOrEmpty(temp))
+                if (!string.IsNullOrEmpty(temp))
+                    userSubjects = temp.Split('|').ToList();
+                else
                     return RedirectToAction("Error");
             }
+            else
+                userSubjects = dbContext.Subjects.Select(u => u.Id.ToString()).ToList();
+
+            ViewBag.Subjects = dbContext.Subjects.Where(u => userSubjects.Contains(u.Id.ToString())) //Добавляем выпадающий список из разрешенных предметов
+                    .Select(u => new SelectListItem()
+                    {
+                        Text = u.Name,
+                        Value = u.Id.ToString(),
+                    }).ToList();
+
+            userSubjects.Sort();
+            int sub = Convert.ToInt32(userSubjects[0]);
+            List<string> tempTags = dbContext.Questions
+                .Where(u => u.IdSubject == sub)
+                .Select(u => u.Tag).Distinct().ToList(); //Берем все разделы
+
+            if (tempTags.Count == 0)
+                tempTags.Add("Все разделы");
+            else
+                tempTags[0] = "Все разделы";
+            tempTags.Add("Без раздела");
+
+            ViewBag.Tags = tempTags //Выпадающий список разделов
+                .Select(u => new SelectListItem()
+                {
+                    Value = u,
+                    Text = u
+                }).ToList();
+            
             return View();
         }
         public PartialViewResult DeleteQuestionSelectAjax(string currentFilter, string searchString, int? page, string NameTest, int? Subjects, string Tags)
@@ -1732,35 +1759,22 @@ namespace FireTest.Controllers
                 searchString = currentFilter;
             ViewBag.CurrentFilter = searchString;
 
-            List<string> userSubjects = new List<string>(); //Берем в массив ид предметов у которых у нас доступ
-            var role = dbContext.Users.Find(userId).Roles.SingleOrDefault();
-            if (dbContext.Roles.Find(role.RoleId).Name != "ADMIN")
-            {
-                string temp = dbContext.TeachersAccess.Where(u => u.TeacherId == userId).Select(u => u.TeacherSubjects).SingleOrDefault();
-                if (!string.IsNullOrEmpty(temp))
-                    userSubjects = temp.Split('|').ToList();
-            }
-            else
-                userSubjects = dbContext.Subjects.Select(u => u.Id.ToString()).ToList();
-
-            var tempSubjects = dbContext.Subjects.Where(u => userSubjects.Contains(u.Id.ToString())).Select(u => new
-            {
-                Id = u.Id,
-                Name = u.Name
-            }); //Записываем предметы в список
-            ViewBag.Subjects = tempSubjects //Добавляем выпадающий список из разрешенных предметов
-                    .Select(u => new SelectListItem()
-                    {
-                        Text = u.Name,
-                        Value = u.Id.ToString(),
-                        Selected = u.Id == Subjects
-                    }).ToList();
-
             int sub; //Если выбран предмет то используем его, если нет, то выбираем первый в списке разрешенных
             if (Subjects != null)
                 sub = Subjects.Value;
             else
             {
+                List<string> userSubjects = new List<string>(); //Берем в массив ид предметов у которых у нас доступ
+                var role = dbContext.Users.Find(userId).Roles.SingleOrDefault();
+                if (dbContext.Roles.Find(role.RoleId).Name != "ADMIN")
+                {
+                    string temp = dbContext.TeachersAccess.Where(u => u.TeacherId == userId).Select(u => u.TeacherSubjects).SingleOrDefault();
+                    if (!string.IsNullOrEmpty(temp))
+                        userSubjects = temp.Split('|').ToList();
+                }
+                else
+                    userSubjects = dbContext.Subjects.Select(u => u.Id.ToString()).ToList();
+
                 userSubjects.Sort();
                 sub = Convert.ToInt32(userSubjects[0]);
             }
@@ -1775,13 +1789,14 @@ namespace FireTest.Controllers
             tempTags.Add("Без раздела");
             if (!tempTags.Contains(Tags))
                 Tags = "Все разделы";
-            ViewBag.Tags = tempTags //Выпадающий список разделов
-                .Select(u => new SelectListItem()
-                {
-                    Value = u,
-                    Text = u,
-                    Selected = u == Tags
-                }).ToList();
+
+            for (int i = 0; i < tempTags.Count(); i++) //Обновляем список разделов
+            {
+                if (tempTags[i] == Tags)
+                    ViewBag.Tags += "<option value=\"" + tempTags[i] + "\" selected=\"selected\">" + tempTags[i] + "</option>";
+                else
+                    ViewBag.Tags += "<option value=\"" + tempTags[i] + "\">" + tempTags[i] + "</option>";
+            }
 
             var tempQuestions = dbContext.Questions //Берем все вопросы дисциплины
                 .Where(u => u.IdSubject == sub)
