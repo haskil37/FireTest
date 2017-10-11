@@ -11,6 +11,18 @@
 {
     <div class="text-success">@ViewBag.StatusMessage</div>
     <div class="row">
+        <div class="col-2">Дисциплина</div>
+        <div class="col-10">
+            @Html.DropDownList("Subjects", ViewBag.Subjects as SelectList, new { @onchange = "$(this.form).submit();" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2">Название раздела</div>
+        <div class="col-10">
+            @Html.DropDownList("Tags", ViewBag.Tags as SelectList, new { @onchange = "$(this.form).submit();" })
+        </div>
+    </div>
+    <div class="row">
         <div class="col-2">Поиск</div>
         <div class="col-10">
             <input name="SearchString" type="text" oninput="$(this.form).submit();">

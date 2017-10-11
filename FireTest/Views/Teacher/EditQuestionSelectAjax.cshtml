@@ -8,18 +8,6 @@
 }))
 {
     @Html.Hidden("currentFilter", (string)ViewBag.CurrentFilter)
-    <div class="row">
-        <div class="col-2">Дисциплина</div>
-        <div class="col-10">
-            @Html.DropDownList("Subjects", ViewBag.Subjects as SelectList, new { @onchange = "$(this.form).submit();" })
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-2">Название раздела</div>
-        <div class="col-10">
-            @Html.DropDownList("Tags", ViewBag.Tags as SelectList, new { @onchange = "$(this.form).submit();" })
-        </div>
-    </div>
     <div>
         Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
         @Html.PagedListPager(Model, page => Url.Action("EditQuestionSelectAjax",
@@ -80,5 +68,8 @@
     </div>
     <script>
         MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'question']);
+        $('#Tags').empty();
+        $('#Tags').append('@Html.Raw(ViewBag.Tags)');
+        $('#Tags').trigger("chosen:updated");
     </script>
 }

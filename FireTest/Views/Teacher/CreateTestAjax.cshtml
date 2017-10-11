@@ -9,18 +9,6 @@
 {
     @Html.Hidden("currentFilter", (string)ViewBag.CurrentFilter)
     <div class="row">
-        <div class="col-2">Дисциплина</div>
-        <div class="col-10">
-            @Html.DropDownList("Subjects", ViewBag.Subjects as SelectList, new { @onchange = "$(this.form).submit();" })
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-2">Название раздела</div>
-        <div class="col-10">
-            @Html.DropDownList("Tags", ViewBag.Tags as SelectList, new { @onchange = "$(this.form).submit();" })
-        </div>
-    </div>
-    <div class="row">
         <div class="center textback">Укажите минимальный процент для получения оценки</div>
         <br />
         <div class="col-1 left">
@@ -100,5 +88,8 @@
     <script>
         MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'question']);
         $('#NameTest').val('@ViewBag.NameTest');
+        $('#Tags').empty();
+        $('#Tags').append('@Html.Raw(ViewBag.Tags)');
+        $('#Tags').trigger("chosen:updated");
     </script>
 }
