@@ -142,7 +142,7 @@ namespace FireTest.Controllers
                     {
                         if (item.Group != user.Group && item.TeacherId != user.Id)
                             continue;
-                        var end = dbContext.TestQualification.SingleOrDefault(u => u.IdExamination == item.Id);
+                        var end = dbContext.TestQualification.Where(u => u.IdUser == userId).SingleOrDefault(u => u.IdExamination == item.Id);
                         if (end == null || !end.End)
                         {
                             if (item.FinishTest)

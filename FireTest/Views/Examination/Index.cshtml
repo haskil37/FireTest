@@ -18,6 +18,7 @@
 }))
 {
     @Html.AntiForgeryToken()
+    @Html.Hidden("IDEXAM", (int)ViewBag.IDEXAM)
     <div id="question">
         <div class="row"><h3>Вопрос №@ViewBag.Number из @ViewBag.Count</h3></div>
         <div class="row"><h3>@Model.QuestionText</h3></div>
