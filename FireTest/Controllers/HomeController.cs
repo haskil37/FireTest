@@ -28,33 +28,15 @@ namespace FireTest.Controllers
                     //То должны вычитать 1, но т.к. начинаем мы не с 0 курса, а с первого то прибавляем 1.
                     //Итого получается, что мы не вычитаем и не прибавляем
                     int course = (zeroTime + diff).Year;
-                    //if (course <= 6)
-                    //{
-                    //    if (user.Group.Substring(0, 1) == "1") //Если ПБ
-                    //    {
-                    //        if (course < 6)
-                    //            user.Course = course;
-                    //        else
-                    //            user.Course = 100;
-                    //    }
-                    //    if (user.Group.Substring(0, 1) == "2") //Если ТБ
-                    //        user.Course = course;
-                    //    if (user.Group.Substring(0, 1) == "0") //Если платно
-                    //    {
-                    //        if (course < 5)
-                    //            user.Course = course;
-                    //        else
-                    //            user.Course = 100;
-                    //    }
-                    //}
-                    //else
-                    //    user.Course = 100;
                     user.Course = course;
-                    var vipusk = user.Group[1];
-                    if (vipusk == '1' && course >= 6)
-                        user.Course = 100;
-                    if (vipusk == '2' && course >= 5)
-                        user.Course = 100;
+                    if (user.Group.Length > 1)
+                    {
+                        var vipusk = user.Group[1];
+                        if (vipusk == '1' && course >= 6)
+                            user.Course = 100;
+                        if (vipusk == '2' && course >= 5)
+                            user.Course = 100;
+                    }
                     if (course > 6)
                         user.Course = 100;
 
@@ -125,7 +107,7 @@ namespace FireTest.Controllers
             switch (NewUser(userId))
             {
                 case true:
-                    return RedirectToAction("Index", "Manage", new { Message = ManageController.ManageMessageId.NewUser });
+                    return RedirectToAction("Index", "Manage");
                 default:
                     ApplicationUser user = dbContext.Users.Find(userId);
                     if (user == null)

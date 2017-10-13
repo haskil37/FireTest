@@ -178,7 +178,7 @@ namespace FireTest.Controllers
 
             await SignInManager.SignInAsync(UserManager.FindById(userId), isPersistent: true, rememberBrowser: true);
 
-            return RedirectToAction("Index", "Manage", new { Message = ManageController.ManageMessageId.NewUser });
+            return RedirectToAction("Index", "Manage");
         }
 
         //

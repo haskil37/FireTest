@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNet.Identity;
-using Microsoft.Owin.Security;
 
 namespace FireTest.Models
 {
@@ -16,6 +14,7 @@ namespace FireTest.Models
         [Required]
         [Display(Name = "Фамилия")]
         public string Family { get; set; }
+        public string Avatar { get; set; }
         [Required]
         [StringLength(4, ErrorMessage = "Год поступления должен состоять из 4 цифр.", MinimumLength = 4)]
         [Display(Name = "Год поступления")]
@@ -29,13 +28,19 @@ namespace FireTest.Models
         public string Age { get; set; }
         [Required]
         [Display(Name = "Пол")]
-        public string Sex { get; set; }
+        public bool Sex { get; set; }
         [Required]
         [Display(Name = "Регион поступления")]
         public string Region { get; set; }
+        public List<System.Web.Mvc.SelectListItem> RegionOptions { get; set; }
         [Required]
         [Display(Name = "Специальность")]
         public string Speciality { get; set; }
+        public List<System.Web.Mvc.SelectListItem> SpecialityOptions { get; set; }
+        [Required]
+        [Display(Name = "Факультет")]
+        public string Faculty { get; set; }
+        public List<System.Web.Mvc.SelectListItem> FacultyOptions { get; set; }
     }
 
     public class ChangePasswordViewModel
