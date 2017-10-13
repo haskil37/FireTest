@@ -103,10 +103,18 @@
                 <div class="row">
                     @Html.LabelFor(m => m.Sex, new { @class = "col-4" })
                     <div class="col-8">
-                        <input id="SexM" type="radio" name="Sex" value="true" @(Model.Sex ? "checked" : "") @(ViewBag.Editable ? "" : "disabled") />
-                        <label for="SexM"><span>М</span></label>
-                        <input id="SexF" type="radio" name="Sex" value="false" @(Model.Sex ? "" : "checked") @(ViewBag.Editable ? "" : "disabled") />                        
-                        <label for="SexF"><span>Ж</span></label>
+                        @if (ViewBag.Editable)
+                        {
+                            <input id="SexM" type="radio" name="Sex" value="true" @(Model.Sex ? "checked" : "")/>
+                            <label for="SexM"><span>М</span></label>
+                            <input id="SexF" type="radio" name="Sex" value="false" @(Model.Sex ? "" : "checked")/>
+                            <label for="SexF"><span>Ж</span></label>
+                        }
+                        else
+                        {
+                            <input type="radio" name="Sex" value="true" checked />
+                            <label for="SexM"><span>@(Model.Sex ? "М" : "Ж")</span></label>
+                        }
                     </div>
                 </div>
                 if (ViewBag.Editable && Model.Group != "Преподаватель")
