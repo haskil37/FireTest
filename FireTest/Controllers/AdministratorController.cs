@@ -81,12 +81,12 @@ namespace FireTest.Controllers
             List<UsersForAdmin> model = new List<UsersForAdmin>();
             var users = dbContext.Users.Where(u => u.Id != user);
 
-            if (!String.IsNullOrEmpty(searchString))
-                foreach (var item in searchString.Split(' '))
-                    if (!String.IsNullOrEmpty(item))
-                        users = users.Where(u => u.Family.Contains(item)
-                                           || u.Name.Contains(item)
-                                           || u.SubName.Contains(item));
+            if (!string.IsNullOrEmpty(searchString))
+                foreach (var item in searchString.ToLower().Split(' '))
+                    if (!string.IsNullOrEmpty(item))
+                        users = users.Where(u => u.Family.ToLower().Contains(item)
+                                           || u.Name.ToLower().Contains(item)
+                                           || u.SubName.ToLower().Contains(item));
 
             users = users.OrderBy(u => u.Family + " " + u.Name + " " + u.SubName);
             var emptycount = 1;
@@ -285,12 +285,12 @@ namespace FireTest.Controllers
                      .Where(u => u.Roles.Any(r => r.RoleId != "3")) //3 - это USER
                      .Where(u => u.Id != user);
 
-            if (!String.IsNullOrEmpty(searchString))
-                foreach (var item in searchString.Split(' '))
-                    if (!String.IsNullOrEmpty(item))
-                        users = users.Where(u => u.Family.Contains(item)
-                                           || u.Name.Contains(item)
-                                           || u.SubName.Contains(item));
+            if (!string.IsNullOrEmpty(searchString))
+                foreach (var item in searchString.ToLower().Split(' '))
+                    if (!string.IsNullOrEmpty(item))
+                        users = users.Where(u => u.Family.ToLower().Contains(item)
+                                           || u.Name.ToLower().Contains(item)
+                                           || u.SubName.ToLower().Contains(item));
 
             users = users.OrderBy(u => u.Family + " " + u.Name + " " + u.SubName);
             var emptycount = 1;
@@ -484,12 +484,12 @@ namespace FireTest.Controllers
                      .Where(u => u.Roles.Any(r => r.RoleId != "3")) //3 - это USER
                      .Where(u => u.Id != user);
 
-            if (!String.IsNullOrEmpty(searchString))
-                foreach (var item in searchString.Split(' '))
-                    if (!String.IsNullOrEmpty(item))
-                        users = users.Where(u => u.Family.Contains(item)
-                                           || u.Name.Contains(item)
-                                           || u.SubName.Contains(item));
+            if (!string.IsNullOrEmpty(searchString))
+                foreach (var item in searchString.ToLower().Split(' '))
+                    if (!string.IsNullOrEmpty(item))
+                        users = users.Where(u => u.Family.ToLower().Contains(item)
+                                           || u.Name.ToLower().Contains(item)
+                                           || u.SubName.ToLower().Contains(item));
 
             users = users.OrderBy(u => u.Family + " " + u.Name + " " + u.SubName);
 

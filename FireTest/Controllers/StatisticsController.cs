@@ -427,23 +427,10 @@ namespace FireTest.Controllers
         }
         public ActionResult Users()
         {
-            Session.Clear();
-            return View();
-        }
-        public PartialViewResult UsersAjax(string currentFilter, string searchString, int? page, string Group)
-        {
-            if (Session["Group"] != null)
-                if ((string)Session["Group"] != Group)
-                    page = 1;
-            Session["Group"] = Group;
-            if (!string.IsNullOrEmpty(searchString))
-                page = 1;
-            else
-                searchString = currentFilter;
-            ViewBag.CurrentFilter = searchString;
-
-            //var groups = dbContext.Users.Where(u => u.Course != 100).Select(u => u.Course + u.Group).Distinct().ToList();
-            var groups = dbContext.Users.Where(u => u.Course != 100).Select(u => u.Group).Distinct().ToList();
+            var groups = dbContext.Users
+                .Where(u => u.Course != 100)
+                .Where(u => !string.IsNullOrEmpty(u.Group))
+                .Select(u => u.Group).Distinct().ToList();
             if (groups == null)
                 RedirectToAction("Index", "Home");
             ViewBag.Group = groups //Выпадающий список групп
@@ -451,36 +438,36 @@ namespace FireTest.Controllers
                 {
                     Value = u,
                     Text = u,
-                    Selected = u == Group
                 }).ToList();
-            if (string.IsNullOrEmpty(Group))
-                ViewBag.Group.Insert(0, new SelectListItem { Text = " -- Выберите группу -- ", Selected = true, Disabled = true });
+            ViewBag.Group.Insert(0, new SelectListItem { Text = " -- Выберите группу -- ", Selected = true, Disabled = true });
+            return View();
+        }
+        public PartialViewResult UsersAjax(string currentFilter, string searchString, int? page, string Group)
+        {
+            if (!string.IsNullOrEmpty(searchString))
+                page = 1;
             else
-                ViewBag.Group.Insert(0, new SelectListItem { Text = " -- Выберите группу -- ", Disabled = true });
+                searchString = currentFilter;
+            ViewBag.CurrentFilter = searchString;
 
+            var users = dbContext.Users.Where(u => !string.IsNullOrEmpty(u.Group)).Where(u => u.Group == Group);
+
+            if (!string.IsNullOrEmpty(searchString))
+                foreach (var item in searchString.ToLower().Split(' '))
+                    if (!string.IsNullOrEmpty(item))
+                        users = users.Where(u => u.Family.ToLower().Contains(item)
+                                           || u.Name.ToLower().Contains(item)
+                                           || u.SubName.ToLower().Contains(item));
+
+            users = users.OrderBy(u => u.Family + " " + u.Name + " " + u.SubName);
             List<UsersForAdmin> model = new List<UsersForAdmin>(); //т.к. нам надо только имя и ид
-            //var users = dbContext.Users.Where(u => u.Course != 100).Where(u => u.Course + u.Group == Group).
-            var users = dbContext.Users.Where(u => u.Course != 100).Where(u => u.Group == Group).
-            Select(u => new {
-                    Id = u.Id,
-                    Name = u.Family + " " + u.Name + " " + u.SubName,
-                }).ToList();
-
             foreach (var item in users)
             {
-                UsersForAdmin user = new UsersForAdmin();
-                if (!String.IsNullOrEmpty(searchString) && item.Name.ToLower().Contains(searchString.ToLower()))
+                model.Add(new UsersForAdmin
                 {
-                    user.Id = item.Id;
-                    user.Name = item.Name;
-                    model.Add(user);
-                }
-                if (String.IsNullOrEmpty(searchString))
-                {
-                    user.Id = item.Id;
-                    user.Name = item.Name;
-                    model.Add(user);
-                }
+                    Id = item.Id,
+                    Name = item.Family + " " + item.Name + " " + item.SubName
+                });
             }
 
             model = model.OrderBy(u => u.Name).ToList();

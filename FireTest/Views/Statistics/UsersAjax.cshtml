@@ -7,14 +7,11 @@
     UpdateTargetId = "Users",
 }))
 {
-    <div class="row">
-        <div class="col-4">Группа</div>
-        <div class="col-8">
-            @Html.DropDownList("Group", ViewBag.Group as SelectList, new { @onchange = "$(this.form).submit();" })
-        </div>
-    </div>
-    <div class="row">
-        <h3>Поиск<span class="search"></span><input id="SearchString" name="SearchString" type="text" value="@ViewBag.CurrentFilter"></h3>
+    @Html.Hidden("currentFilter", (string)ViewBag.CurrentFilter)
+    <div>
+        Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
+        @Html.PagedListPager(Model, page => Url.Action("UsersAjax", new { page }),
+            PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "Users" }))
     </div>
     <div class="row">
         <table>
@@ -40,21 +37,7 @@
     </div>
     <div>
         Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
-        @Html.PagedListPager(Model, page => Url.Action("UsersAjax",
-            new { page, currentFilter = ViewBag.CurrentFilter, Group = Session["Group"] }),
+        @Html.PagedListPager(Model, page => Url.Action("UsersAjax", new { page }),
             PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "Users" }))
     </div>
-    <script>
-    (function ($) {
-        $.fn.setCursorToTextEnd = function () {
-            var $initialVal = this.val();
-            this.val($initialVal);
-    };
-    })(jQuery);
-    $('#SearchString').focus();
-    $('#SearchString').setCursorToTextEnd();
-    $('#SearchString').keyup(function () {
-        $(this.form).submit();
-    });
-    </script>
 }

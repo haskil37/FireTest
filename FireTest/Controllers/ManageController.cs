@@ -102,21 +102,12 @@ namespace FireTest.Controllers
             if (!ModelState.IsValid)
             {
                 var user = await UserManager.FindByIdAsync(UserId);
-                model = new IndexViewModel
-                {
-                    Name = user.Name,
-                    SubName = user.SubName,
-                    Family = user.Family,
-                    Avatar = "/Images/Avatars/" + user.Avatar,
-                    Year = user.Year != 0 ? user.Year.ToString() : "",
-                    Group = user.Group,
-                    Age = user.Age.ToString(),
-                    Sex = user.Sex,
-                    SpecialityOptions = Speciality(user.Speciality),
-                    FacultyOptions = Faculty(user.Faculty),
-                    RegionOptions = Region(user.Region)
-                };
+                model.Avatar = "/Images/Avatars/" + user.Avatar;
+                model.SpecialityOptions = Speciality(user.Speciality);
+                model.FacultyOptions = Faculty(user.Faculty);
+                model.RegionOptions = Region(user.Region);
 
+                ViewBag.Editable = true;
                 if (user.Course == 100)
                 {
                     var role = dbContext.Users.Find(UserId).Roles.SingleOrDefault();
