@@ -1,12 +1,19 @@
 ﻿@{
     ViewBag.Title = "Статистика";
 }
+<div id="loadingIndicator" style="display:none;">
+    <div class="container">
+        <div class="wheel"></div>
+    </div>
+    <h3 class="center">Загрузка</h3>
+</div>
 @Styles.Render("~/Content/statistic")
 @using (Ajax.BeginForm("Groups", new AjaxOptions
 {
     HttpMethod = "Post",
     InsertionMode = InsertionMode.Replace,
     UpdateTargetId = "Charts",
+    LoadingElementId = "loadingIndicator",
 }))
 {
     <div class="row">

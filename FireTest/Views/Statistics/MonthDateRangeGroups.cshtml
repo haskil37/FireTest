@@ -32,7 +32,12 @@
                 },
                 ticks: {
                     fontColor: "rgb(255, 115, 0)",
-                    stepSize: 1
+                    beginAtZero: true,
+                    callback: function (value, index, values) {
+                        if (Math.floor(value) === value) {
+                            return value;
+                        }
+                    }
                 },
             }],
         }
@@ -91,13 +96,13 @@
     });
 </script>
 <div class="row">
-    <div class="textback">Сколько человек из @ViewBag.TitleChart группы проходили тесты по уровням подготовки @ViewBag.Range</div>
+    <div class="textback">Сколько человек из @ViewBag.TitleChart группы проходили тесты по уровням подготовки</div>
 </div>
 <div class="row centerChart">
     <canvas id="lineChartQ" />
 </div>
 <div class="row">
-    <div class="textback">Сколько человек из @ViewBag.TitleChart группы проходили тесты по отдельным дисциплинам @ViewBag.Range</div>
+    <div class="textback">Сколько человек из @ViewBag.TitleChart группы проходили тесты по отдельным дисциплинам</div>
 </div>
 <div class="row centerChart">
     <canvas id="lineChartD" />
