@@ -4,7 +4,7 @@ using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using EntityFramework.Extensions;
 using System.Web.Mvc;
 
 namespace FireTest.Controllers
@@ -176,90 +176,47 @@ namespace FireTest.Controllers
                 var users = dbContext.Users
                     .Where(u => u.Course != 100)
                     .Where(u => u.Group == Groups)
-                                        //.Where(u => u.Course + u.Group == Groups)
-
                     .Select(u => u.Id).ToList();
-                int range = 0;
 
-                List<bool> selected = new List<bool>() { false, false, false };
-
-                switch (DateRange)
-                {
-                    case 1:
-                        range = 1;
-                        selected[0] = true;
-                        ViewBag.Range = "за последний месяц";
-                        break;
-                    case 2:
-                        range = 3;
-                        selected[1] = true;
-                        ViewBag.Range = "за последние 3 месяца";
-                        break;
-                    case 3:
-                        range = 6;
-                        selected[2] = true;
-                        ViewBag.Range = "за последние 6 месяцев";
-                        break;
-                }
+                int range = DateRange.Value * (DateRange.Value + 1) / 2;
                 var today = DateTime.Today.AddDays(1);
                 var beforeMonth = new DateTime(today.Year, today.Month - range, today.Day);
 
-                List<DateTime> allDates = new List<DateTime>();
+                Dictionary<DateTime, int> SelfyD = new Dictionary<DateTime, int>();
+                Dictionary<DateTime, int> SelfyQ = new Dictionary<DateTime, int>();
+
                 for (DateTime date = beforeMonth; date < today; date = date.AddDays(1))
-                    allDates.Add(date);
-                string osX = "";
-                List<int> osYD = new List<int>();
-                List<int> osYQ = new List<int>();
-                foreach (var item in allDates)
                 {
-                    osX += item.Day + "." + item.Month + ",";
-                    osYD.Add(0);
-                    osYQ.Add(0);
+                    SelfyD.Add(date, 0);
+                    SelfyQ.Add(date, 0);
                 }
-                osX = osX.Substring(0, osX.Length - 1);
                 foreach (var item in users)
                 {
                     var temp = dbContext.SelfyTestQualifications.
                         Where(u => u.IdUser == item).
                         Where(u => u.TimeStart >= beforeMonth).
-                        Where(u => u.TimeStart < today).Select(u => u.TimeStart).ToList();
-                    var allSelfyQualifications = temp.Select(u => u.ToString("dd.MM.yyyy")).Distinct().ToList();
-                    foreach (var date in allSelfyQualifications)
-                    {
-                        var tempDate = new DateTime(today.Year, DateTime.Parse(date).Month, DateTime.Parse(date).Day);
-                        var index = allDates.IndexOf(tempDate);
-                        osYQ[index] += 1;
-                    }
-                    temp = dbContext.SelfyTestDisciplines.
+                        Where(u => u.TimeStart < today).Future().Select(u => u.TimeStart.Date).Distinct();
+                    var temp2 = dbContext.SelfyTestDisciplines.
                         Where(u => u.IdUser == item).
                         Where(u => u.TimeStart >= beforeMonth).
-                        Where(u => u.TimeStart < today).Select(u => u.TimeStart).ToList();
-                    var allSelfyDisciplines = temp.Select(u => u.ToString("dd.MM.yyyy")).Distinct().ToList();
+                        Where(u => u.TimeStart < today).Future().Select(u => u.TimeStart.Date).Distinct();
 
-                    foreach (var date in allSelfyDisciplines)
-                    {
-                        var tempDate = new DateTime(today.Year, DateTime.Parse(date).Month, DateTime.Parse(date).Day);
-                        var index = allDates.IndexOf(tempDate);
-                        osYD[index] += 1;
-                    }
+                    foreach (var date in temp)
+                        SelfyQ[date] += 1;
+                    foreach (var date in temp2)
+                        SelfyD[date] += 1;
                 }
-                ViewBag.osXD = osX;
-                ViewBag.osYD = "";
-                foreach (var item in osYD)
-                    ViewBag.osYD += item + ",";
-
-                ViewBag.osXQ = osX;
-                ViewBag.osYQ = "";
-                foreach (var item in osYQ)
-                    ViewBag.osYQ += item + ",";
-
-                ViewBag.DateRange = new[]{
-                 new SelectListItem{ Text=" -- Выберите период -- ", Disabled=true},
-                 new SelectListItem{ Value="1",Text="За последний месяц", Selected=selected[0]},
-                 new SelectListItem{ Value="2",Text="За последние 3 месяца", Selected=selected[1]},
-                 new SelectListItem{ Value="3",Text="За последние 6 месяцев", Selected=selected[2]},
-                }.ToList();
-
+                foreach (var item in SelfyQ)
+                {
+                    ViewBag.osXQ += "'" + item.Key.Date.ToString("d MMMM") + "',";
+                    ViewBag.osYQ += item.Value + ",";
+                }
+                foreach (var item in SelfyD)
+                {
+                    ViewBag.osXD += "'" + item.Key.Date.ToString("d MMMM") + "',";
+                    ViewBag.osYD += item.Value + ",";
+                }
+                ViewBag.DateRange = ListDataRange(DateRange.Value); //Выпадающий список периодов
                 return PartialView("MonthDateRangeGroups");
             }
             return PartialView();
@@ -995,6 +952,23 @@ namespace FireTest.Controllers
                 return PartialView("CompareCoursesRange");
             }
             return PartialView();
+        }
+
+        private List<SelectListItem> ListDataRange(int DataRange)
+        {
+            Dictionary<int, string> DateRangeDB = new Dictionary<int, string>
+            {
+                {1,"За последний месяц"},
+                {2,"За последние 3 месяца" },
+                {3,"За последние 6 месяцев" },
+            };
+            List<SelectListItem> ListDataRange = new List<SelectListItem>
+            {
+                new SelectListItem { Text = " -- Выберите период -- ", Disabled = true }
+            };
+            foreach (var item in DateRangeDB)
+                ListDataRange.Add(new SelectListItem { Value = item.Key.ToString(), Text = item.Value, Selected = item.Key == DataRange ? true : false });
+            return ListDataRange;
         }
     }
 }

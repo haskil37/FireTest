@@ -821,22 +821,8 @@ namespace FireTest.Controllers
         public ActionResult NewQuestion(string Message, int? Department, int? Subject, int? Course)
         {
             ViewBag.StatusMessage = Message;
-            string userId = User.Identity.GetUserId();
-
-            List<string> userSubjects = new List<string>(); //Берем в массив ид предметов у которых у нас доступ
-            var role = dbContext.Users.Find(userId).Roles.SingleOrDefault();
-            if (dbContext.Roles.Find(role.RoleId).Name != "ADMIN")
-            {
-                string temp = dbContext.TeachersAccess.Where(u => u.TeacherId == userId).Select(u => u.TeacherSubjects).SingleOrDefault();
-                if (!string.IsNullOrEmpty(temp))
-                    userSubjects = temp.Split('|').ToList();
-                else
-                    return RedirectToAction("Error");
-            }
-            else
-                userSubjects = dbContext.Subjects.Select(u => u.Id.ToString()).ToList();
-
-            var tempSubjects = dbContext.Subjects.Where(u => userSubjects.Contains(u.Id.ToString())).Select(u => new
+            List<int> userSubjects = GetSubjects();
+            var tempSubjects = dbContext.Subjects.Where(u => userSubjects.Contains(u.Id)).Select(u => new
             {
                 Id = u.Id,
                 Name = u.Name
@@ -857,8 +843,7 @@ namespace FireTest.Controllers
                    Selected = u.Id == Department
                }).ToList();
 
-            List<int> tempCourses = new List<int>() { 1, 2, 3, 4, 5 }; //Добавляем выпадающий список курсов
-            ViewBag.Courses = tempCourses
+            ViewBag.Courses = new List<int>() { 1, 2, 3, 4, 5 } //Список курсов
                .Select(u => new SelectListItem()
                {
                    Text = "Курс " + u.ToString(),
@@ -874,51 +859,35 @@ namespace FireTest.Controllers
         {
             if (!ModelState.IsValid || Type != 1)
             {
-                string userId = User.Identity.GetUserId();
-
-                List<string> userSubjects = new List<string>(); //Берем в массив ид предметов у которых у нас доступ
-                var role = dbContext.Users.Find(userId).Roles.SingleOrDefault();
-                if (dbContext.Roles.Find(role.RoleId).Name != "ADMIN")
-                {
-                    string temp = dbContext.TeachersAccess.Where(u => u.TeacherId == userId).Select(u => u.TeacherSubjects).SingleOrDefault();
-                    if (!string.IsNullOrEmpty(temp))
-                        userSubjects = temp.Split('|').ToList();
-                }
-                else
-                    userSubjects = dbContext.Subjects.Select(u => u.Id.ToString()).ToList();
-
-                var tempSubjects = dbContext.Subjects.Where(u => userSubjects.Contains(u.Id.ToString())).Select(u => new
+                List<int> userSubjects = GetSubjects();
+                var tempSubjects = dbContext.Subjects.Where(u => userSubjects.Contains(u.Id)).Select(u => new
                 {
                     Id = u.Id,
                     Name = u.Name
                 }); //Записываем предметы в список
-                var selectList = tempSubjects //Добавляем выпадающий список из разрешенных предметов
+                ViewBag.Subjects = tempSubjects //Добавляем выпадающий список из разрешенных предметов
                         .Select(u => new SelectListItem()
                         {
                             Text = u.Name,
                             Value = u.Id.ToString(),
                             Selected = u.Id == Subjects
                         }).ToList();
-                ViewBag.Subjects = selectList;
 
-                selectList = dbContext.Departments //Добавляем выпадающий список из кафедр
+                ViewBag.Departments = dbContext.Departments //Добавляем выпадающий список из кафедр
                    .Select(u => new SelectListItem()
                    {
                        Text = u.Name,
                        Value = u.Id.ToString(),
                        Selected = u.Id == Departments
                    }).ToList();
-                ViewBag.Departments = selectList;
 
-                List<int> tempCourses = new List<int>() { 1, 2, 3, 4, 5 }; //Добавляем выпадающий список курсов
-                selectList = tempCourses
+                ViewBag.Courses = new List<int>() { 1, 2, 3, 4, 5 } //Список курсов
                    .Select(u => new SelectListItem()
                    {
-                       Text = "Курс "+u.ToString(),
+                       Text = "Курс " + u.ToString(),
                        Value = u.ToString(),
                        Selected = u == Courses
                    }).ToList();
-                ViewBag.Courses = selectList;
                 ViewBag.Type = Type;
                 if (Type == 1)
                     return View(model);
