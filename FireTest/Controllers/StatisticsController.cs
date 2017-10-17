@@ -366,6 +366,14 @@ namespace FireTest.Controllers
         }
         public PartialViewResult UsersAjax(string currentFilter, string searchString, int? page, string Group)
         {
+            if (!string.IsNullOrEmpty(Group))
+                Session["Group"] = Group;
+            else
+            {
+                if (Session["Group"] != null)
+                    Group = (string)Session["Group"];
+            }
+
             if (!string.IsNullOrEmpty(searchString))
                 page = 1;
             else
