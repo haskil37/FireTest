@@ -967,6 +967,7 @@ li.sortable-placeholder {
     position: relative;
     cursor: pointer;
 }
+
 #users .parent {
     width: 100%;
     display: block;
@@ -978,13 +979,24 @@ li.sortable-placeholder {
     text-align: center;
     word-wrap: break-word;
     overflow: hidden;
+    border-radius: 10px;
 }
-#users .parent img {
-    width: 50px;
-    border-radius: 50%;
-    float: left;
-    margin: 5px;
-}
+
+    #users .parent:hover {
+        -webkit-box-shadow: 0px 0px 30px 0px rgba(196,189,151,1);
+        -moz-box-shadow: 0px 0px 30px 0px rgba(196,189,151,1);
+        box-shadow: 0px 0px 30px 0px rgba(196,189,151,1);
+    }
+    #users .parent img {
+        width: 50px;
+        border-radius: 50%;
+        float: left;
+        margin: 5px;
+    }
+
+    #users .parent h3 {
+        text-align: left;
+    }
 #users .content {
     position: absolute;
     bottom: 0;
@@ -994,6 +1006,7 @@ li.sortable-placeholder {
     padding-top: 60px;
     -webkit-transition: height .5s ease;
     -webkit-transition-delay: .4s;
+    width: 100%
 }
 #users .wrapper:active .content {
     z-index: 3;
