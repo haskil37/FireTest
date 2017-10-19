@@ -12,6 +12,7 @@
     }))
     {
         @Html.AntiForgeryToken();
+        @Html.Hidden("idtest", (int)ViewBag.Id);
         <div class="row center"><h3>Выберите курс</h3></div>
         <div id="DisciplinesCourse" class="row">
             <div class="col-offset-1 col-2">

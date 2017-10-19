@@ -196,92 +196,75 @@ namespace FireTest.Controllers
         [ValidateAntiForgeryToken]
         public PartialViewResult Questions(List<int> AnswersIDs, int? IDEXAM)
         {
-            try
+            ViewBag.IDEXAM = IDEXAM.Value;
+            string user = User.Identity.GetUserId();
+            var test = dbContext.TestQualification //Берем id теста
+                .Where(u => u.IdUser == user)
+                .Where(u => string.IsNullOrEmpty(u.Questions) != true)
+                .Where(u => u.End == false)
+                .Where(u => u.IdExamination == IDEXAM)
+                .Select(u => new
+                {
+                    id = u.Id,
+                    questions = u.Questions,
+                    answers = u.Answers,
+                    idExam = u.IdExamination,
+                    start = u.TimeStart
+                }).SingleOrDefault();
+            var exam = dbContext.Examinations
+                .Where(u => u.Id == test.idExam)
+                .Select(u => new
+                {
+                    Name = u.Name,
+                    Time = u.Time,
+                }).SingleOrDefault();
+            var tempTime = test.start.AddMinutes(exam.Time) - DateTime.Now;
+            ViewBag.TimeMin = tempTime.Minutes;
+            ViewBag.TimeSec = tempTime.Seconds;
+            if (test.start.AddMinutes(exam.Time) <= DateTime.Now) //Проверяем если превысили время 
             {
-                ViewBag.IDEXAM = IDEXAM.Value;
-                string user = User.Identity.GetUserId();
-                var test = dbContext.TestQualification //Берем id теста
-                    .Where(u => u.IdUser == user)
-                    .Where(u => string.IsNullOrEmpty(u.Questions) != true)
-                    .Where(u => u.End == false)
-                    .Where(u => u.IdExamination == IDEXAM)
-                    .Select(u => new
-                    {
-                        id = u.Id,
-                        questions = u.Questions,
-                        answers = u.Answers,
-                        idExam = u.IdExamination,
-                        start = u.TimeStart
-                    }).SingleOrDefault();
-                var exam = dbContext.Examinations
-                    .Where(u => u.Id == test.idExam)
-                    .Select(u => new
-                    {
-                        Name = u.Name,
-                        Time = u.Time,
-                        //Finish = u.FinishTest
-                    }).SingleOrDefault();
-                var tempTime = test.start.AddMinutes(exam.Time) - DateTime.Now;
-                ViewBag.TimeMin = tempTime.Minutes;
-                ViewBag.TimeSec = tempTime.Seconds;
-                if (test.start.AddMinutes(exam.Time) <= DateTime.Now) //Проверяем если превысили время 
+                var elapsed = dbContext.TestQualification.Find(test.id);
+                int questionsCount = elapsed.Questions.Split('|').ToList().Count();
+                int answersCount = 0;
+                if (!string.IsNullOrEmpty(elapsed.Answers))
+                    answersCount = elapsed.Answers.Split('|').ToList().Count();
+                if (questionsCount - answersCount != 0) //Если ответов меньше чем вопросов
                 {
-                    var elapsed = dbContext.TestQualification.Find(test.id);
-                    int questionsCount = elapsed.Questions.Split('|').ToList().Count();
-                    int answersCount = 0;
-                    if (!string.IsNullOrEmpty(elapsed.Answers))
-                        answersCount = elapsed.Answers.Split('|').ToList().Count();
-                    if (questionsCount - answersCount != 0) //Если ответов меньше чем вопросов
-                    {
-                        string answers = "0";
-                        for (int i = 1; i < questionsCount - answersCount; i++)
-                            answers = answers + "|0";
-                        elapsed.Answers += answers;
-                        elapsed.RightOrWrong += answers;
-                        ViewBag.ExaminationEnd = true;
-                        dbContext.SaveChanges();
-                        return PartialView();
-                    }
-                }
-                if (!SaveAnswer(test.id, AnswersIDs))
-                    return PartialView();
-
-                int count = test.questions.Split('|').ToList().Count(); //Общее количество вопросов
-                int number = 0;
-                if (test.answers != null)
-                    number = test.answers.Split('|').ToList().Count() + 1; //Общее количество ответов +1, т.к. запрос был раньше чем добавлен в базу новый ответ.
-                else
-                    number = 1; //Общее количество ответов 1, т.к. запрос был раньше чем добавлен в базу новый ответ.
-
-                if (count == number) //Если ответов столько же сколько и вопросов то идем на страницу статистики.
-                {
-                    //TestQualification testEnd = dbContext.TestQualification.Find(test.id); //Заканчиваем тест
-                    //testEnd.End = true;
-                    //dbContext.SaveChanges();
-
+                    string answers = "0";
+                    for (int i = 1; i < questionsCount - answersCount; i++)
+                        answers = answers + "|0";
+                    elapsed.Answers += answers;
+                    elapsed.RightOrWrong += answers;
                     ViewBag.ExaminationEnd = true;
+                    dbContext.SaveChanges();
                     return PartialView();
-                }
-                else //Иначе продолжаем тестирование
-                {
-                    ViewBag.Count = count;
-                    ViewBag.Number = number + 1;
-                    ViewBag.ExaminationName = exam.Name;
-                    ViewBag.ExaminationEnd = false;
-
-                    Questions model = new Questions();
-                    //if (exam.Finish)
-                    //    model = SelectQuestion(test.id, true);
-                    //else
-                    //    model = SelectQuestion(test.id, false);
-                    model = SelectQuestion(test.id);
-                    return PartialView(model);
                 }
             }
-            catch (Exception ex)
+            if (!SaveAnswer(test.id, AnswersIDs))
+                return PartialView();
+
+            int count = test.questions.Split('|').ToList().Count(); //Общее количество вопросов
+            int number = 0;
+            if (test.answers != null)
+                number = test.answers.Split('|').ToList().Count() + 1; //Общее количество ответов +1, т.к. запрос был раньше чем добавлен в базу новый ответ.
+            else
+                number = 1; //Общее количество ответов 1, т.к. запрос был раньше чем добавлен в базу новый ответ.
+
+            if (count == number) //Если ответов столько же сколько и вопросов то идем на страницу статистики.
             {
-                ViewBag.Message = ex;
-                return PartialView("Error");
+                ViewBag.ExaminationEnd = true;
+                return PartialView();
+            }
+            else //Иначе продолжаем тестирование
+            {
+                ViewBag.Count = count;
+                ViewBag.Number = number + 1;
+                ViewBag.ExaminationName = exam.Name;
+                ViewBag.ExaminationEnd = false;
+
+                Questions model = new Questions();
+                model = SelectQuestion(test.id);
+                return PartialView(model);
             }
         }
         public ActionResult End(int? IDEXAM)

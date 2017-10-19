@@ -29,7 +29,7 @@ namespace FireTest.Controllers
                     id = u.Id,
                     questions = u.Questions,
                     idSubject = u.IdSubject,
-                }).SingleOrDefault();
+                }).FirstOrDefault();
             ViewBag.Сompleted = true;
 
             if (end != null)
@@ -66,31 +66,29 @@ namespace FireTest.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public PartialViewResult IndexCount(int course = 1)
+        public PartialViewResult IndexCount(int idtest, int course = 1)
         {
-            if (!ModelState.IsValid || course < 1 || course > 5)
-                return PartialView();
+            try
+            {
+                if (!ModelState.IsValid || course < 1 || course > 5)
+                    return PartialView();
 
-            ViewBag.Course = course;
-            string user = User.Identity.GetUserId();
+                ViewBag.Course = course;
 
-            var idSubject = dbContext.SelfyTestDisciplines //Берем id предмета
-                    .Where(u => u.IdUser == user)
-                    .Where(u => u.End == false)
-                    .Select(u => new {
-                        id = u.IdSubject,
-                    }).SingleOrDefault();
+                var idSubject = dbContext.SelfyTestDisciplines //Берем id предмета
+                        .SingleOrDefault(u => u.Id == idtest).IdSubject;
 
-            int count = dbContext.Questions
-                        .Where(u => u.IdSubject == idSubject.id)
-                        .Where(u => u.IdCourse == course).Count();
-            ViewBag.Count = count;
-            //ViewBag.CountMax = 0;
-            //if (count < 100) //Если вопросов меньше 100, то изменяем максимум ползунка
-            //{
-             ViewBag.CountMax = Math.Ceiling(count / 10.0);
-            //}
-
+                int count = dbContext.Questions
+                            .Where(u => u.IdSubject == idSubject)
+                            .Where(u => u.IdCourse == course).Count();
+                ViewBag.Count = count;
+                ViewBag.CountMax = Math.Ceiling(count / 10.0);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Message = ex;
+                return PartialView("Error");
+            }
             return PartialView();
         }
         [HttpPost]
