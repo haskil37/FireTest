@@ -10,17 +10,17 @@
 }))
 {
     <div class="row">
-        <h3>Поиск<span class="search"></span><input id="SearchString" name="SearchString" type="text"></h3>
+        <div class="col-2">Поиск</div>
+        <div class="col-10">
+            <input name="SearchString" type="text" oninput="$(this.form).submit();">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-10 col-offset-2">
+            <p>Поиск осуществляется по фамилии, имени, отчеству, группе и СНИЛС</p>
+        </div>
     </div>
 }
 <div id="Users">
     @{ Html.RenderAction("UsersAjax", new { Page = 1}); }
 </div>
-@section scripts
-{
-    <script>
-    $('#SearchString').keyup(function () {
-        $(this.form).submit();
-    });
-    </script>
-}

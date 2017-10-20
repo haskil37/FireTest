@@ -84,9 +84,18 @@ namespace FireTest.Controllers
             if (!string.IsNullOrEmpty(searchString))
                 foreach (var item in searchString.ToLower().Split(' '))
                     if (!string.IsNullOrEmpty(item))
+                    {
                         users = users.Where(u => u.Family.ToLower().Contains(item)
                                            || u.Name.ToLower().Contains(item)
-                                           || u.SubName.ToLower().Contains(item));
+                                           || u.SubName.ToLower().Contains(item)
+                                           || u.Group.ToLower().Contains(item)
+                                           || u.Snils.ToLower().Contains(item));
+                        if ("преподаватель".Contains(item.ToLower()) || "администратор".Contains(item.ToLower()))
+                        {
+                            var newusers = dbContext.Users.Where(u => u.Id != user).Where(u => u.Group == "-1");
+                            users = users.Union(newusers);
+                        }
+                    }
 
             users = users.OrderBy(u => u.Family + " " + u.Name + " " + u.SubName);
             var emptycount = 1;
@@ -290,7 +299,8 @@ namespace FireTest.Controllers
                     if (!string.IsNullOrEmpty(item))
                         users = users.Where(u => u.Family.ToLower().Contains(item)
                                            || u.Name.ToLower().Contains(item)
-                                           || u.SubName.ToLower().Contains(item));
+                                           || u.SubName.ToLower().Contains(item)
+                                           || u.Snils.ToLower().Contains(item));
 
             users = users.OrderBy(u => u.Family + " " + u.Name + " " + u.SubName);
             var emptycount = 1;
@@ -300,6 +310,7 @@ namespace FireTest.Controllers
                 if (emptycount >= (pageNumber - 1) * pageSize + 1 && emptycount <= pageNumber * pageSize)
                 {
                     temp.Id = item.Id + "|" + searchString;
+                    temp.Snils = item.Snils;
                     temp.Avatar = item.Avatar;
                     temp.Name = item.Family + " " + item.Name + " " + item.SubName;
                     var teacherQ = dbContext.TeachersAccess.SingleOrDefault(u => u.TeacherId == item.Id);
