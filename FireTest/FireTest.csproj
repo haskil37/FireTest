@@ -439,6 +439,7 @@
     <Content Include="Images\Questions\03.JPG" />
     <Content Include="Images\Questions\04.JPG" />
     <Content Include="Images\Questions\05.JPG" />
+    <Content Include="robots.txt" />
     <Content Include="Scripts\avatar.js" />
     <Content Include="Scripts\audio.js" />
     <Content Include="Scripts\bootstrap-datepicker.js" />

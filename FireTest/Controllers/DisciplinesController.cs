@@ -36,10 +36,25 @@ namespace FireTest.Controllers
             {
                 if (!string.IsNullOrEmpty(end.questions)) //Если незаконченный тест, то предлагаем закончить
                 {
-                    ViewBag.DisciplineName = dbContext.Subjects.Find(end.idSubject).Name;
-                    ViewBag.Id = end.id;
-                    ViewBag.EndId = id;
-                    ViewBag.Сompleted = false;
+                    var name = dbContext.Subjects.Find(end.idSubject);
+                    if (name != null)
+                    {
+                        ViewBag.DisciplineName = name.Name;
+                        ViewBag.Id = end.id;
+                        ViewBag.EndId = id;
+                        ViewBag.Сompleted = false;
+                    }
+                    else
+                    {   
+                        //Если такой дисциплины больше нет, но тест не закончен - обнуляем
+                        SelfyTestDiscipline continueTest = dbContext.SelfyTestDisciplines.Find(end.id);
+                        continueTest.IdSubject = id;
+                        continueTest.Questions = null;
+                        continueTest.Answers = null;
+                        continueTest.RightOrWrong = null;
+                        dbContext.SaveChanges();
+                        ViewBag.Id = end.id;
+                    }
                 }
                 else  //Если пустой тест, то меняем значение предмета
                 {
