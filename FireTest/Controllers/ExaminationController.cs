@@ -302,7 +302,7 @@ namespace FireTest.Controllers
             if (test.start.AddMinutes(exam.Time) <= DateTime.Now)
                 ViewBag.Time = exam.Time;
             else
-                ViewBag.Time = (DateTime.Now - test.start).Minutes;
+                ViewBag.Time = (DateTime.Now - test.start).TotalMinutes;
 
             TestQualification testEnd = dbContext.TestQualification.Find(test.id); //Заканчиваем тест
             testEnd.End = true;
