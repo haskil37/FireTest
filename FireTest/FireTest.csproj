@@ -265,6 +265,10 @@
     <Compile Include="Migrations\201710011151065_addCountTestQuestions.Designer.cs">
       <DependentUpon>201710011151065_addCountTestQuestions.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201710311854331_addTimeEnd.cs" />
+    <Compile Include="Migrations\201710311854331_addTimeEnd.Designer.cs">
+      <DependentUpon>201710311854331_addTimeEnd.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Decliner.cs" />
@@ -2635,6 +2639,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201710011151065_addCountTestQuestions.resx">
       <DependentUpon>201710011151065_addCountTestQuestions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710311854331_addTimeEnd.resx">
+      <DependentUpon>201710311854331_addTimeEnd.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

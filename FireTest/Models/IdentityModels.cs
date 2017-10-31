@@ -373,6 +373,7 @@ namespace FireTest.Models
         public string Answers { get; set; }
         public string RightOrWrong { get; set; }
         public System.DateTime TimeStart { get; set; }
+        public System.DateTime TimeEnd { get; set; }
         public int Score { get; set; }
         public bool End { get; set; }
     }

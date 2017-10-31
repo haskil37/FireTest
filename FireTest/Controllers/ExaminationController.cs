@@ -109,7 +109,8 @@ namespace FireTest.Controllers
                 {
                     IdUser = userId,
                     IdExamination = id.Value,
-                    TimeStart = DateTime.Now
+                    TimeStart = DateTime.Now,
+                    TimeEnd = DateTime.Now
                 };
                 string examQuestions = "";
                 if (!exam.Finish)
@@ -299,14 +300,16 @@ namespace FireTest.Controllers
                     Time = u.Time,
                     FinishTest = u.FinishTest
                 }).SingleOrDefault();
-            if (test.start.AddMinutes(exam.Time) <= DateTime.Now)
-                ViewBag.Time = exam.Time;
-            else
-                ViewBag.Time = (DateTime.Now - test.start).TotalMinutes;
 
             TestQualification testEnd = dbContext.TestQualification.Find(test.id); //Заканчиваем тест
             testEnd.End = true;
+            testEnd.TimeEnd = DateTime.Now;
             ViewBag.ExaminationName = exam.Name;
+
+            if (test.start.AddMinutes(exam.Time) <= testEnd.TimeEnd)
+                ViewBag.Time = exam.Time;
+            else
+                ViewBag.Time = (int)(testEnd.TimeEnd - test.start).TotalMinutes;
 
             List<string> right = new List<string>(); //Берем правильные и неправильные ответы и из каких они дисциплин
             List<string> wrong = new List<string>();
@@ -392,7 +395,7 @@ namespace FireTest.Controllers
             if (IdQua != 0 && Eval != 2)
             {
                 string quapoint = userBusy.QualificationPoint;
-                //От идКвалификации зависbт на какой позиции менять оценку. Маска _|_|_|_|_
+                //От идКвалификации зависит на какой позиции менять оценку. Маска _|_|_|_|_
                 //                                                                0 2 4 6 8                
                 var index = 2 * IdQua - 2; // 1->0; 2->2; 3->4; 4->6; 5->8
                 quapoint = quapoint.Remove(index, 1).Insert(index, Eval.ToString());
@@ -400,7 +403,7 @@ namespace FireTest.Controllers
             }
             dbContext.SaveChanges();
             ViewBag.Avatar = "/Images/Avatars/" + userBusy.Avatar;
-
+            ViewBag.Name = userBusy.Family + " " + userBusy.Name + " " + userBusy.SubName;
             return View(AllTestWrongAnswers);
         }
         #region Вспомогательные приложения

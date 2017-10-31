@@ -13,6 +13,7 @@ namespace FireTest.Controllers
         ApplicationDbContext dbContext = new ApplicationDbContext();
         private static Random random = new Random();
         const int battleQuestions = 20;
+        const int timeQuestion = 30;
         public ActionResult Index()
         {
             string userId = User.Identity.GetUserId();
@@ -36,7 +37,7 @@ namespace FireTest.Controllers
                     int counAnswersLost = 0;
                     for (int i = 0; i < battleQuestions; i++)
                     {
-                        time = time + 60 / Math.Pow(2, i);
+                        time = time + timeQuestion / Math.Pow(2, i);
                         if (time < timeElapsed)
                             counAnswersLost++;
                     }
@@ -55,7 +56,7 @@ namespace FireTest.Controllers
                     int counAnswersLost = 0;
                     for (int i = 0; i < battleQuestions - unfinishedBattle.Row.Split('|').Count(); i++)
                     {
-                        time = time + 60 / Math.Pow(2, i);
+                        time = time + timeQuestion / Math.Pow(2, i);
                         if (time < timeElapsed)
                             counAnswersLost++;
                     }
@@ -93,7 +94,7 @@ namespace FireTest.Controllers
                     int counAnswersLost = 0;
                     for (int i = 0; i < battleQuestions; i++)
                     {
-                        time = time + 60 / Math.Pow(2, i);
+                        time = time + timeQuestion / Math.Pow(2, i);
                         if (time < timeElapsed)
                             counAnswersLost++;
                     }
@@ -112,7 +113,7 @@ namespace FireTest.Controllers
                     int counAnswersLost = 0;
                     for (int i = 0; i < battleQuestions - unfinishedBattle.Row.Split('|').Count(); i++)
                     {
-                        time = time + 60 / Math.Pow(2, i);
+                        time = time + timeQuestion / Math.Pow(2, i);
                         if (time < timeElapsed)
                             counAnswersLost++;
                     }
@@ -326,7 +327,7 @@ namespace FireTest.Controllers
                 {
                     for (int i = 0; i < battleQuestions; i++)
                     {
-                        time = time + 60 / Math.Pow(2, i);
+                        time = time + timeQuestion / Math.Pow(2, i);
                     }
                     if ((DateTime.Now - unfinishedBattle.lastActivity).TotalSeconds >= time)
                     {
@@ -346,7 +347,7 @@ namespace FireTest.Controllers
                     //Считаем сколько осталось
                     for (int i = 0; i < battleQuestions - unfinishedBattle.Row.Split('|').Count(); i++)
                     {
-                        time = time + 60 / Math.Pow(2, i);
+                        time = time + timeQuestion / Math.Pow(2, i);
                     }
                     if ((DateTime.Now - unfinishedBattle.lastActivity).TotalSeconds >= time)
                     {
@@ -380,7 +381,7 @@ namespace FireTest.Controllers
                 {
                     for (int i = 0; i < battleQuestions; i++)
                     {
-                        time = time + 60 / Math.Pow(2, i);
+                        time = time + timeQuestion / Math.Pow(2, i);
                     }
                     if ((DateTime.Now - unfinishedBattle.lastActivity).TotalSeconds >= time)
                     {
@@ -400,7 +401,7 @@ namespace FireTest.Controllers
                     //Считаем сколько осталось
                     for (int i = 0; i < battleQuestions - unfinishedBattle.Row.Split('|').Count(); i++)
                     {
-                        time = time + 60 / Math.Pow(2, i);
+                        time = time + timeQuestion / Math.Pow(2, i);
                     }
                     if ((DateTime.Now - unfinishedBattle.lastActivity).TotalSeconds >= time)
                     {
@@ -539,7 +540,7 @@ namespace FireTest.Controllers
             ViewBag.SecondPlayerAvatar = "/Images/Avatars/" + player.Avatar;
 
             ViewBag.Id = id;
-            ViewBag.Time = 60 - (DateTime.Now - result.TimeStartFirstPlayer).Seconds;
+            ViewBag.Time = timeQuestion - (DateTime.Now - result.TimeStartFirstPlayer).Seconds;
             return View();
         }
         [HttpPost]
@@ -672,17 +673,17 @@ namespace FireTest.Controllers
 
             Questions model = new Questions();
             model = SelectQuestion(fightId);
-            ViewBag.Afk = 60;
+            ViewBag.Afk = timeQuestion;
             return View(model);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public PartialViewResult FightQuestions(int id, List<int> AnswersIDs, string afk, int timeAfk = 60)
+        public PartialViewResult FightQuestions(int id, List<int> AnswersIDs, string afk, int timeAfk = timeQuestion)
         {
             if (!string.IsNullOrEmpty(afk))
                 ViewBag.Afk = Math.Floor(timeAfk / 2.0); //Округляем секунды, например 7,5 => 7
             else
-                ViewBag.Afk = 60;
+                ViewBag.Afk = timeQuestion;
 
             var battle = dbContext.Battles.Find(id);
             if (!battle.AgreementOtherPlayer) //Если попали сюда сами и второго юзера нет, то домой
@@ -856,8 +857,8 @@ namespace FireTest.Controllers
                 else
                     lastActivity = battle.TimeEndSecondPlayer;
 
-                //Если 60 секунд небыло ответа
-                if (lastActivity < DateTime.Now.AddSeconds(-60))
+                //Если 30 секунд небыло ответа
+                if (lastActivity < DateTime.Now.AddSeconds(-1 * timeQuestion))
                 {
                     //Если второго игрока нет - считаем время которое ждать до конца, в зависимости от кол-ва его ответов.
                     double time = 0;
@@ -867,7 +868,7 @@ namespace FireTest.Controllers
                         {
                             for (int i = 0; i < battleQuestions; i++)
                             {
-                                time = time + 60 / Math.Pow(2, i);
+                                time = time + timeQuestion / Math.Pow(2, i);
                             }
                             if ((DateTime.Now - lastActivity).TotalSeconds >= time)
                             {
@@ -887,7 +888,7 @@ namespace FireTest.Controllers
                             //Считаем сколько осталось
                             for (int i = 0; i < battleQuestions - battle.RightOrWrongFirstPlayer.Split('|').Count(); i++)
                             {
-                                time = time + 60 / Math.Pow(2, i);
+                                time = time + timeQuestion / Math.Pow(2, i);
                             }
                             if ((DateTime.Now - lastActivity).TotalSeconds >= time)
                             {
@@ -909,7 +910,7 @@ namespace FireTest.Controllers
                             for (int i = 0; i < battleQuestions; i++)
                             {
                                 var temp = Math.Pow(2, i);
-                                time = time + 60 / temp;
+                                time = time + timeQuestion / temp;
                             }
                             if ((DateTime.Now - lastActivity).TotalSeconds >= time) 
                             {
@@ -928,7 +929,7 @@ namespace FireTest.Controllers
                         {
                             for (int i = 0; i < battleQuestions - battle.RightOrWrongSecondPlayer.Split('|').Count(); i++)
                             {
-                                time = time + 60 / Math.Pow(2, i);
+                                time = time + timeQuestion / Math.Pow(2, i);
                             }
                             if ((DateTime.Now - lastActivity).TotalSeconds >= time)
                             {
