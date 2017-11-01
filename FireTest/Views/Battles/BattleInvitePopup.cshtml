@@ -13,7 +13,14 @@
                         <div>@Model[0].Name @Model[0].Family</div>
                         <br />
                         <div>Учебная группа: @Model[0].Group</div>
-                        <div>Место в рейтинге: @Model[0].Rating</div>
+                        @if (Model[0].Group == "Преподаватель")
+                        {
+                            <div>Место в рейтинге: Не участвует</div>
+                        }
+                        else
+                        {
+                            <div>Место в рейтинге: @Model[0].Rating</div>
+                        }
                         <div>Процент правильных ответов: @Model[0].CorrectAnswers</div>
                         <div>Количество поединков: @Model[0].Battles</div>
                     </div>
@@ -22,7 +29,14 @@
                         <div>@Model[1].Name @Model[1].Family</div>
                         <br />
                         <div>Учебная группа: @Model[1].Group</div>
-                        <div>Место в рейтинге: @Model[1].Rating</div>
+                        @if (Model[1].Group == "Преподаватель")
+                        {
+                            <div>Место в рейтинге: Не участвует</div>
+                        }
+                        else
+                        {
+                            <div>Место в рейтинге: @Model[1].Rating</div>
+                        }                        
                         <div>Процент правильных ответов: @Model[1].CorrectAnswers</div>
                         <div>Количество поединков: @Model[1].Battles</div>
                     </div>

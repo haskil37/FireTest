@@ -255,7 +255,7 @@ namespace FireTest.Controllers
 
             string group = user.Group;
             var role = dbContext.Users.Find(userId).Roles.SingleOrDefault();
-            if (user.Course == 100)
+            if (user.Course == 100 && user.Group == "-1")
                 group = "Преподаватель";
                 
             invite.Add(new UsersData
@@ -540,7 +540,7 @@ namespace FireTest.Controllers
             ViewBag.SecondPlayerAvatar = "/Images/Avatars/" + player.Avatar;
 
             ViewBag.Id = id;
-            ViewBag.Time = timeQuestion - (DateTime.Now - result.TimeStartFirstPlayer).Seconds;
+            ViewBag.Time = 60 - (DateTime.Now - result.TimeStartFirstPlayer).Seconds; //Ожидаем боя 1 минуту
             return View();
         }
         [HttpPost]
