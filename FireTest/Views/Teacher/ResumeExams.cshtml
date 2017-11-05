@@ -1,0 +1,41 @@
+﻿@model List<FireTest.Models.ResumeTest>
+@{
+    ViewBag.Title = "Итоги экзамена";
+}
+@Styles.Render("~/Content/administrator")
+<div class="substrate">
+    <div class="row"><h3>@ViewBag.NameTest</h3></div>
+</div>
+@if (Model.Count() > 0)
+{
+    <div class="row">
+        <table>
+            <tr>
+                <th>
+                    Фото
+                </th>
+                <th>
+                    Имя
+                </th>
+                <th>
+                    Ответы
+                </th>
+                <th>
+                    Оценка
+                </th>
+            </tr>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="center"><img class="avatar-mini" src="~/Images/Avatars/@item.Avatar" /></td>
+                    <td>@item.Name</td>
+                    <td class="center">Правильные: @item.Correct <br />Неправильные: @item.Wrong</td>
+                    <td class="center">@item.Score</td>
+                </tr>
+            }
+        </table>
+    </div>
+}
+<div class="row">
+    @Html.ActionLink("На главную", "Index", null, new { @class = "button-Cancel" })
+</div>

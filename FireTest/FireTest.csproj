@@ -2572,6 +2572,7 @@
     <Content Include="Views\Administrator\SelectTeacherStatistic.cshtml" />
     <Content Include="Views\Administrator\SelectTeacherStatisticAjax.cshtml" />
     <Content Include="Views\Administrator\TeacherStatistic.cshtml" />
+    <Content Include="Views\Teacher\ResumeExams.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

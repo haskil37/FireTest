@@ -344,7 +344,7 @@ namespace FireTest.Controllers
             }
 
             var tempTags = GetTags(sub);
-            ViewBag.Tags = ReplaceQuot(tempTags, Tags);
+            ViewBag.Tags = ReplaceQuotes(tempTags, Tags);
             if (!tempTags.Contains(Tags))
                 Tags = "Все разделы";
 
@@ -596,7 +596,7 @@ namespace FireTest.Controllers
             }
 
             var tempTags = GetTags(sub);
-            ViewBag.Tags = ReplaceQuot(tempTags, Tags);
+            ViewBag.Tags = ReplaceQuotes(tempTags, Tags);
             if (!tempTags.Contains(Tags))
                 Tags = "Все разделы";
             List<int> questions = new List<int>();
@@ -817,8 +817,8 @@ namespace FireTest.Controllers
             ViewBag.Count250 = "Количество вопросов для тестирования по уровню подготовки должно быть не менее <span style=\"color:rgb(255, 115, 0);\">" + minimumQuestionsCount + "</span>. У Вас: <span style=\"color:rgb(114, 191, 230);\">" + count250+ "</span>";
             return PartialView(model.ToPagedList(pageNumber, pageSize));
         }
-        
-        public ActionResult NewQuestion(string Message, int? Department, int? Subject, int? Course)
+
+        public ActionResult NewQuestion(string Message, int? Department, int? Subject, int? Course, string SelectedTag)
         {
             ViewBag.StatusMessage = Message;
             List<int> userSubjects = GetSubjects();
@@ -834,6 +834,22 @@ namespace FireTest.Controllers
                         Value = u.Id.ToString(),
                         Selected = u.Id == Subject
                     }).ToList();
+
+            int sub;
+            if (Subject == null)
+                sub = userSubjects[0];
+            else
+                sub = Subject.Value;
+
+            var Tags = GetTags(sub);
+            Tags.RemoveAt(0); //Удаляем "все разделы", тут это не надо
+            ViewBag.OldTags = Tags //Выпадающий список разделов
+                .Select(u => new SelectListItem()
+                {
+                    Value = u,
+                    Text = u,
+                    Selected = u == SelectedTag
+                }).ToList();
 
             ViewBag.Departments = dbContext.Departments //Добавляем выпадающий список из кафедр
                .Select(u => new SelectListItem()
@@ -855,8 +871,27 @@ namespace FireTest.Controllers
             return View();
         }
         [HttpPost]
-        public ActionResult NewQuestion(ViewCreateQuestion model, int Subjects, int Departments, int Courses, int Type, List<string> AnswersSequence, List<string> AnswersConformity, HttpPostedFileBase uploadfile)
+        public ActionResult UpdateTags(int? Subjects)
         {
+            int sub;
+            if (Subjects == null)
+            {
+                List<int> userSubjects = GetSubjects();
+                sub = userSubjects[0];
+            }
+            else
+                sub = Subjects.Value;
+
+            var Tags = GetTags(sub);
+            Tags.RemoveAt(0); //Удаляем "все разделы", тут это не надо
+            return Json(new { Success = "true", Tags = ReplaceQuotes(Tags, "") });
+        }
+        [HttpPost]
+        public ActionResult NewQuestion(ViewCreateQuestion model, int Subjects, int Departments, int Courses, int Type, string OldTags, List<string> AnswersSequence, List<string> AnswersConformity, HttpPostedFileBase uploadfile)
+        {
+            if (string.IsNullOrEmpty(model.Tag))
+                model.Tag = OldTags;
+
             if (!ModelState.IsValid || Type != 1)
             {
                 List<int> userSubjects = GetSubjects();
@@ -872,6 +907,15 @@ namespace FireTest.Controllers
                             Value = u.Id.ToString(),
                             Selected = u.Id == Subjects
                         }).ToList();
+
+                var Tags = GetTags(Subjects);
+                ViewBag.OldTags = Tags //Выпадающий список разделов
+                    .Select(u => new SelectListItem()
+                    {
+                        Value = u,
+                        Text = u,
+                        Selected = u == model.Tag
+                    }).ToList();
 
                 ViewBag.Departments = dbContext.Departments //Добавляем выпадающий список из кафедр
                    .Select(u => new SelectListItem()
@@ -1051,7 +1095,7 @@ namespace FireTest.Controllers
                 newQuestion.IdCorrect = answerCorrectIndex;
                 dbContext.SaveChanges();
             }
-            return RedirectToAction("NewQuestion", new { Message = "Вопрос был успешно добавлен", Department = newQuestion.IdDepartment, Subject = newQuestion.IdSubject, Course = newQuestion.IdCourse });
+            return RedirectToAction("NewQuestion", new { Message = "Вопрос был успешно добавлен", Department = newQuestion.IdDepartment, Subject = newQuestion.IdSubject, Course = newQuestion.IdCourse, SelectedTag = newQuestion.Tag });
         }
         public ActionResult EditQuestionSelect(string message, string Message)
         {
@@ -1113,7 +1157,7 @@ namespace FireTest.Controllers
             }
 
             var tempTags = GetTags(sub);
-            ViewBag.Tags = ReplaceQuot(tempTags, Tags);
+            ViewBag.Tags = ReplaceQuotes(tempTags, Tags);
             if (!tempTags.Contains(Tags))
                 Tags = "Все разделы";
 
@@ -1558,9 +1602,14 @@ namespace FireTest.Controllers
 
             //return RedirectToAction("EditQuestion", new { id, Message = "Вопрос был успешно изменен" });
         }
-        public ActionResult DeleteQuestionSelect()
+        public ActionResult DeleteQuestionSelect(int? SelectedSubjects, string SelectedTag)
         {
             Session.Clear();
+            if (SelectedSubjects != null)
+                Session["Subjects"] = SelectedSubjects.Value;
+            if (!string.IsNullOrEmpty(SelectedTag))
+                Session["Tags"] = SelectedTag;
+
             var Subjects = GetSubjects();
             if (Subjects.Count == 0)
                 return RedirectToAction("Error");
@@ -1570,6 +1619,7 @@ namespace FireTest.Controllers
                     {
                         Text = u.Name,
                         Value = u.Id.ToString(),
+                        Selected = u.Id == SelectedSubjects.Value
                     }).ToList();
 
             var Tags = GetTags(Subjects[0]);
@@ -1577,7 +1627,8 @@ namespace FireTest.Controllers
                 .Select(u => new SelectListItem()
                 {
                     Value = u,
-                    Text = u
+                    Text = u,
+                    Selected = u == SelectedTag
                 }).ToList(); 
             return View();
         }
@@ -1615,7 +1666,7 @@ namespace FireTest.Controllers
             }
 
             var tempTags = GetTags(sub);
-            ViewBag.Tags = ReplaceQuot(tempTags, Tags);
+            ViewBag.Tags = ReplaceQuotes(tempTags, Tags);
             if (!tempTags.Contains(Tags))
                 Tags = "Все разделы";
             var tempQuestions = dbContext.Questions //Берем все вопросы дисциплины
@@ -1705,14 +1756,14 @@ namespace FireTest.Controllers
         {
             Question question = dbContext.Questions.Find(id);
             if (Action == "Назад")
-                return RedirectToAction("DeleteQuestionSelect", new { Subjects = question.IdSubject, Tags = question.Tag });
+                return RedirectToAction("DeleteQuestionSelect", new { SelectedSubjects = Session["Subjects"], SelectedTag = Session["Tags"] });
 
             dbContext.Questions.Remove(question);
             List<Answer> answers = dbContext.Answers.Where(u => u.IdQuestion == id).ToList();
             foreach (Answer item in answers)
                 dbContext.Answers.Remove(item);
             dbContext.SaveChanges();
-            return RedirectToAction("DeleteQuestionSelect", new { Subjects = question.IdSubject, Tags = question.Tag });
+            return RedirectToAction("DeleteQuestionSelect", new { SelectedSubjects = Session["Subjects"], SelectedTag = Session["Tags"] });
         }
         public ActionResult QuestionQualification(int id)
         {
@@ -2074,7 +2125,6 @@ namespace FireTest.Controllers
 
             return View(exams);
         }
-
         public ActionResult ExamAccess(int? id)
         {
             Session.Clear();
@@ -2083,37 +2133,56 @@ namespace FireTest.Controllers
             Session["IdTest"] = id;
             return View();
         }
-        public PartialViewResult ExamAccessAjax(string currentFilter, string searchString, int? page, string submitButton)
+        public PartialViewResult ExamAccessAjax(string currentFilter, string searchString, int? page, string submitButton, bool submitButtonAll = false)
         {
             if (Session["IdTest"] == null)
                 return PartialView();
             int id = (int)Session["IdTest"];
 
-            if (!string.IsNullOrEmpty(submitButton))
+            var group = dbContext.Examinations.Find(id).Group;
+            var users = dbContext.Users.Where(u => u.Group == group);
+
+            if (submitButtonAll)
             {
-                var search = submitButton.Split('|');
-                currentFilter = search[1];
-                submitButton = search[0];
                 var exam = dbContext.TestQualificationAccess.SingleOrDefault(u => u.IdExamination == id);
-                if (!string.IsNullOrEmpty(exam.IdUsers) && exam.IdUsers.Contains(submitButton))
-                {
-                    List<string> temp = exam.IdUsers.Split(',').ToList();
-                    temp.Remove(submitButton);
-                    string tempIdUsers = "";
-                    foreach (string item in temp)
-                        tempIdUsers += "," + item;
-                    if (temp.Count() != 0)
-                        tempIdUsers = tempIdUsers.Remove(0, 1);
-                    exam.IdUsers = tempIdUsers;
-                }
-                else
+                exam.IdUsers = "";
+                foreach (var item in users)
                 {
                     if (string.IsNullOrEmpty(exam.IdUsers))
-                        exam.IdUsers = submitButton;
+                        exam.IdUsers = item.Id;
                     else
-                        exam.IdUsers += "," + submitButton;
+                        exam.IdUsers += "," + item.Id;
                 }
                 dbContext.SaveChanges();
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(submitButton))
+                {
+                    var search = submitButton.Split('|');
+                    currentFilter = search[1];
+                    submitButton = search[0];
+                    var exam = dbContext.TestQualificationAccess.SingleOrDefault(u => u.IdExamination == id);
+                    if (!string.IsNullOrEmpty(exam.IdUsers) && exam.IdUsers.Contains(submitButton))
+                    {
+                        List<string> temp = exam.IdUsers.Split(',').ToList();
+                        temp.Remove(submitButton);
+                        string tempIdUsers = "";
+                        foreach (string item in temp)
+                            tempIdUsers += "," + item;
+                        if (temp.Count() != 0)
+                            tempIdUsers = tempIdUsers.Remove(0, 1);
+                        exam.IdUsers = tempIdUsers;
+                    }
+                    else
+                    {
+                        if (string.IsNullOrEmpty(exam.IdUsers))
+                            exam.IdUsers = submitButton;
+                        else
+                            exam.IdUsers += "," + submitButton;
+                    }
+                    dbContext.SaveChanges();
+                }
             }
 
             if (searchString != null)
@@ -2123,8 +2192,6 @@ namespace FireTest.Controllers
             ViewBag.CurrentFilter = searchString;
 
             List<UsersForAdmin> model = new List<UsersForAdmin>();
-            var group = dbContext.Examinations.Find(id).Group;
-            var users = dbContext.Users.Where(u => u.Group == group);
 
             if (!string.IsNullOrEmpty(searchString))
                 foreach (var item in searchString.ToLower().Split(' '))
@@ -2168,12 +2235,73 @@ namespace FireTest.Controllers
 
             return PartialView(model.ToPagedList(pageNumber, pageSize));
         }
+        public ActionResult ResumeExams(int? id)
+        {
+            if (id == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var ResumeExams = dbContext.TestQualification.Where(u => u.IdExamination == id).Where(u => u.End == true).ToList();
+            var exam = dbContext.Examinations.Find(id);
+            int Eval5, Eval4, Eval3;
+            string Name;
+            if (exam.FinishTest)
+            {
+                var teachertest = dbContext.TeacherFinishTests.Find(exam.IdTest);
+                Eval5 = teachertest.Eval5;
+                Eval4 = teachertest.Eval4;
+                Eval3 = teachertest.Eval3;
+                Name = teachertest.NameTest;
+            }
+            else
+            {
+                var teachertest = dbContext.TeacherTests.Find(exam.IdTest);
+                Eval5 = teachertest.Eval5;
+                Eval4 = teachertest.Eval4;
+                Eval3 = teachertest.Eval3;
+                Name = teachertest.NameTest;
+            }
+            ViewBag.NameTest = "Экзамен " + Name;
+
+            if (ResumeExams.Count() == 0)
+            {
+                if (exam.Date > DateTime.Now)
+                    ViewBag.NameTest = ViewBag.NameTest + " еще не проходил";
+                else
+                    ViewBag.NameTest = ViewBag.NameTest + " еще ни кто не прошел";
+            }
+
+            var resume = new List<ResumeTest>();
+            foreach (var item in ResumeExams)
+            {
+                var user = dbContext.Users.Find(item.IdUser);
+                var RoW = item.RightOrWrong.Split('|');
+                var correct = RoW.Count(u => u == "1");
+                var wrong = RoW.Count(u => u == "0");
+                var rightP = correct * 100 / RoW.Count();
+                int Eval = 0;
+                if (rightP >= Eval5)
+                    Eval = 5;
+                if (rightP < Eval5)
+                    Eval = 4;
+                if (rightP < Eval4)
+                    Eval = 3;
+                if (rightP < Eval3)
+                    Eval = 2;
+                resume.Add(new ResumeTest()
+                {
+                    Avatar = user.Avatar,
+                    Name = user.Family + " " + user.Name + " " + user.SubName,
+                    Correct = correct,
+                    Wrong = wrong,
+                    Score = Eval
+                });
+            }
+            return View(resume);
+        }
 
         public ActionResult Error()
         {
             return View();
         }
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -2212,7 +2340,7 @@ namespace FireTest.Controllers
 
             return Tags;
         }
-        private string ReplaceQuot(List<string> tempTags, string Tags)
+        private string ReplaceQuotes(List<string> tempTags, string Tags)
         {
             string value = "";
             foreach (var item in tempTags) //Обновляем список разделов

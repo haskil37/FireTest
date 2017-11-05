@@ -383,6 +383,14 @@ namespace FireTest.Models
         public int IdExamination { get; set; }
         public string IdUsers { get; set; }
     }
+    public class ResumeTest
+    {
+        public string Avatar { get; set; }
+        public string Name { get; set; }
+        public int Correct { get; set; }
+        public int Wrong { get; set; }
+        public int Score { get; set; }
+    }
     #endregion
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {

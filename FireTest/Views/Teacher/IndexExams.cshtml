@@ -8,6 +8,7 @@
                 <th width="50%">
                     Запланированные тестирования:
                 </th>
+                <th width="10%">Группа</th>
                 <th width="10%">Дата</th>
                 <th>
                 </th>
@@ -23,9 +24,20 @@
                         }
                     </td>
                     <td>
+                        @if (item.Group == "-1")
+                        {
+                            <span>Преподаватели</span>
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(modelItem => item.Group)
+                        }
+                    </td>
+                    <td>
                         @String.Format("{0:dd.MM.yyyy}", item.Date)
                     </td>
                     <td>
+                        @Html.ActionLink("Итоги", "ResumeExams", new { id = item.Id }) |
                         @Html.ActionLink("Редактировать", "EditExams", new { id = item.Id }) |
                         @Html.ActionLink("Подробности", "DetailsExams", new { id = item.Id }) |
                         @Html.ActionLink("Удалить", "DeleteExams", new { id = item.Id })

@@ -49,6 +49,14 @@
                 Раздел
             </div>
             <div class="col-10">
+                @Html.DropDownList("OldTags", ViewBag.OldTags as SelectList)
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2">
+                или новый
+            </div>
+            <div class="col-10">
                 @Html.TextAreaFor(model => model.Tag)
             </div>
         </div>
@@ -218,7 +226,7 @@
             @Html.Partial("LaTex")
         </div>
         <div class="row">
-            <input type="submit" value="Сохранить" class="button" />
+            <input type="submit" class="button"/>
         </div>
     </div>
 }
@@ -280,6 +288,18 @@
         $(".type-tab").click(function () {
             $('.type-tab').removeClass("active");
             $(this).addClass("active");
+        });
+
+        $(function () {
+            $("#Subjects").change(function () {
+                $.post("@Url.Action("UpdateTags", "Teacher")?Subjects=" + $(this).val(), function(res) {
+                    if (res.Success === "true") {
+                        $('#OldTags').empty();
+                        $('#OldTags').append(res.Tags);
+                        $('#OldTags').trigger("chosen:updated");
+                    }
+                });
+            });
         });
     </script>
 }
