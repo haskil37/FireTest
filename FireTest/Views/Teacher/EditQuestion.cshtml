@@ -51,7 +51,15 @@
                 Раздел
             </div>
             <div class="col-10">
-                @Html.TextAreaFor(model => model.Tag)
+                @Html.DropDownList("Tags", ViewBag.Tags as SelectList)
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2">
+                или новый
+            </div>
+            <div class="col-10">
+                <textarea cols="20" id="Tag" name="Tag" rows="2"></textarea>
             </div>
         </div>
         @if (!string.IsNullOrEmpty(ViewBag.QuestionImage))
@@ -274,5 +282,16 @@
             }
             MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'formula']);
         }
+        $(function () {
+            $("#Subjects").change(function () {
+                $.post("@Url.Action("UpdateTags", "Teacher")?Subjects=" + $(this).val(), function(res) {
+                    if (res.Success === "true") {
+                        $('#Tags').empty();
+                        $('#Tags').append(res.Tags);
+                        $('#Tags').trigger("chosen:updated");
+                    }
+                });
+            });
+        });
     </script>
 }

@@ -909,6 +909,7 @@ namespace FireTest.Controllers
                         }).ToList();
 
                 var Tags = GetTags(Subjects);
+                Tags.RemoveAt(0); //Удаляем "все разделы", тут это не надо
                 ViewBag.OldTags = Tags //Выпадающий список разделов
                     .Select(u => new SelectListItem()
                     {
@@ -1097,27 +1098,34 @@ namespace FireTest.Controllers
             }
             return RedirectToAction("NewQuestion", new { Message = "Вопрос был успешно добавлен", Department = newQuestion.IdDepartment, Subject = newQuestion.IdSubject, Course = newQuestion.IdCourse, SelectedTag = newQuestion.Tag });
         }
-        public ActionResult EditQuestionSelect(string message, string Message)
+        public ActionResult EditQuestionSelect(string message, string Message, int? Subjects, string Tags)
         {
             Session.Clear();
             ViewBag.StatusMessage = Message;
-            var Subjects = GetSubjects();
-            if (Subjects.Count == 0)
+            var AllSubjects = GetSubjects();
+            if (AllSubjects.Count == 0)
                 return RedirectToAction("Error");
 
-            ViewBag.Subjects = dbContext.Subjects.Where(u => Subjects.Contains(u.Id)) //Выпадающий список из разрешенных предметов
+            ViewBag.Subjects = dbContext.Subjects.Where(u => AllSubjects.Contains(u.Id)) //Выпадающий список из разрешенных предметов
                     .Select(u => new SelectListItem()
                     {
                         Text = u.Name,
                         Value = u.Id.ToString(),
+                        Selected = u.Id == Subjects.Value
                     }).ToList();
+            int sub;
+            if (Subjects == null)
+                sub = AllSubjects[0];
+            else
+                sub = Subjects.Value;
 
-            var Tags = GetTags(Subjects[0]);
-            ViewBag.Tags = Tags //Выпадающий список разделов
+            var AllTags = GetTags(sub);
+            ViewBag.Tags = AllTags //Выпадающий список разделов
                 .Select(u => new SelectListItem()
                 {
                     Value = u,
-                    Text = u
+                    Text = u,
+                    Selected = u == Tags
                 }).ToList();
 
             return View();
@@ -1206,49 +1214,51 @@ namespace FireTest.Controllers
         {
             ViewBag.Id = id;
             string userId = User.Identity.GetUserId();
-            string temp = dbContext.TeachersAccess.Where(u => u.TeacherId == userId).Select(u => u.TeacherSubjects).SingleOrDefault();
-            List<string> userSubjects = new List<string>(); //Берем в массив ид предметов у которых у нас доступ
-            if (!string.IsNullOrEmpty(temp))
-                userSubjects = temp.Split('|').ToList();
-            else
-                return RedirectToAction("Error");
-
             var question = dbContext.Questions.Find(id); //Данные вопроса
             if (!string.IsNullOrEmpty(question.QuestionImage) && question.QuestionImage != "NULL")
                 ViewBag.QuestionImage = question.QuestionImage;
 
-            var tempSubjects = dbContext.Subjects.Where(u => userSubjects.Contains(u.Id.ToString())).Select(u => new
+            List<int> userSubjects = GetSubjects();
+            var tempSubjects = dbContext.Subjects.Where(u => userSubjects.Contains(u.Id)).Select(u => new
             {
                 Id = u.Id,
                 Name = u.Name
             }); //Записываем предметы в список
-            var selectList = tempSubjects //Добавляем выпадающий список из разрешенных предметов
+            ViewBag.Subjects = tempSubjects //Добавляем выпадающий список из разрешенных предметов
                     .Select(u => new SelectListItem()
                     {
                         Text = u.Name,
                         Value = u.Id.ToString(),
                         Selected = u.Id == question.IdSubject
                     }).ToList();
-            ViewBag.Subjects = selectList;
+
             ViewBag.OldSubjects = question.IdSubject;
-            selectList = dbContext.Departments //Добавляем выпадающий список из кафедр
+            ViewBag.Departments = dbContext.Departments //Добавляем выпадающий список из кафедр
                .Select(u => new SelectListItem()
                {
                    Text = u.Name,
                    Value = u.Id.ToString(),
                    Selected = u.Id == question.IdDepartment
                }).ToList();
-            ViewBag.Departments = selectList;
+
+            var Tags = GetTags(question.IdSubject);
+            Tags.RemoveAt(0); //Удаляем "все разделы", тут это не надо
+            ViewBag.Tags = Tags //Выпадающий список разделов
+                .Select(u => new SelectListItem()
+                {
+                    Value = u,
+                    Text = u,
+                    Selected = u == question.Tag
+                }).ToList();
 
             List<int> tempCourses = new List<int>() { 1, 2, 3, 4, 5 }; //Добавляем выпадающий список курсов
-            selectList = tempCourses
+            ViewBag.Courses = tempCourses
                .Select(u => new SelectListItem()
                {
                    Text = "Курс " + u.ToString(),
                    Value = u.ToString(),
                    Selected = u == question.IdCourse
                }).ToList();
-            ViewBag.Courses = selectList;
 
             var model = new ViewEditQuestion()
             {
@@ -1343,11 +1353,17 @@ namespace FireTest.Controllers
             return View(model);
         }
         [HttpPost]
-        public ActionResult EditQuestion(ViewEditQuestion Question, int Type, int id, int Subjects, int Departments, int Courses, string Delete, HttpPostedFileBase uploadfile, int OldSubjects, string OldTags)
+        public ActionResult EditQuestion(ViewEditQuestion Question, int Type, int id, int Subjects, int Departments, int Courses, string Delete, HttpPostedFileBase uploadfile, int OldSubjects, string OldTags, string Tags)
         {
             if (!ModelState.IsValid)
                 return View(Question);
 
+            if (string.IsNullOrEmpty(Question.Tag))
+            {
+                if (Tags == "Без раздела")
+                    Tags = null;
+                Question.Tag = Tags;
+            }
             var question = dbContext.Questions.Find(id);
             question.IdCourse = Courses;
             question.IdDepartment = Departments;
