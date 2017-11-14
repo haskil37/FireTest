@@ -187,8 +187,6 @@ namespace FireTest.Controllers
         {
             var top = dbContext.Users
                     .Where(u => u.Course != 100)
-                    .Where(u => !string.IsNullOrEmpty(u.Name))
-                    .Where(u => !string.IsNullOrEmpty(u.SubName))
                     .Select(u => new
                     {
                         avatar = u.Avatar,
@@ -224,6 +222,7 @@ namespace FireTest.Controllers
                     .Where(u => !string.IsNullOrEmpty(u.SubName))
                     .Where(u => u.Rating > you.Rating)
                     .Where(u => u.Group == you.Group)
+                    .Where(u => u.Id != YouId)
                     .Select(u => u.Rating).OrderByDescending(u => u).Count();
             int numberbottom = dbContext.Users
                     .Where(u => u.Course != 100)
@@ -275,13 +274,14 @@ namespace FireTest.Controllers
                     .Where(u => !string.IsNullOrEmpty(u.SubName))
                     .Where(u => u.Rating > you.Rating)
                     .Where(u => u.Group == you.Group)
+                    .Where(u => u.Id != YouId)
                     .Select(u => new
                     {
                         Avatar = u.Avatar,
                         Name = u.Name,
                         Family = u.Family,
                         Rating = u.Rating,
-                    }).OrderByDescending(s => s.Rating).Take(taketop);
+                    }).OrderByDescending(s => s.Rating).Skip(numbertop - taketop).Take(taketop); //пропускаем всех до нужной нам позиции
 
             List<Rating> users = new List<Rating>();
 

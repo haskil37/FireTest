@@ -134,6 +134,8 @@ namespace FireTest.Controllers
 
                 Questions model = new Questions();
                 model = SelectQuestion(newExam.Id);
+                if (model == null)
+                    return RedirectToAction("End", new { IDEXAM = id.Value });
 
                 ViewBag.Count = examQuestions.Split('|').ToList().Count(); //Общее количество вопросов
                 ViewBag.Number = 1;
@@ -182,6 +184,8 @@ namespace FireTest.Controllers
                 //else
                 //    model = SelectQuestion(end.Id, false);
                 model = SelectQuestion(end.Id);
+                if (model == null)
+                    return RedirectToAction("End", new { IDEXAM = id.Value });
 
                 ViewBag.Count = count;
                 ViewBag.Number = number + 1;
@@ -231,7 +235,11 @@ namespace FireTest.Controllers
                     answersCount = elapsed.Answers.Split('|').ToList().Count();
                 if (questionsCount - answersCount != 0) //Если ответов меньше чем вопросов
                 {
-                    string answers = "0";
+                    string answers;
+                    if (answersCount == 0)
+                        answers = "0";
+                    else
+                        answers = "|0";
                     for (int i = 1; i < questionsCount - answersCount; i++)
                         answers = answers + "|0";
                     elapsed.Answers += answers;
@@ -246,7 +254,7 @@ namespace FireTest.Controllers
 
             int count = test.questions.Split('|').ToList().Count(); //Общее количество вопросов
             int number = 0;
-            if (test.answers != null)
+            if (!string.IsNullOrEmpty(test.answers))
                 number = test.answers.Split('|').ToList().Count() + 1; //Общее количество ответов +1, т.к. запрос был раньше чем добавлен в базу новый ответ.
             else
                 number = 1; //Общее количество ответов 1, т.к. запрос был раньше чем добавлен в базу новый ответ.
@@ -265,6 +273,11 @@ namespace FireTest.Controllers
 
                 Questions model = new Questions();
                 model = SelectQuestion(test.id);
+                if (model == null)
+                {
+                    ViewBag.QualificationTestEnd = true;
+                    return PartialView();
+                }
                 return PartialView(model);
             }
         }
@@ -429,13 +442,38 @@ namespace FireTest.Controllers
         private Questions SelectQuestion(int id)
         {
             Questions question = new Questions();
+            Question questionDB;
             int CurrentQuestion = CountAnswers(id);
+            do
+            {
+                questionDB = dbContext.Questions.Find(CurrentQuestion);
+                if (questionDB == null) //Если вопрос удален, делаем ответ верным и идем дальше
+                {
+                    TestQualification test = dbContext.TestQualification.Find(id);
+                    if (!string.IsNullOrEmpty(test.Answers))
+                        test.Answers += "|0";
+                    else
+                        test.Answers = "0";
+
+                    if (!string.IsNullOrEmpty(test.RightOrWrong))
+                        test.RightOrWrong += "|1";
+                    else
+                        test.RightOrWrong = "1";
+                    dbContext.SaveChanges();
+                    int count = test.Questions.Split('|').ToList().Count(); //Общее количество вопросов
+                    int number = test.Answers.Split('|').ToList().Count(); //Общее количество ответов
+
+                    if (count == number) //Если ответов столько же сколько и вопросов то идем на страницу статистики.
+                        return null;
+                    CurrentQuestion = CountAnswers(id);
+                }
+            } while (questionDB == null);
 
             //Делаем запрос без прибавления 1, т.к. списки начинаются с 0, а не с 1.
 
-            var questionDB = dbContext.Questions.Find(CurrentQuestion);
             var allanswers = dbContext.Answers.Find(CurrentQuestion);
             question.QuestionText = questionDB.QuestionText;
+
 
             if (!string.IsNullOrEmpty(questionDB.QuestionImage) && questionDB.QuestionImage != "NULL")
                 question.QuestionImage = "/Images/Questions/" + questionDB.QuestionImage;
@@ -505,7 +543,7 @@ namespace FireTest.Controllers
             List<string> answers = new List<string>();
 
             questions = test.Questions.Split('|').ToList();
-            if (test.Answers != null)
+            if (!string.IsNullOrEmpty(test.Answers))
                 answers = test.Answers.Split('|').ToList();
 
             return Convert.ToInt32(questions[answers.Count()]);
@@ -563,7 +601,7 @@ namespace FireTest.Controllers
                 if (tempCount == tempCorrect.Count())
                     answer = correct;
             }
-            if (test.Answers != null && test.Answers.Count() > 0)
+            if (!string.IsNullOrEmpty(test.Answers))
                 test.Answers += "|" + answer;
             else
                 test.Answers += answer;
@@ -575,14 +613,14 @@ namespace FireTest.Controllers
                 user.CorrectAnswersCount += 1;  //Прибавляем +1 к тому что пользователь правильно ответил (для статистики)
                 question.CountCorrect += 1;  //Прибавляем +1 к тому что на вопрос правильно ответили (для статистики)
 
-                if (test.RightOrWrong != null)
+                if (!string.IsNullOrEmpty(test.RightOrWrong))
                     test.RightOrWrong += "|1";
                 else
                     test.RightOrWrong = "1";
             }
             else
             {
-                if (test.RightOrWrong != null)
+                if (!string.IsNullOrEmpty(test.RightOrWrong))
                     test.RightOrWrong += "|0";
                 else
                     test.RightOrWrong = "0";

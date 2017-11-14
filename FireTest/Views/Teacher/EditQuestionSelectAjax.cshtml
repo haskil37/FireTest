@@ -22,6 +22,8 @@
                 </th>
                 <th>
                 </th>
+                <th>
+                </th>
                 @if (ViewBag.Access == true)
                 {
                     <th>
@@ -33,6 +35,9 @@
                 <tr>
                     <td>
                         @item.Name
+                    </td>
+                    <td class="center" width="15%">
+                        <span>Сколько раз был задан - @item.Count, отвечен верно - @item.CountCorrect</span>
                     </td>
                     <td class="center" width="15%">
                         <a href="EditQuestion/@item.Id">Редактировать</a>

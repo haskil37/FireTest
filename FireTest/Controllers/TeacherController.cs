@@ -1175,7 +1175,9 @@ namespace FireTest.Controllers
                     Id = u.Id,
                     Text = u.QuestionText,
                     Tag = u.Tag,
-                    Qualification = u.IdQualification
+                    Qualification = u.IdQualification,
+                    Count = u.CountAll,
+                    CountCorrect = u.CountCorrect
                 }).ToList();
 
             //Оставляем вопросы дисциплины нужного раздела
@@ -1197,7 +1199,9 @@ namespace FireTest.Controllers
                 {
                     Id = item.Id,
                     Name = item.Text,
-                    Qualification = item.Qualification
+                    Qualification = item.Qualification,
+                    Count = item.Count,
+                    CountCorrect = item.CountCorrect
                 };
                 if (item.Qualification != 0)
                     subject.QualificationName = dbContext.Qualifications.Find(item.Qualification).Name;
@@ -2136,8 +2140,10 @@ namespace FireTest.Controllers
             Examination exams = dbContext.Examinations.Find(id);
             if (exams == null)
                 return HttpNotFound();
-
-            ViewBag.NameTest = dbContext.TeacherTests.Find(exams.IdTest).NameTest;
+            if (exams.FinishTest)
+                ViewBag.NameTest = dbContext.TeacherFinishTests.Find(exams.IdTest).NameTest;
+            else
+                ViewBag.NameTest = dbContext.TeacherTests.Find(exams.IdTest).NameTest;
 
             return View(exams);
         }
@@ -2302,13 +2308,18 @@ namespace FireTest.Controllers
                     Eval = 3;
                 if (rightP < Eval3)
                     Eval = 2;
+                var time = (int)(item.TimeEnd - item.TimeStart).TotalMinutes;
+                if (exam.Time < time)
+                    time = exam.Time;
+
                 resume.Add(new ResumeTest()
                 {
                     Avatar = user.Avatar,
                     Name = user.Family + " " + user.Name + " " + user.SubName,
                     Correct = correct,
                     Wrong = wrong,
-                    Score = Eval
+                    Score = Eval,
+                    Time = time
                 });
             }
             return View(resume);

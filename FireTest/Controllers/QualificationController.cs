@@ -52,7 +52,7 @@ namespace FireTest.Controllers
                     id = u.Id,
                     questions = u.Questions,
                     idQualification = u.IdQualification,
-                }).SingleOrDefault();
+                }).FirstOrDefault();
             ViewBag.Сompleted = true;
 
             if (end != null)
@@ -120,7 +120,7 @@ namespace FireTest.Controllers
                                 questions = u.Questions,
                                 idQualification = u.IdQualification,
                                 course = u.Course,
-                            }).SingleOrDefault();
+                            }).FirstOrDefault();
 
             if (test == null) //Если id туфта, то выходим
                 return RedirectToAction("Index", "Home");
@@ -180,13 +180,13 @@ namespace FireTest.Controllers
                     idQualification = u.IdQualification,
                     questions = u.Questions,
                     answers = u.Answers
-                }).SingleOrDefault();
+                }).FirstOrDefault();
             if (qualificationTest == null) //Если нет теста, то на главную
                 return RedirectToAction("Index", "Home");
 
             int count = qualificationTest.questions.Split('|').ToList().Count(); //Общее количество вопросов
             int number = 0;
-            if (qualificationTest.answers != null)
+            if (!string.IsNullOrEmpty(qualificationTest.answers))
                 number = qualificationTest.answers.Split('|').ToList().Count(); //Общее количество ответов
 
             if (count == number) //Если ответов столько же сколько и вопросов то идем на страницу статистики.
@@ -195,9 +195,11 @@ namespace FireTest.Controllers
             ViewBag.QualificationName = dbContext.Qualifications.Find(qualificationTest.idQualification).Name;
             Questions model = new Questions();
             model = SelectQuestion(qualificationTest.id);
+            if (model == null)
+                return RedirectToAction("QualificationTestEnd");
 
             ViewBag.Count = qualificationTest.questions.Split('|').ToList().Count();
-            if (qualificationTest.answers != null)
+            if (!string.IsNullOrEmpty(qualificationTest.answers))
                 ViewBag.Number = qualificationTest.answers.Split('|').ToList().Count() + 1;
             else
             {
@@ -231,7 +233,7 @@ namespace FireTest.Controllers
 
             int count = qualificationTest.questions.Split('|').ToList().Count(); //Общее количество вопросов
             int number = 0;
-            if (qualificationTest.answers != null)
+            if (!string.IsNullOrEmpty(qualificationTest.answers))
                 number = qualificationTest.answers.Split('|').ToList().Count() + 1; //Общее количество ответов +1, т.к. запрос был раньше чем добавлен в базу новый ответ.
             else
                 number = 1; //Общее количество ответов 1, т.к. запрос был раньше чем добавлен в базу новый ответ.
@@ -250,6 +252,11 @@ namespace FireTest.Controllers
 
                 Questions model = new Questions();
                 model = SelectQuestion(qualificationTest.id);
+                if (model == null)
+                {
+                    ViewBag.QualificationTestEnd = true;
+                    return PartialView();
+                }
                 return PartialView(model);
             }
         }
@@ -497,11 +504,35 @@ namespace FireTest.Controllers
         private Questions SelectQuestion(int id)
         {
             Questions question = new Questions();
+            Question questionDB;
             int CurrentQuestion = CountAnswers(id);
+            do
+            {
+                questionDB = dbContext.Questions.Find(CurrentQuestion);
+                if (questionDB == null) //Если вопрос удален, делаем ответ верным и идем дальше
+                {
+                    SelfyTestQualification test = dbContext.SelfyTestQualifications.Find(id);
+                    if (!string.IsNullOrEmpty(test.Answers))
+                        test.Answers += "|0";
+                    else
+                        test.Answers = "0";
+
+                    if (!string.IsNullOrEmpty(test.RightOrWrong))
+                        test.RightOrWrong += "|1";
+                    else
+                        test.RightOrWrong = "1";
+                    dbContext.SaveChanges();
+                    int count = test.Questions.Split('|').ToList().Count(); //Общее количество вопросов
+                    int number = test.Answers.Split('|').ToList().Count(); //Общее количество ответов
+
+                    if (count == number) //Если ответов столько же сколько и вопросов то идем на страницу статистики.
+                        return null;
+                    CurrentQuestion = CountAnswers(id);
+                }
+            } while (questionDB == null);
 
             //Делаем запрос без прибавления 1, т.к. списки начинаются с 0, а не с 1.
 
-            var questionDB = dbContext.Questions.Find(CurrentQuestion);
             var allanswers = dbContext.Answers.Find(CurrentQuestion);
             question.QuestionText = questionDB.QuestionText;
 
@@ -573,7 +604,7 @@ namespace FireTest.Controllers
             List<string> answers = new List<string>();
 
             questions = test.Questions.Split('|').ToList();
-            if (test.Answers != null)
+            if (!string.IsNullOrEmpty(test.Answers))
                 answers = test.Answers.Split('|').ToList();
 
             return Convert.ToInt32(questions[answers.Count()]);
@@ -631,7 +662,7 @@ namespace FireTest.Controllers
                 if (tempCount == tempCorrect.Count())
                     answer = correct;
             }
-            if (test.Answers != null && test.Answers.Count() > 0)
+            if (!string.IsNullOrEmpty(test.Answers))
                 test.Answers += "|" + answer;
             else
                 test.Answers += answer;
@@ -643,14 +674,14 @@ namespace FireTest.Controllers
                 user.CorrectAnswersCount += 1;  //Прибавляем +1 к тому что пользователь правильно ответил (для статистики)
                 question.CountCorrect += 1;  //Прибавляем +1 к тому что на вопрос правильно ответили (для статистики)
 
-                if (test.RightOrWrong != null)
+                if (!string.IsNullOrEmpty(test.RightOrWrong))
                     test.RightOrWrong += "|1";
                 else
                     test.RightOrWrong = "1";
             }
             else
             {
-                if (test.RightOrWrong != null)
+                if (!string.IsNullOrEmpty(test.RightOrWrong))
                     test.RightOrWrong += "|0";
                 else
                     test.RightOrWrong = "0";

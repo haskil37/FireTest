@@ -105,6 +105,8 @@ namespace FireTest.Models
         public string Name { get; set; }
         public int Qualification { get; set; }
         public string QualificationName { get; set; }
+        public int Count { get; set; }
+        public int CountCorrect { get; set; }
     }
     public class DepartmentsAndSubjects
     {
@@ -390,6 +392,7 @@ namespace FireTest.Models
         public int Correct { get; set; }
         public int Wrong { get; set; }
         public int Score { get; set; }
+        public int Time { get; set; }
     }
     #endregion
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
