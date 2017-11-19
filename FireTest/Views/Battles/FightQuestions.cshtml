@@ -115,6 +115,7 @@ else
             $("#left > li").eq(2).outerHeight($('#right > li').eq(2).height() + 12);
             $("#left > li").eq(3).outerHeight($('#right > li').eq(3).height() + 12);
         };
+        $('#QID').val('@ViewBag.QID');
         if (AFKInterval) clearInterval(AFKInterval);
         AFKInterval = setInterval(function () {afk()}, @ViewBag.Afk * 1000);
         sec = @ViewBag.Afk;

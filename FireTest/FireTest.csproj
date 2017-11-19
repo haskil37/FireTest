@@ -269,6 +269,14 @@
     <Compile Include="Migrations\201710311854331_addTimeEnd.Designer.cs">
       <DependentUpon>201710311854331_addTimeEnd.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201711171635390_addIssues.cs" />
+    <Compile Include="Migrations\201711171635390_addIssues.Designer.cs">
+      <DependentUpon>201711171635390_addIssues.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201711181223061_issuesupd.cs" />
+    <Compile Include="Migrations\201711181223061_issuesupd.Designer.cs">
+      <DependentUpon>201711181223061_issuesupd.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Decliner.cs" />
@@ -2573,6 +2581,8 @@
     <Content Include="Views\Administrator\SelectTeacherStatisticAjax.cshtml" />
     <Content Include="Views\Administrator\TeacherStatistic.cshtml" />
     <Content Include="Views\Teacher\ResumeExams.cshtml" />
+    <Content Include="Views\Teacher\IndexIssues.cshtml" />
+    <Content Include="Views\Teacher\IssueComplete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -2643,6 +2653,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201710311854331_addTimeEnd.resx">
       <DependentUpon>201710311854331_addTimeEnd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201711171635390_addIssues.resx">
+      <DependentUpon>201711171635390_addIssues.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201711181223061_issuesupd.resx">
+      <DependentUpon>201711181223061_issuesupd.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

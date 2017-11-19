@@ -1,0 +1,80 @@
+﻿@model IEnumerable<FireTest.Models.IssueViewModel>
+<div class="spoiler">
+    <span class="headline">Запросы от студентов</span>
+</div>
+<div class="-closed">
+    @if (Model.Count() > 0)
+    {
+        <div class="substrate">
+            <div class="row">
+                @foreach (var item in Model)
+                {
+                    <table>
+                        <tr>
+                            <td colspan="3">
+                                Запрос от
+                                <img class="avatar-mini" src="~/Images/Avatars/@Html.DisplayFor(modelItem => item.UserAvatar)" />
+                                @Html.DisplayFor(modelItem => item.UserName)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="33.3%">Вопрос</td>
+                            <td width="33.3%">Проблема</td>
+                            <td width="33.3%">Кто решает</td>
+                        </tr>
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.Question.QuestionText)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Message)</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.TeacherName))
+                                {
+                                    <img class="avatar-mini" src="~/Images/Avatars/@Html.DisplayFor(modelItem => item.TeacherAvatar)" />
+                                    @Html.DisplayFor(modelItem => item.TeacherName)
+                                }
+                                else
+                                {
+                                    <p>Еще никто не решает данную проблему</p>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                <div class="row center">
+                                    @if (!string.IsNullOrEmpty(item.TeacherName))
+                                    {
+                                        if (ViewBag.TeacherId == item.TeacherId)
+                                        {
+                                            <a href="IssueTake/@item.IssueId" class="mini-button">
+                                                Перестать решать
+                                            </a>
+                                            <a href="EditQuestion/@item.Question.Id" class="mini-button">
+                                                Перейти к вопросу
+                                            </a>
+                                            <a href="IssueComplete/@item.IssueId" class="mini-button">
+                                                Удалить запрос
+                                            </a>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <a href="IssueTake/@item.IssueId" class="mini-button">
+                                            Взять для решения
+                                        </a>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="substrate">
+            <div class="row">
+                <h3>Запросов пока нет</h3>
+            </div>
+        </div>
+    }
+</div>

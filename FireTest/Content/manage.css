@@ -188,9 +188,9 @@ input[type='radio']:checked + label {
     font-weight: bold;
     text-decoration: none;
 }
-.popup .close:hover {
-    color: #e94d76;
-}
+    .popup .close:hover {
+        color: rgb(255, 115, 0);
+    }
 
 @media(max-width:1170px) {
     #drop-zone {

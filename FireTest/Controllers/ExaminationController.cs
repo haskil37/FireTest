@@ -419,6 +419,36 @@ namespace FireTest.Controllers
             ViewBag.Name = userBusy.Family + " " + userBusy.Name + " " + userBusy.SubName;
             return View(AllTestWrongAnswers);
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Issue(int? QID, string Issue)
+        {
+            string Result = "Произошел сбой. Сообщение не доставлено";
+            if (QID != null)
+            {
+                if (string.IsNullOrEmpty(Issue))
+                    Result = "Вы должны описать проблему";
+                else
+                {
+                    var result = dbContext.Questions.Find(QID.Value);
+                    if (result != null)
+                    {
+                        dbContext.Issues.Add(new Issue
+                        {
+                            QuestionId = QID.Value,
+                            SubjectId = result.IdSubject,
+                            Message = Issue,
+                            UserId = User.Identity.GetUserId()
+                        });
+                        dbContext.SaveChanges();
+                        Result = "Сообщение доставлено";
+                    }
+                }
+            }
+
+            return Content(Result);
+        }
+
         #region Вспомогательные приложения
         protected override void Dispose(bool disposing)
         {
@@ -468,6 +498,7 @@ namespace FireTest.Controllers
                     CurrentQuestion = CountAnswers(id);
                 }
             } while (questionDB == null);
+            ViewBag.QID = CurrentQuestion;
 
             //Делаем запрос без прибавления 1, т.к. списки начинаются с 0, а не с 1.
 

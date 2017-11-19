@@ -673,6 +673,8 @@ namespace FireTest.Controllers
 
             Questions model = new Questions();
             model = SelectQuestion(fightId);
+            if (model == null)
+                return RedirectToAction("BattleEnd", new { id = fightId });
             ViewBag.Afk = timeQuestion;
             return View(model);
         }
@@ -757,6 +759,21 @@ namespace FireTest.Controllers
 
             Questions model = new Questions();
             model = SelectQuestion(id);
+            if (model == null)
+            {
+                if (user == battle.FirstPlayer) //Сюда первый юзер
+                {
+                    battle.TimeEndFirstPlayer = DateTime.Now;
+                    battle.EndFirstPlayer = true;
+                }
+                else
+                {
+                    battle.TimeEndSecondPlayer = DateTime.Now;
+                    battle.EndSecondPlayer = true;
+                }
+                dbContext.SaveChanges();
+                return PartialView();
+            }
 
             List<string> answers = new List<string>();
             if (battle.FirstPlayer == User.Identity.GetUserId())
@@ -1022,6 +1039,35 @@ namespace FireTest.Controllers
 
             return View();
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Issue(int? QID, string Issue)
+        {
+            string Result = "Произошел сбой. Сообщение не доставлено";
+            if (QID != null)
+            {
+                if (string.IsNullOrEmpty(Issue))
+                    Result = "Вы должны описать проблему";
+                else
+                {
+                    var result = dbContext.Questions.Find(QID.Value);
+                    if (result != null)
+                    {
+                        dbContext.Issues.Add(new Issue
+                        {
+                            QuestionId = QID.Value,
+                            SubjectId = result.IdSubject,
+                            Message = Issue,
+                            UserId = User.Identity.GetUserId()
+                        });
+                        dbContext.SaveChanges();
+                        Result = "Сообщение доставлено";
+                    }
+                }
+            }
+
+            return Content(Result);
+        }
 
         #region Вспомогательные приложения
         protected override void Dispose(bool disposing)
@@ -1096,11 +1142,59 @@ namespace FireTest.Controllers
         private Questions SelectQuestion(int id)
         {
             Questions question = new Questions();
+            Question questionDB;
             int CurrentQuestion = CountAnswers(id);
+            do
+            {
+                questionDB = dbContext.Questions.Find(CurrentQuestion);
+                if (questionDB == null) //Если вопрос удален, делаем ответ верным и идем дальше
+                {
+                    Battle battle = dbContext.Battles.Find(id);
+                    string user = User.Identity.GetUserId();
+                    int count = 0;
+                    int number = 0;
 
+                    if (user == battle.FirstPlayer) //Сюда первый юзер
+                    {
+                        if (!string.IsNullOrEmpty(battle.AnswersFirstPlayer))
+                            battle.AnswersFirstPlayer += "|0";
+                        else
+                            battle.AnswersFirstPlayer = "0";
+
+                        if (!string.IsNullOrEmpty(battle.RightOrWrongFirstPlayer))
+                            battle.RightOrWrongFirstPlayer += "|1";
+                        else
+                            battle.RightOrWrongFirstPlayer = "1";
+                        dbContext.SaveChanges();
+                        count = battle.QuestionsFirstPlayer.Split('|').ToList().Count(); //Общее количество вопросов
+                        number = battle.AnswersFirstPlayer.Split('|').ToList().Count(); //Общее количество ответов
+                    }
+                    else //Сюда второй
+                    {
+                        if (!string.IsNullOrEmpty(battle.AnswersSecondPlayer))
+                            battle.AnswersSecondPlayer += "|0";
+                        else
+                            battle.AnswersSecondPlayer = "0";
+
+                        if (!string.IsNullOrEmpty(battle.RightOrWrongSecondPlayer))
+                            battle.RightOrWrongSecondPlayer += "|1";
+                        else
+                            battle.RightOrWrongSecondPlayer = "1";
+                        dbContext.SaveChanges();
+                        count = battle.QuestionsSecondPlayer.Split('|').ToList().Count(); //Общее количество вопросов
+                        number = battle.AnswersSecondPlayer.Split('|').ToList().Count(); //Общее количество ответов
+                    }
+
+
+
+                    if (count == number) //Если ответов столько же сколько и вопросов то идем на страницу статистики.
+                        return null;
+                    CurrentQuestion = CountAnswers(id);
+                }
+            } while (questionDB == null);
+            ViewBag.QID = CurrentQuestion;
             //Делаем запрос без прибавления 1, т.к. списки начинаются с 0, а не с 1.
 
-            var questionDB = dbContext.Questions.Find(CurrentQuestion);
             var allanswers = dbContext.Answers.Find(CurrentQuestion);
             question.QuestionText = questionDB.QuestionText;
 

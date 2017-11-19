@@ -33,6 +33,34 @@ namespace FireTest.Controllers
             return View(tests);
         }
         [ChildActionOnly]
+        public ActionResult IndexIssues()
+        {
+            ViewBag.TeacherId = User.Identity.GetUserId();
+            var teacherAccess = GetSubjects();
+            List<Issue> allIssues = dbContext.Issues.Where(u=> teacherAccess.Contains(u.SubjectId)).ToList(); //берем только те запросы где есть доступ к этой дисциплине
+
+            var model = new List<IssueViewModel>();
+            foreach (var item in allIssues)
+            {
+                var user = dbContext.Users.Find(item.UserId);
+                var teacher = dbContext.Users.Find(item.TeacherId);
+                Decliner decliner = new Decliner();
+                string[] declineText = decliner.Decline(user.Family, user.Name, user.SubName, 2);//Меняем падеж
+                model.Add(new IssueViewModel
+                {
+                    IssueId = item.Id,
+                    UserAvatar = user.Avatar,
+                    UserName = declineText[0] + " " + declineText[1] + " " + declineText[2],
+                    TeacherAvatar = teacher != null ? user.Avatar: "",
+                    TeacherName = teacher != null ? teacher.Family + " " + teacher.Name + " " + teacher.SubName : "",
+                    TeacherId = teacher != null ? teacher.Id : "",
+                    Message = item.Message,
+                    Question = dbContext.Questions.Find(item.QuestionId)
+                });
+            }
+            return PartialView(model);
+        }
+        [ChildActionOnly]
         public ActionResult IndexExams()
         {
             var teacherID = User.Identity.GetUserId();
@@ -2382,5 +2410,46 @@ namespace FireTest.Controllers
 
             return value;
         }
+        public ActionResult IssueComplete(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var issue = dbContext.Issues.Find(id);
+            if (issue == null)
+            {
+                return HttpNotFound();
+            }
+            return View(issue);
+        }
+        [HttpPost, ActionName("IssueComplete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult IssueCompleteConfirmed(int id)
+        {
+            var issue = dbContext.Issues.Find(id);
+            dbContext.Issues.Remove(issue);
+            dbContext.SaveChanges();
+            return RedirectToAction("Index", new { message = "Запрос был успешно удален" });
+        }
+        public ActionResult IssueTake(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var issue = dbContext.Issues.Find(id);
+            if (issue == null)
+            {
+                return HttpNotFound();
+            }
+            if (string.IsNullOrEmpty(issue.TeacherId))
+                issue.TeacherId = User.Identity.GetUserId();
+            else if (issue.TeacherId == User.Identity.GetUserId())
+                issue.TeacherId = null;
+            dbContext.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
     }
 }

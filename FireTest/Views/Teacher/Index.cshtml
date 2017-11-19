@@ -3,8 +3,11 @@
     ViewBag.Title = "Преподавательская";
 }
 @Styles.Render("~/Content/administrator")
+
+<p class="text-success">@ViewBag.Message</p>
+@{ Html.RenderAction("IndexIssues", "Teacher"); }
+
 <div class="substrate">
-    <p class="text-success">@ViewBag.Message</p>
     <div class="row"><h3>Создать тест по дисциплине</h3></div>    
     <div class="row">Данный раздел позволяет выбрать вопросы из базы данных для создания теста по определенной дисциплине</div>
     <div class="row" id="Tests">

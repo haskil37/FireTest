@@ -109,6 +109,33 @@
         <input type="submit" class="button center" value="Ответить" id="Answer" />
     </div>
 }
+<div class="IssueRow">
+    <button id="IssueBtn" class="IssueButton">Обратная связь по вопросу</button>
+</div>
+<div id="IssueModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3 class="center">Изложите суть проблемы в данном вопросе.</h3>
+        <br />
+        @using (Ajax.BeginForm("Issue", new AjaxOptions
+        {
+            HttpMethod = "POST",
+            UpdateTargetId = "IssueInfo",
+            InsertionMode = InsertionMode.Replace,
+            OnComplete = "onComplete"
+        }))
+        {
+            <h3 class="center" id="IssueInfo"></h3>
+            <br />
+            @Html.AntiForgeryToken()
+            <input id="QID" type="hidden" name="QID" value="@ViewBag.QID">
+            @Html.TextArea("Issue", new { rows = 5 })
+            <div class="row center">
+                <input type="submit" value="Отправить" class="button center" />
+            </div>
+        }
+    </div>
+</div>
 @section scripts
 {
     <script>
@@ -158,5 +185,24 @@
 	                document.getElementById('timeElapsed').innerHTML = text;                    
 	            }, 1000);
         };
+        var modal = document.getElementById('IssueModal');
+        var btn = document.getElementById("IssueBtn");
+        var span = document.getElementsByClassName("close")[0];
+        btn.onclick = function () {
+            $("#IssueInfo").empty();
+            modal.style.display = "block";
+            $("#Issue").focus();
+        }
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+        function onComplete() {
+            $("#Issue").val('');
+        }
     </script>
 }

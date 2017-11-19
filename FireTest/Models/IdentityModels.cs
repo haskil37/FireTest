@@ -364,6 +364,26 @@ namespace FireTest.Models
         public string Qualification { get; set; }
         public string IsOver { get; set; }
     }
+    public class Issue
+    {
+        public int Id { get; set; }
+        public int QuestionId { get; set; }
+        public int SubjectId { get; set; }
+        public string UserId { get; set; }
+        public string Message { get; set; }
+        public string TeacherId { get; set; }
+    }
+    public class IssueViewModel
+    {
+        public int IssueId { get; set; }
+        public Question Question { get; set; }
+        public string UserAvatar { get; set; }
+        public string UserName { get; set; }        
+        public string TeacherAvatar { get; set; }
+        public string TeacherName { get; set; }
+        public string TeacherId { get; set; }
+        public string Message { get; set; }
+    }
     #endregion
     #region Тестирование
     public class TestQualification
@@ -413,6 +433,7 @@ namespace FireTest.Models
         public DbSet<Examination> Examinations { get; set; }
         public DbSet<TestQualification> TestQualification { get; set; }
         public DbSet<TestQualificationAccess> TestQualificationAccess { get; set; }
+        public DbSet<Issue> Issues { get; set; }
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
         {
