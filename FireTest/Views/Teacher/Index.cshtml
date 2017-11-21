@@ -5,10 +5,16 @@
 @Styles.Render("~/Content/administrator")
 
 <p class="text-success">@ViewBag.Message</p>
-@{ Html.RenderAction("IndexIssues", "Teacher"); }
-
+<div class="spoiler">
+    <span class="headline">Запросы от студентов</span>
+</div>
+<div class="-closed">
+    <div class="substrate" id="Issues">
+        @{ Html.RenderAction("IndexIssues", new { Page = 1 }); }
+    </div>
+</div>
 <div class="substrate">
-    <div class="row"><h3>Создать тест по дисциплине</h3></div>    
+    <div class="row"><h3>Создать тест по дисциплине</h3></div>
     <div class="row">Данный раздел позволяет выбрать вопросы из базы данных для создания теста по определенной дисциплине</div>
     <div class="row" id="Tests">
         <table>
@@ -19,7 +25,6 @@
                 <th>
                 </th>
             </tr>
-
             @foreach (var item in Model)
             {
                 <tr>
@@ -71,3 +76,9 @@
         <br />
     </div>
 </div>
+@section scripts
+{
+    <script>
+        MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'question']);
+    </script>
+}

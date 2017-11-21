@@ -15,7 +15,7 @@
             <input type="submit" value="Удалить" class="button" name="Action" />
         </div>
         <div class="row center">
-            <input type="submit" value="Назад" class="button-Cancel" name="Action" />
+            @Html.ActionLink("Назад", "Index", null, new { @class = "button-Cancel" })
         </div>
     }
 }

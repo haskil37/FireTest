@@ -377,6 +377,7 @@ namespace FireTest.Models
     {
         public int IssueId { get; set; }
         public Question Question { get; set; }
+        public string QuestionSubject { get; set; }
         public string UserAvatar { get; set; }
         public string UserName { get; set; }        
         public string TeacherAvatar { get; set; }

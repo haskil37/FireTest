@@ -32,12 +32,26 @@ namespace FireTest.Controllers
 
             return View(tests);
         }
-        [ChildActionOnly]
-        public ActionResult IndexIssues()
+        public PartialViewResult IndexIssues(int? page, int? submitButton)
         {
-            ViewBag.TeacherId = User.Identity.GetUserId();
+            string teacherId = User.Identity.GetUserId();
+            ViewBag.TeacherId = teacherId;
+            if (submitButton != null)
+            {
+                var id = submitButton.Value;
+                var issue = dbContext.Issues.Find(id);
+                if (issue != null)
+                {
+                    if (string.IsNullOrEmpty(issue.TeacherId))
+                        issue.TeacherId = teacherId;
+                    else if (issue.TeacherId == teacherId)
+                        issue.TeacherId = null;
+                    dbContext.SaveChanges();
+                }
+            }
+
             var teacherAccess = GetSubjects();
-            List<Issue> allIssues = dbContext.Issues.Where(u=> teacherAccess.Contains(u.SubjectId)).ToList(); //берем только те запросы где есть доступ к этой дисциплине
+            List<Issue> allIssues = dbContext.Issues.Where(u => teacherAccess.Contains(u.SubjectId)).ToList(); //берем только те запросы где есть доступ к этой дисциплине
 
             var model = new List<IssueViewModel>();
             foreach (var item in allIssues)
@@ -46,20 +60,29 @@ namespace FireTest.Controllers
                 var teacher = dbContext.Users.Find(item.TeacherId);
                 Decliner decliner = new Decliner();
                 string[] declineText = decliner.Decline(user.Family, user.Name, user.SubName, 2);//Меняем падеж
+                var que = dbContext.Questions.Find(item.QuestionId);
+                var subject = dbContext.Subjects.Find(que.IdSubject);
                 model.Add(new IssueViewModel
                 {
                     IssueId = item.Id,
                     UserAvatar = user.Avatar,
                     UserName = declineText[0] + " " + declineText[1] + " " + declineText[2],
-                    TeacherAvatar = teacher != null ? teacher.Avatar: "",
+                    TeacherAvatar = teacher != null ? teacher.Avatar : "",
                     TeacherName = teacher != null ? teacher.Family + " " + teacher.Name + " " + teacher.SubName : "",
                     TeacherId = teacher != null ? teacher.Id : "",
                     Message = item.Message,
-                    Question = dbContext.Questions.Find(item.QuestionId)
+                    Question = que,
+                    QuestionSubject = subject.Name
                 });
             }
-            return PartialView(model);
+
+            model = model.ToList();
+            int pageSize = 2;
+            int pageNumber = (page ?? 1);
+            ViewBag.page = pageNumber;
+            return PartialView(model.ToPagedList(pageNumber, pageSize));
         }
+
         [ChildActionOnly]
         public ActionResult IndexExams()
         {
@@ -2432,24 +2455,5 @@ namespace FireTest.Controllers
             dbContext.SaveChanges();
             return RedirectToAction("Index", new { message = "Запрос был успешно удален" });
         }
-        public ActionResult IssueTake(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            var issue = dbContext.Issues.Find(id);
-            if (issue == null)
-            {
-                return HttpNotFound();
-            }
-            if (string.IsNullOrEmpty(issue.TeacherId))
-                issue.TeacherId = User.Identity.GetUserId();
-            else if (issue.TeacherId == User.Identity.GetUserId())
-                issue.TeacherId = null;
-            dbContext.SaveChanges();
-            return RedirectToAction("Index");
-        }
-
     }
 }

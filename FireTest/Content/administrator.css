@@ -34,6 +34,22 @@ textarea {
 .correct input[type='checkbox'] ~ label:hover {
     color: rgb(255, 115, 0);
 }
+.issue-button-Cancel {
+    color: rgb(196, 189, 151);
+    background: none;
+    border: 0;
+    cursor: pointer;
+    padding-bottom: 5px;
+    outline: none;
+    font-size: 100%;
+    border-bottom: 2px dashed;
+    white-space: normal;
+    text-decoration: none;
+    margin: -7px;
+}
+    .issue-button-Cancel:hover {
+        color: rgb(255, 115, 0);
+    }
 .mini-button {
     color: rgb(196, 189, 151);
     background-color: rgba(114, 191, 230, 0.7);
@@ -48,10 +64,10 @@ textarea {
     min-width: 200px;
     text-decoration: none;
 }
-.mini-button:hover {
-    background-color: rgba(255, 115, 0, 0.7);
-    color: white;
-}
+    .mini-button:hover {
+        background-color: rgba(255, 115, 0, 0.7);
+        color: white;
+    }
 .substrate {
     background: rgba(0, 0, 0, 0.7);
     border-radius: 15px;
