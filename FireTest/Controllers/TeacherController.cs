@@ -51,7 +51,7 @@ namespace FireTest.Controllers
                     IssueId = item.Id,
                     UserAvatar = user.Avatar,
                     UserName = declineText[0] + " " + declineText[1] + " " + declineText[2],
-                    TeacherAvatar = teacher != null ? user.Avatar: "",
+                    TeacherAvatar = teacher != null ? teacher.Avatar: "",
                     TeacherName = teacher != null ? teacher.Family + " " + teacher.Name + " " + teacher.SubName : "",
                     TeacherId = teacher != null ? teacher.Id : "",
                     Message = item.Message,
