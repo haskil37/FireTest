@@ -52,7 +52,6 @@ namespace FireTest.Controllers
 
             var teacherAccess = GetSubjects();
             List<Issue> allIssues = dbContext.Issues.Where(u => teacherAccess.Contains(u.SubjectId)).ToList(); //берем только те запросы где есть доступ к этой дисциплине
-
             var model = new List<IssueViewModel>();
             foreach (var item in allIssues)
             {
@@ -77,7 +76,7 @@ namespace FireTest.Controllers
             }
 
             model = model.ToList();
-            int pageSize = 2;
+            int pageSize = 5;
             int pageNumber = (page ?? 1);
             ViewBag.page = pageNumber;
             return PartialView(model.ToPagedList(pageNumber, pageSize));
