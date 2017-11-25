@@ -1,0 +1,26 @@
+﻿@model  FireTest.Models.MessageOfTheDayViewModel
+@{
+    ViewBag.Title = "Сообщение дня";
+}
+@using (Html.BeginForm("MessageOfTheDay", "Administrator", FormMethod.Post, new { role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    <p class="text-success">@ViewBag.StatusMessage</p>
+    <div class="row">
+        <div class="col-2">Сообщение</div>
+        <div class="col-10">
+            @Html.TextAreaFor(model => model.Message, 5, 20, null)
+        </div>
+    </div>
+    <div class="row">
+        <div class="row">
+            <div class="col-2"></div>
+            <div class="col-10 center">
+                Убрать сообщение дня - оставить поле выше пустым
+            </div>
+        </div>
+    </div>
+   <div class="row">
+        <input type="submit" value="Создать" class="button" />
+    </div>
+}

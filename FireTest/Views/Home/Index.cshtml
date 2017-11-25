@@ -3,6 +3,14 @@
     ViewBag.Title = "Главная";
 }
 @Styles.Render("~/Content/statistic")
+@if (!string.IsNullOrEmpty(ViewBag.MOTD))
+{
+    <div class="row">
+        <div class="ExamWarning">
+            @Html.Raw(ViewBag.MOTD.Replace("\n", "</br>"))
+        </div>
+    </div>
+}
 @if (ViewBag.Exam != null)
 {
     <div class="row">

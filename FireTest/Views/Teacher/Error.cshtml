@@ -1,7 +1,7 @@
-﻿@{
-    ViewBag.Title = "Преподавательская";
+﻿@model System.Web.Mvc.HandleErrorInfo
+@{
+    ViewBag.Title = "Ошибка";
 }
-@Styles.Render("~/Content/administrator")
-<div class="substrate">
-    <div class="row"><h3>У Вас нет доступа к предметам</h3></div>
-</div>
+<h1 class="text-danger">Произошла непредвиденная ошибка</h1>
+<h2 class="text-danger">Пожалуйста, сообщите преподавателю о тех действиях, которые привели к появлению ошибки.</h2>
+<div class="ExamWarning">@Model.Exception</div>

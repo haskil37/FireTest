@@ -409,7 +409,7 @@ namespace FireTest.Controllers
             string Result = "Произошел сбой. Сообщение не доставлено";
             if (QID != null)
             {
-                if (string.IsNullOrEmpty(Issue))
+                if (string.IsNullOrEmpty(Issue.Trim()))
                     Result = "Вы должны описать проблему";
                 else
                 {
@@ -688,7 +688,6 @@ namespace FireTest.Controllers
             dbContext.SaveChanges();
             return true;
         }
-
         #endregion
     }
 }

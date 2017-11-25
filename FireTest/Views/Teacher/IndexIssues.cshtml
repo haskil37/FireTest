@@ -34,9 +34,12 @@
                     </tr>
                     <tr>
                         <td>
-                            Дисциплина - @Html.DisplayFor(modelItem => item.QuestionSubject)
-                            <hr />
-                            @Html.DisplayFor(modelItem => item.Question.QuestionText)
+                            @if (item.QuestionText != "Вопрос удален")
+                            {
+                                <span>Дисциплина - </span>@Html.DisplayFor(modelItem => item.QuestionSubject)
+                                <hr />
+                            }
+                            @Html.DisplayFor(modelItem => item.QuestionText)
                         </td>
                         <td>@Html.DisplayFor(modelItem => item.Message)</td>
                         <td class="center">
@@ -47,7 +50,7 @@
                                 if (ViewBag.TeacherId == item.TeacherId)
                                 {
                                     <hr />
-                                    <a href="EditQuestion/@item.Question.Id" class="mini-button">
+                                    <a href="EditQuestion/@item.QuestionId" class="mini-button">
                                         Перейти к вопросу
                                     </a>
                                     <hr />

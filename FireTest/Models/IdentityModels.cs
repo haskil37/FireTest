@@ -376,13 +376,25 @@ namespace FireTest.Models
     public class IssueViewModel
     {
         public int IssueId { get; set; }
-        public Question Question { get; set; }
+        public string QuestionId { get; set; }
+        public string QuestionText { get; set; }
         public string QuestionSubject { get; set; }
         public string UserAvatar { get; set; }
         public string UserName { get; set; }        
         public string TeacherAvatar { get; set; }
         public string TeacherName { get; set; }
         public string TeacherId { get; set; }
+        public string Message { get; set; }
+    }
+    public class MessageOfTheDay
+    {
+        public int Id { get; set; }
+        public string Group { get; set; }
+        public string Message { get; set; }
+    }
+    public class MessageOfTheDayViewModel
+    {
+        public string Group { get; set; }
         public string Message { get; set; }
     }
     #endregion
@@ -435,6 +447,7 @@ namespace FireTest.Models
         public DbSet<TestQualification> TestQualification { get; set; }
         public DbSet<TestQualificationAccess> TestQualificationAccess { get; set; }
         public DbSet<Issue> Issues { get; set; }
+        public DbSet<MessageOfTheDay> MessageOfTheDays { get; set; }
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
         {

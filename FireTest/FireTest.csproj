@@ -277,6 +277,10 @@
     <Compile Include="Migrations\201711181223061_issuesupd.Designer.cs">
       <DependentUpon>201711181223061_issuesupd.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201711251556550_MOTD.cs" />
+    <Compile Include="Migrations\201711251556550_MOTD.Designer.cs">
+      <DependentUpon>201711251556550_MOTD.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Decliner.cs" />
@@ -2583,6 +2587,7 @@
     <Content Include="Views\Teacher\ResumeExams.cshtml" />
     <Content Include="Views\Teacher\IssueComplete.cshtml" />
     <Content Include="Views\Teacher\IndexIssues.cshtml" />
+    <Content Include="Views\Administrator\MessageOfTheDay.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -2659,6 +2664,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201711181223061_issuesupd.resx">
       <DependentUpon>201711181223061_issuesupd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201711251556550_MOTD.resx">
+      <DependentUpon>201711251556550_MOTD.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

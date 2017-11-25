@@ -18,6 +18,23 @@ namespace FireTest.Controllers
         {
             return View();
         }
+        public ActionResult MessageOfTheDay()
+        {
+            return View(new MessageOfTheDayViewModel
+            {
+                Message = dbContext.MessageOfTheDays.Where(u => u.Group == "-1").Select(u => u.Message).FirstOrDefault()
+            });
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult MessageOfTheDay(MessageOfTheDayViewModel model)
+        {
+            var Message = dbContext.MessageOfTheDays.Where(u => u.Group == "-1").FirstOrDefault();
+            Message.Message = model.Message;
+            dbContext.SaveChanges();
+            ViewBag.StatusMessage = "Сообщение создано";
+            return View();
+        }
         public ActionResult Users()
         {
             return View();

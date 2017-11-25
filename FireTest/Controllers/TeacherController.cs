@@ -60,7 +60,16 @@ namespace FireTest.Controllers
                 Decliner decliner = new Decliner();
                 string[] declineText = decliner.Decline(user.Family, user.Name, user.SubName, 2);//Меняем падеж
                 var que = dbContext.Questions.Find(item.QuestionId);
-                var subject = dbContext.Subjects.Find(que.IdSubject);
+                string questionText = "Вопрос удален";
+                string questionSubject = "";
+                string questionId = "";
+                if (que != null)
+                {
+                    questionText = que.QuestionText;
+                    questionId = que.Id.ToString();
+                    var subject = dbContext.Subjects.Find(que.IdSubject);
+                    questionSubject = subject.Name;
+                }
                 model.Add(new IssueViewModel
                 {
                     IssueId = item.Id,
@@ -70,8 +79,9 @@ namespace FireTest.Controllers
                     TeacherName = teacher != null ? teacher.Family + " " + teacher.Name + " " + teacher.SubName : "",
                     TeacherId = teacher != null ? teacher.Id : "",
                     Message = item.Message,
-                    Question = que,
-                    QuestionSubject = subject.Name
+                    QuestionText = questionText,
+                    QuestionId = questionId,
+                    QuestionSubject = questionSubject
                 });
             }
 

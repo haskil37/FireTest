@@ -104,64 +104,67 @@ namespace FireTest.Controllers
         public ActionResult Index(ManageController.ManageMessageId? message)
         {
             string userId = User.Identity.GetUserId();
-            switch (NewUser(userId))
+            var result = NewUser(userId);
+            if (result)
+                return RedirectToAction("Index", "Manage");
+            ApplicationUser user = dbContext.Users.Find(userId);
+            if (user == null)
+                return RedirectToAction("Login", "Account");
+            user.Busy = false;
+            dbContext.SaveChanges();
+
+            var exams = dbContext.Examinations.Where(u => u.Date == DateTime.Today).ToList();
+            string tempExam = "";
+            string tempFinish = "";
+            int countExam = 0;
+            int countFinish = 0;
+            foreach (var item in exams)
             {
-                case true:
-                    return RedirectToAction("Index", "Manage");
-                default:
-                    ApplicationUser user = dbContext.Users.Find(userId);
-                    if (user == null)
-                        return RedirectToAction("Login", "Account");
-                    user.Busy = false;
-                    dbContext.SaveChanges();
-
-                    var exams = dbContext.Examinations.Where(u => u.Date == DateTime.Today).ToList();
-                    string tempExam = "";
-                    string tempFinish = "";
-                    int countExam = 0;
-                    int countFinish = 0;
-                    foreach (var item in exams)
+                if (item.Group != user.Group && item.TeacherId != user.Id)
+                    continue;
+                var end = dbContext.TestQualification.Where(u => u.IdUser == userId).SingleOrDefault(u => u.IdExamination == item.Id);
+                if (end == null || !end.End)
+                {
+                    if (item.FinishTest)
                     {
-                        if (item.Group != user.Group && item.TeacherId != user.Id)
-                            continue;
-                        var end = dbContext.TestQualification.Where(u => u.IdUser == userId).SingleOrDefault(u => u.IdExamination == item.Id);
-                        if (end == null || !end.End)
-                        {
-                            if (item.FinishTest)
-                            {
-                                countFinish++;
-                                tempFinish += "\"" + item.Name + "\" в аудитории: " + item.Classroom;
-                                if (!string.IsNullOrEmpty(item.Annotations))
-                                    tempFinish += " (" + item.Annotations + ")";
-                                tempFinish += "\n";
-                            }
-                            else
-                            {
-                                countExam++;
-                                tempExam += "\"" + item.Name + "\" в аудитории: " + item.Classroom;
-                                if (!string.IsNullOrEmpty(item.Annotations))
-                                    tempExam += " (" + item.Annotations + ")";
-                                tempExam += "\n";
-                            }
-                        }
+                        countFinish++;
+                        tempFinish += "\"" + item.Name + "\" в аудитории: " + item.Classroom;
+                        if (!string.IsNullOrEmpty(item.Annotations))
+                            tempFinish += " (" + item.Annotations + ")";
+                        tempFinish += "\n";
                     }
-                    string tempFinishHeader = "У Вас сегодня итоговое тестирование:\n";
-                    if (countFinish > 1)
-                        tempFinishHeader = "У Вас сегодня итоговые тестирования:\n";
-                    string tempExamHeader = "У Вас сегодня экзамен:\n";
-                    if (countExam > 1)
-                        tempExamHeader = "У Вас сегодня экзамены:\n";
-
-                    if (tempExam.Length != 0)
-                        ViewBag.Exam += tempExamHeader + tempExam;
-                    if (ViewBag.Exam != null && tempFinish.Length != 0)
-                        ViewBag.Exam += "<hr/>";
-                    if (tempFinish.Length != 0)
-                        ViewBag.Exam += tempFinishHeader + tempFinish;
-                    
-                    ViewBag.Images = new SIC().SelectImagesCache(SIC.type.img);
-                    return View();
+                    else
+                    {
+                        countExam++;
+                        tempExam += "\"" + item.Name + "\" в аудитории: " + item.Classroom;
+                        if (!string.IsNullOrEmpty(item.Annotations))
+                            tempExam += " (" + item.Annotations + ")";
+                        tempExam += "\n";
+                    }
+                }
             }
+            string tempFinishHeader = "У Вас сегодня итоговое тестирование:\n";
+            if (countFinish > 1)
+                tempFinishHeader = "У Вас сегодня итоговые тестирования:\n";
+            string tempExamHeader = "У Вас сегодня экзамен:\n";
+            if (countExam > 1)
+                tempExamHeader = "У Вас сегодня экзамены:\n";
+
+            if (tempExam.Length != 0)
+                ViewBag.Exam += tempExamHeader + tempExam;
+            if (ViewBag.Exam != null && tempFinish.Length != 0)
+                ViewBag.Exam += "<hr/>";
+            if (tempFinish.Length != 0)
+                ViewBag.Exam += tempFinishHeader + tempFinish;
+
+            ViewBag.Images = new SIC().SelectImagesCache(SIC.type.img);
+            if (user.Group == "-1")
+            {
+                var Message = dbContext.MessageOfTheDays.Where(u => u.Group == "-1").Select(u => u.Message).FirstOrDefault();
+                if (Message != null)
+                    ViewBag.MOTD = Message.Trim();
+            }
+            return View();
         }
         public ActionResult Load()
         {
