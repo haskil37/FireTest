@@ -4,7 +4,7 @@ namespace FireTest.Models
 {
     public class Answers
     {
-        public int AnswerId { set; get; }
+        public string AnswerId { set; get; }
         public string AnswerText { set; get; }
     }
     public class Questions

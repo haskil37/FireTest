@@ -80,6 +80,14 @@ namespace FireTest.Controllers
             }
             string login = model.Snils.Replace(" ", string.Empty);
             login = login.Replace("-", string.Empty);
+
+            var loggedinUser = await UserManager.FindAsync(login, model.Password);
+            if (loggedinUser != null)
+            {
+                // change the security stamp only on correct username/password
+                await UserManager.UpdateSecurityStampAsync(loggedinUser.Id);
+            }
+
             var result = await SignInManager.PasswordSignInAsync(login, model.Password, model.RememberMe, shouldLockout: true);
             switch (result)
             {

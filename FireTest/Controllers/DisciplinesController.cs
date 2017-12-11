@@ -199,9 +199,12 @@ namespace FireTest.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public PartialViewResult DisciplineTestQuestions(List<int> AnswersIDs)
+        public PartialViewResult DisciplineTestQuestions(List<string> AnswersIDs)
         {
             string user = User.Identity.GetUserId();
+            if (dbContext.Users.Find(user).LastActivity < DateTime.Now.AddSeconds(-30)) //Проверка на оффлайн для ботов
+                return PartialView();
+
             var disciplineTest = dbContext.SelfyTestDisciplines //Берем id теста
                 .Where(u => u.IdUser == user)
                 .Where(u => string.IsNullOrEmpty(u.Questions) != true)
@@ -213,7 +216,16 @@ namespace FireTest.Controllers
                     answers = u.Answers
                 }).SingleOrDefault();
 
-            if (!SaveAnswer(disciplineTest.id, AnswersIDs))
+            List<int> AnswersIDsINT = new List<int>();
+            if (AnswersIDs != null)
+            {
+                foreach (var item in AnswersIDs)
+                    AnswersIDsINT.Add(CodeDecode(item));
+            }
+            else
+                AnswersIDsINT.Add(0);
+
+            if (!SaveAnswer(disciplineTest.id, AnswersIDsINT))
                 return PartialView();
 
             int count = disciplineTest.questions.Split('|').ToList().Count(); //Общее количество вопросов
@@ -404,21 +416,22 @@ namespace FireTest.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Issue(int? QID, string Issue)
+        public ActionResult Issue(string QID, string Issue)
         {
+            int que = CodeDecode(QID);
             string Result = "Произошел сбой. Сообщение не доставлено";
-            if (QID != null)
+            if (que != 0)
             {
                 if (string.IsNullOrEmpty(Issue.Trim()))
                     Result = "Вы должны описать проблему";
                 else
                 {
-                    var result = dbContext.Questions.Find(QID.Value);
+                    var result = dbContext.Questions.Find(que);
                     if (result != null)
                     {
                         dbContext.Issues.Add(new Issue
                         {
-                            QuestionId = QID.Value,
+                            QuestionId = que,
                             SubjectId = result.IdSubject,
                             Message = Issue,
                             UserId = User.Identity.GetUserId()
@@ -528,11 +541,10 @@ namespace FireTest.Controllers
                     CurrentQuestion = CountAnswers(id);
                 }
             } while (questionDB == null);
-            ViewBag.QID = CurrentQuestion;
-            //Делаем запрос без прибавления 1, т.к. списки начинаются с 0, а не с 1.
+            ViewBag.QID = CodeDecode(CurrentQuestion);
 
             var allanswers = dbContext.Answers.Find(CurrentQuestion);
-            question.QuestionText = questionDB.QuestionText;
+            question.QuestionText = TranslitText(questionDB.QuestionText);
 
             if (!string.IsNullOrEmpty(questionDB.QuestionImage) && questionDB.QuestionImage != "NULL")
                 question.QuestionImage = "/Images/Questions/" + questionDB.QuestionImage;
@@ -574,17 +586,17 @@ namespace FireTest.Controllers
                 foreach (var idAnsw in answDragUser)
                     foreach (var answ in allAnswers)
                         if (Convert.ToInt32(idAnsw) == answ.id)
-                            Answers.Add(new Answers { AnswerText = answ.text, AnswerId = answ.id });
+                            Answers.Add(new Answers { AnswerText = TranslitText(answ.text), AnswerId = CodeDecode(answ.id) });
                 foreach (var idAnsw in answNoDragUser)
                     foreach (var answ in allAnswers)
                         if (Convert.ToInt32(idAnsw) == answ.id)
-                            Answers.Add(new Answers { AnswerText = answ.text, AnswerId = answ.id });
+                            Answers.Add(new Answers { AnswerText = TranslitText(answ.text), AnswerId = CodeDecode(answ.id) });
             }
             else
             {
                 for (int i = 0; i < allAnswers.Count(); i++)
                 {
-                    Answers.Add(new Answers { AnswerText = allAnswers[i].text, AnswerId = allAnswers[i].id });
+                    Answers.Add(new Answers { AnswerText = TranslitText(allAnswers[i].text), AnswerId = CodeDecode(allAnswers[i].id) });
                     Shuffle(Answers);
                 }
             }
@@ -687,6 +699,149 @@ namespace FireTest.Controllers
 
             dbContext.SaveChanges();
             return true;
+        }
+        static int CodeDecode(string value)
+        {
+            try
+            {
+                int randomInt = Convert.ToInt32(value.Substring(0, 2));
+                switch (randomInt % 4)
+                {
+                    case 0:
+                        {
+                            string otherString = value.Substring(7, value.Length - 7);
+                            var intValue10 = Convert.ToInt32(otherString, 16);
+                            return intValue10 - randomInt;
+                        }
+                    case 1:
+                        {
+                            string otherString = value.Substring(2, value.Length - 5 - 2);
+                            const string chars = "ABDHIJKLMN";
+                            var stringValue = "";
+                            for (int i = 0; i < otherString.Length; i++)
+                                stringValue += chars.IndexOf(otherString[i]);
+                            return Convert.ToInt32(stringValue) - randomInt;
+                        }
+                    case 2:
+                        {
+                            string otherString = value.Substring(7, value.Length - 7);
+                            const string chars = "SDFGLHWXZJ";
+                            var stringValue = "";
+                            for (int i = 0; i < otherString.Length; i++)
+                                stringValue += chars.IndexOf(otherString[i]);
+                            return Convert.ToInt32(stringValue) - randomInt;
+                        }
+                    default:
+                        {
+                            string otherString = value.Substring(2, value.Length - 2);
+                            const string Vowels = "AEIOU";
+                            var stringValue = "";
+                            for (int i = 0; i < otherString.Length; i++)
+                            {
+                                if (Vowels.Contains(otherString[i]))
+                                    stringValue += 0;
+                                else
+                                    stringValue += 1;
+                            }
+                            var intValue10 = Convert.ToInt32(stringValue, 2);
+                            return intValue10;
+                        }
+                }
+
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+        }
+        static string CodeDecode(int intValue)
+        {
+            string value = intValue.ToString();
+            string code = "";
+            int randomInt = random.Next(10, 99);
+            switch (randomInt % 4)
+            {
+                case 0:
+                    {
+                        var intValue16 = Convert.ToString(intValue + randomInt, 16);
+                        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                        string randomString = new string(Enumerable.Repeat(chars, 5).Select(s => s[random.Next(s.Length)]).ToArray());
+                        code = randomInt + randomString + intValue16;
+                        break;
+                    }
+                case 1:
+                    {
+                        const string chars = "ABDHIJKLMN";
+                        var stringValue = "";
+                        value = (Convert.ToInt32(value) + randomInt).ToString();
+                        for (int i = 0; i < value.Length; i++)
+                            stringValue += chars[Convert.ToInt32(value[i].ToString())];
+                        code = randomInt + stringValue + random.Next(10000, 99999);
+                        break;
+                    }
+                case 2:
+                    {
+                        const string chars = "SDFGLHWXZJ";
+                        var stringValue = "";
+                        value = (Convert.ToInt32(value) + randomInt).ToString();
+                        for (int i = 0; i < value.Length; i++)
+                            stringValue += chars[Convert.ToInt32(value[i].ToString())];
+                        code = randomInt + random.Next(10000, 99999).ToString() + stringValue;
+                        break;
+                    }
+                default:
+                    {
+                        var intValue2 = Convert.ToString(intValue, 2);
+                        const string Vowels = "AEIOU";
+                        const string Consonants = "BCDFGHJKLMNPQRSTVWXYZ";
+                        var stringValue = "";
+                        for (int i = 0; i < intValue2.Length; i++)
+                        {
+                            if (intValue2[i] == '0')
+                                stringValue += Vowels[random.Next(Vowels.Length)];
+                            else
+                                stringValue += Consonants[random.Next(Consonants.Length)];
+                        }
+                        code = randomInt + stringValue;
+                        break;
+                    }
+            }
+            return code.ToUpper();
+        }
+        private string TranslitText(string source)
+        {
+            Dictionary<string, string> dictionaryChar = new Dictionary<string, string>()
+            {
+                {"а","a"},
+                {"е","e"},
+                {"о","o"},
+                {"р","p"},
+                {"с","c"},
+                {"х","x"},
+                {"А","A"},
+                {"С","C"},
+                {"Р","P"},
+                {"О","O"},
+                {"Е","E"},
+                {"М","M"},
+                {"В","B"},
+                {"Т","T"},
+                {"Н","H"},
+                {"Х","X"}
+            };
+            var result = "";
+            foreach (var ch in source)
+            {
+                if (dictionaryChar.TryGetValue(ch.ToString(), out string ss))
+                {
+                    if (random.NextDouble() > 0.5)
+                        result += ss;
+                    else
+                        result += ch;
+                }
+                else result += ch;
+            }
+            return result;
         }
         #endregion
     }

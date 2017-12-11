@@ -31,7 +31,7 @@ namespace FireTest
                     // Позволяет приложению проверять метку безопасности при входе пользователя.
                     // Эта функция безопасности используется, когда вы меняете пароль или добавляете внешнее имя входа в свою учетную запись.  
                     OnValidateIdentity = SecurityStampValidator.OnValidateIdentity<ApplicationUserManager, ApplicationUser>(
-                        validateInterval: TimeSpan.FromMinutes(30),
+                        validateInterval: TimeSpan.FromMinutes(0), //<----- 30
                         regenerateIdentity: (manager, user) => user.GenerateUserIdentityAsync(manager))
                 }
             });            
