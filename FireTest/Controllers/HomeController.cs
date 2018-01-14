@@ -19,8 +19,7 @@ namespace FireTest.Controllers
             try
             {
                 ApplicationUser user = dbContext.Users.Find(userID);
-                DateTime entrance = DateTime.Parse("1 Sep " + user.Year);
-                TimeSpan diff = DateTime.Now.Subtract(entrance);
+                TimeSpan diff = DateTime.Now - DateTime.Parse("1 Sep " + user.Year);
                 DateTime zeroTime = new DateTime(1, 1, 1);
                 if (diff.Days > 0)
                 {
@@ -89,7 +88,7 @@ namespace FireTest.Controllers
                         ViewBag.Correct = user.CorrectAnswersCount * 100 / user.AnswersCount;
                     else
                         ViewBag.Correct = 0;
-                    var role = dbContext.Users.Find(User.Identity.GetUserId()).Roles.SingleOrDefault();
+                    var role = dbContext.Users.Find(userId).Roles.SingleOrDefault();
                     if (dbContext.Roles.Find(role.RoleId).Name == "USER")
                     {
                         var result = UpdateCourse(user.Id);

@@ -184,7 +184,7 @@ namespace FireTest.Controllers
 
                 int range = DateRange.Value * (DateRange.Value + 1) / 2;
                 var today = DateTime.Today.AddDays(1);
-                var beforeMonth = new DateTime(today.Year, today.Month - range, today.Day);
+                var beforeMonth = DateTime.Today.AddMonths(-range);
 
                 Dictionary<DateTime, int> SelfyD = new Dictionary<DateTime, int>();
                 Dictionary<DateTime, int> SelfyQ = new Dictionary<DateTime, int>();
@@ -306,7 +306,7 @@ namespace FireTest.Controllers
 
                 int range = DateRange.Value * (DateRange.Value + 1) / 2;
                 var today = DateTime.Today.AddDays(1);
-                var beforeMonth = new DateTime(today.Year, today.Month - range, today.Day);
+                var beforeMonth = DateTime.Today.AddMonths(-range);
 
                 Dictionary<DateTime, int> SelfyD = new Dictionary<DateTime, int>();
                 Dictionary<DateTime, int> SelfyQ = new Dictionary<DateTime, int>();
@@ -447,7 +447,7 @@ namespace FireTest.Controllers
             {
                 int range = DateRange.Value * (DateRange.Value + 1) / 2;
                 var today = DateTime.Today.AddDays(1);
-                var beforeMonth = new DateTime(today.Year, today.Month - range, today.Day);
+                var beforeMonth = DateTime.Today.AddMonths(-range);
 
                 Dictionary<DateTime, int> SelfyD = new Dictionary<DateTime, int>();
                 Dictionary<DateTime, int> SelfyQ = new Dictionary<DateTime, int>();
@@ -519,16 +519,16 @@ namespace FireTest.Controllers
                            .Where(u => u.Group == Group1)
                            .Select(u => new
                            {
-                               AnswersCount = u.AnswersCount,
-                               CorrectAnswersCount = u.CorrectAnswersCount
+                               u.AnswersCount,
+                               u.CorrectAnswersCount
                            }).ToList();
                         var users2 = dbContext.Users
                            .Where(u => u.Course != 100)
                            .Where(u => u.Group == Group2)
                            .Select(u => new
                            {
-                               AnswersCount = u.AnswersCount,
-                               CorrectAnswersCount = u.CorrectAnswersCount
+                               u.AnswersCount,
+                               u.CorrectAnswersCount
                            }).ToList();
 
                         int answers = 0;
@@ -567,7 +567,7 @@ namespace FireTest.Controllers
 
                 int range = DateRange.Value * (DateRange.Value + 1) / 2;
                 var today = DateTime.Today.AddDays(1);
-                var beforeMonth = new DateTime(today.Year, today.Month - range, today.Day);
+                var beforeMonth = DateTime.Today.AddMonths(-range);
 
                 Dictionary<DateTime, int> SelfyD1 = new Dictionary<DateTime, int>();
                 Dictionary<DateTime, int> SelfyQ1 = new Dictionary<DateTime, int>();
@@ -665,8 +665,8 @@ namespace FireTest.Controllers
                            .Where(u => u.Group.Substring(0, 1) == Course1)
                            .Select(u => new
                            {
-                               AnswersCount = u.AnswersCount,
-                               CorrectAnswersCount = u.CorrectAnswersCount
+                               u.AnswersCount,
+                               u.CorrectAnswersCount
                            }).ToList();
                         var users2 = dbContext.Users
                            .Where(u => u.Course != 100)
@@ -713,7 +713,7 @@ namespace FireTest.Controllers
                     .Select(u => u.Id).ToList();
                 int range = DateRange.Value * (DateRange.Value + 1) / 2;
                 var today = DateTime.Today.AddDays(1);
-                var beforeMonth = new DateTime(today.Year, today.Month - range, today.Day);
+                var beforeMonth = DateTime.Today.AddMonths(-range);
 
                 Dictionary<DateTime, int> SelfyD1 = new Dictionary<DateTime, int>();
                 Dictionary<DateTime, int> SelfyQ1 = new Dictionary<DateTime, int>();

@@ -2354,33 +2354,39 @@ namespace FireTest.Controllers
             var resume = new List<ResumeTest>();
             foreach (var item in ResumeExams)
             {
-                var user = dbContext.Users.Find(item.IdUser);
-                var RoW = item.RightOrWrong.Split('|');
-                var correct = RoW.Count(u => u == "1");
-                var wrong = RoW.Count(u => u == "0");
-                var rightP = correct * 100 / RoW.Count();
-                int Eval = 0;
-                if (rightP >= Eval5)
-                    Eval = 5;
-                if (rightP < Eval5)
-                    Eval = 4;
-                if (rightP < Eval4)
-                    Eval = 3;
-                if (rightP < Eval3)
-                    Eval = 2;
-                var time = (int)(item.TimeEnd - item.TimeStart).TotalMinutes;
-                if (exam.Time < time)
-                    time = exam.Time;
-
-                resume.Add(new ResumeTest()
+                try
                 {
-                    Avatar = user.Avatar,
-                    Name = user.Family + " " + user.Name + " " + user.SubName,
-                    Correct = correct,
-                    Wrong = wrong,
-                    Score = Eval,
-                    Time = time
-                });
+                    var user = dbContext.Users.Find(item.IdUser);
+                    var RoW = item.RightOrWrong.Split('|');
+                    var correct = RoW.Count(u => u == "1");
+                    var wrong = RoW.Count(u => u == "0");
+                    var rightP = correct * 100 / RoW.Count();
+                    int Eval = 0;
+                    if (rightP >= Eval5)
+                        Eval = 5;
+                    if (rightP < Eval5)
+                        Eval = 4;
+                    if (rightP < Eval4)
+                        Eval = 3;
+                    if (rightP < Eval3)
+                        Eval = 2;
+                    var time = (int)(item.TimeEnd - item.TimeStart).TotalMinutes;
+                    if (exam.Time < time)
+                        time = exam.Time;
+
+                    resume.Add(new ResumeTest()
+                    {
+                        Avatar = user.Avatar,
+                        Name = user.Family + " " + user.Name + " " + user.SubName,
+                        Correct = correct,
+                        Wrong = wrong,
+                        Score = Eval,
+                        Time = time
+                    });
+                }
+                catch (Exception) //Если юзера уже нет
+                {
+                }
             }
             return View(resume);
         }
