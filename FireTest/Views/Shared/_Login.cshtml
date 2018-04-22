@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <meta name="robots" content="none">
     @Styles.Render("~/Content/login")
-    @Styles.Render("~/Content/audio")
+    @*@Styles.Render("~/Content/audio")*@
     <title>FireTest</title>
     <script>
         if (screen.width <= 500) {
@@ -27,16 +27,16 @@
             <a href="Register" class="button"><span>Регистрация</span></a>
         </div>
     </div>
-    <div class="music">
+    @*<div class="music">
         <span id="play-button" onclick="Audio_Stop()" class="pause"></span>
         <span id="volume-button" class="volume" onclick="Volume_Off()"></span>
         <input type="range" min="0" max="10" id="volume" oninput="Audio_Volume()" value="5" />
         <audio id="audio" preload="auto" src="~/Content/select.mp3" loop="loop" autoplay="autoplay" />
-    </div>
+    </div>*@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/jquerymask")
-    @Scripts.Render("~/bundles/audio")
+    @*@Scripts.Render("~/bundles/audio")*@
 
     @RenderSection("scripts", required: false)
     <!-- Yandex.Metrika counter -->

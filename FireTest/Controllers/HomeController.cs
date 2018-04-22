@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using EntityFramework.Extensions;
 
 namespace FireTest.Controllers
 {
@@ -28,16 +29,22 @@ namespace FireTest.Controllers
                     //Итого получается, что мы не вычитаем и не прибавляем
                     int course = (zeroTime + diff).Year;
                     user.Course = course;
-                    if (user.Group.Length > 1)
-                    {
-                        var vipusk = user.Group[1];
-                        if (vipusk == '1' && course >= 6)
-                            user.Course = 100;
-                        if (vipusk == '2' && course >= 5)
-                            user.Course = 100;
-                    }
-                    if (course > 6)
+                    //if (user.Group.Length > 1)
+                    //{
+                    //var vipusk = user.Group[1];
+                    //if (vipusk == '1' && course >= 6)
+                    //    user.Course = 100;
+                    //if (vipusk == '2' && course >= 5)
+                    //    user.Course = 100;
+                    var vipusk = dbContext.Faculties.Find(Convert.ToInt32(user.Faculty)).Bachelor;
+                    if (user.Master) //если пошел на магистра, то к выпуску добавляем срок для магистра
+                        vipusk += dbContext.Faculties.Find(user.Faculty).Master;
+                    if (course >= vipusk + 1)
                         user.Course = 100;
+
+                    //}
+                    //if (course > 6)
+                    //    user.Course = 100;
 
                     if (user.Course != 100)
                         user.Group = user.Course + user.Group.Remove(0, 1);
@@ -102,6 +109,12 @@ namespace FireTest.Controllers
 
         public ActionResult Index(ManageController.ManageMessageId? message)
         {
+
+            ////Используется EntityFramework.Extensions для быстрого обновления БД
+            //var update = dbContext.Questions
+            //                    .Where(u => u.IdQualification != 0).Update(u => new Question { Qualification = true });
+            //update = dbContext.Questions.Update(u => new Question { Faculties = "[1][2][3]" });
+
             string userId = User.Identity.GetUserId();
             var result = NewUser(userId);
             if (result)
@@ -111,6 +124,10 @@ namespace FireTest.Controllers
                 return RedirectToAction("Login", "Account");
             user.Busy = false;
             dbContext.SaveChanges();
+            
+            GetFacultyQualificationsName(ref user, out List<FacultyQualifications> FacultyQualificationsName);
+            if (FacultyQualificationsName.Count() == 0)
+                return RedirectToAction("Index", "Manage", new { NewFaculty = "Проверьте Ваш факультет и сохраните" });
 
             var exams = dbContext.Examinations.Where(u => u.Date == DateTime.Today).ToList();
             string tempExam = "";
@@ -156,18 +173,18 @@ namespace FireTest.Controllers
             if (tempFinish.Length != 0)
                 ViewBag.Exam += tempFinishHeader + tempFinish;
 
-            ViewBag.Images = new SIC().SelectImagesCache(SIC.type.img);
+            //ViewBag.Images = new SIC().SelectImagesCache(SIC.type.img);
             if (user.Group == "-1")
             {
                 var Message = dbContext.MessageOfTheDays.Where(u => u.Group == "-1").Select(u => u.Message).FirstOrDefault();
                 if (Message != null)
                     ViewBag.MOTD = Message.Trim();
             }
-            return View();
+            return View(FacultyQualificationsName);
         }
         public ActionResult Load()
         {
-            ViewBag.Images = new SIC().SelectImagesCache(SIC.type.img);
+            //ViewBag.Images = new SIC().SelectImagesCache(SIC.type.img);
             return View();
         }
         [ChildActionOnly]
@@ -279,10 +296,10 @@ namespace FireTest.Controllers
                     .Where(u => u.Id != YouId)
                     .Select(u => new
                     {
-                        Avatar = u.Avatar,
-                        Name = u.Name,
-                        Family = u.Family,
-                        Rating = u.Rating,
+                        u.Avatar,
+                        u.Name,
+                        u.Family,
+                        u.Rating,
                     }).OrderByDescending(s => s.Rating).Skip(numbertop - taketop).Take(taketop); //пропускаем всех до нужной нам позиции
 
             List<Rating> users = new List<Rating>();
@@ -315,10 +332,10 @@ namespace FireTest.Controllers
                     .Where(u => u.Id != YouId)
                     .Select(u => new
                     {
-                        Avatar = u.Avatar,
-                        Name = u.Name,
-                        Family = u.Family,
-                        Rating = u.Rating,
+                        u.Avatar,
+                        u.Name,
+                        u.Family,
+                        u.Rating,
                     }).OrderByDescending(s => s.Rating).Take(takebottom);
 
             foreach (var item in bottom)
@@ -393,6 +410,25 @@ namespace FireTest.Controllers
                 Qualification = Qualifications
             };
             return PartialView(model);
+        }
+
+        void GetFacultyQualificationsName(ref ApplicationUser user, out List<FacultyQualifications> QualificationsName)
+        {
+            var faculty = dbContext.Faculties.Find(Convert.ToInt32(user.Faculty));
+            QualificationsName = new List<FacultyQualifications>();
+            if (faculty != null)
+            {
+                var facultyPictures = faculty.LevelsPictures.Split('|');
+                var facultyNames = faculty.LevelsName.Split('|');
+                for (int i = 0; i < facultyNames.Count(); i++)
+                {
+                    QualificationsName.Add(new FacultyQualifications
+                    {
+                        Name = facultyNames[i],
+                        Picture = facultyPictures[i]
+                    });
+                }
+            }
         }
     }
 }

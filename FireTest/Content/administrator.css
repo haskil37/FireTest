@@ -389,3 +389,121 @@ input.datepicker {
 .qualification-color {
     color: rgb(255, 115, 0);
 }
+.PrewImgInp {
+    min-width: 200px;
+    min-height: 200px;
+}
+
+    .PrewImgInp img {
+        width: 200px;
+        height: 200px;
+        background-color: #c4bd97;
+    }
+
+        .PrewImgInp img[alt]:after {
+            font-size: 20px;
+            font-family: 'Helvetica','Arial',sans-serif;
+            display: block;
+            position: absolute;
+            margin-left: -64px;
+            margin-top: -20px;
+            width: 200px;
+            height: 200px;
+            background-color: #c4bd97;
+            color: black;
+            line-height: 10;
+            text-align: center;
+            content: attr(alt);
+        }
+
+.empty {
+    font-size: 20px;
+    font-family: 'Helvetica','Arial',sans-serif;
+    position: absolute;
+    margin-left: -125px;
+    margin-top: 85px;
+}
+
+.number-style input {
+    display: inline-block;
+    vertical-align: middle;
+    text-align: center;
+    background-color: #c4bd97;
+    border: none;
+    font-size: 20px;
+    font-family: 'Helvetica','Arial',sans-serif;
+    width: 100px;
+    outline-color: #ff7300;
+    color: #000000;
+    margin: 5px;
+}
+
+.number-style span {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin: 0 10px;
+    cursor: pointer;
+}
+
+    .number-style span.number-minus {
+        border: 2px solid #ff7300;
+    }
+
+        .number-style span.number-minus::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin: -1px 0 0 -5px;
+            width: 10px;
+            height: 2px;
+            background-color: #ff7300;
+        }
+
+    .number-style span.number-plus {
+        border: 2px solid #72bfe6;
+    }
+
+        .number-style span.number-plus::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin: -1px 0 0 -5px;
+            width: 10px;
+            height: 2px;
+            background-color: #72bfe6;
+        }
+
+        .number-style span.number-plus::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin: -5px 0 0 -1px;
+            width: 2px;
+            height: 10px;
+            background-color: #72bfe6;
+        }
+
+    .number-style span.disabled {
+        border: 2px solid #c4bd97;
+    }
+
+        .number-style span.disabled::after,
+        .number-style span.disabled::before {
+            background-color: #c4bd97;
+        }
+
+.number-style input[type='number'] {
+    -moz-appearance: textfield;
+}
+
+.number-style input::-webkit-outer-spin-button,
+.number-style input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}

@@ -1,0 +1,142 @@
+﻿@model FireTest.Models.FacultyEditQualifications
+@{
+    ViewBag.Title = "Редактировать факультет";
+}
+@Styles.Render("~/Content/administrator")
+@using (Html.BeginForm("EditFaculty", "Administrator", FormMethod.Post, new { enctype = "multipart/form-data", name = "cf" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        Укажите название факультета. Начинайте со слова <span style="font-style: italic">Факультет</span>
+    </div>
+    <div class="row">
+        @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+        @Html.TextBoxFor(m => m.Name)
+    </div>
+    <div class="row">
+        Годы обучения.
+        В левой колонке указывается количество курсов для бакалавра. В правой - магистра. Если обучения для специалитета, то надо указать в левой 6 лет, а в правой 0.
+        При изменении количества годов изображения надо будет указывать заново.
+    </div>
+    @Html.ValidationMessageFor(m => m.Bachelor, "", new { @class = "text-danger" })
+    <div class="row">
+        <div class="col-6">
+            <div class="textback rating-left">
+                @Html.TextBoxFor(model => model.Bachelor, new { type = "number", min = "1", max = "6", @readonly = true })
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="textback rating-right">
+                @Html.TextBoxFor(model => model.Master, new { type = "number", min = "0", max = "6", @readonly = true })
+            </div>
+        </div>
+    </div>
+    <p>@Html.ValidationMessageFor(m => m.LevelsName, "", new { @class = "text-danger" })</p>
+    <p>@Html.ValidationMessageFor(m => m.LevelsPictures, "", new { @class = "text-danger" })</p>
+    <div class="row" id="Qualifications">
+        @{ Html.RenderAction("AddQualificationEdit"); }
+    </div>
+    <div class="row center">
+        <input type="submit" value="Сохранить" class="button" />
+    </div>
+}
+@section scripts
+{
+    <script>
+        (function ($) {
+            $.fn.number = function (customOptions) {
+                var options = {
+
+                    'containerClass': 'number-style',
+                    'minus': 'number-minus',
+                    'plus': 'number-plus',
+                    'containerTag': 'div',
+                    'btnTag': 'span'
+                };
+                options = $.extend(true, options, customOptions);
+                var input = this;
+                input.wrap('<' + options.containerTag + ' class="' + options.containerClass + '">');
+                var wrapper = input.parent();
+                wrapper.prepend('<' + options.btnTag + ' class="' + options.minus + '"></' + options.btnTag + '>');
+                var minus = wrapper.find('.' + options.minus);
+                wrapper.append('<' + options.btnTag + ' class="' + options.plus + '"></' + options.btnTag + '>');
+                var plus = wrapper.find('.' + options.plus);
+                var min = input.attr('min');
+                var max = input.attr('max');
+                if (input.attr('step')) {
+                    var step = +input.attr('step');
+                } else {
+                    var step = 1;
+                }
+                if (+input.val() <= +min) {
+                    minus.addClass('disabled');
+                }
+                if (+input.val() >= +max) {
+                    plus.addClass('disabled');
+                }
+                minus.click(function () {
+                    var input = $(this).parent().find('input');
+                    var value = input.val();
+                    if (+value > +min) {
+                        input.val(+value - step);
+                        AddQualification();
+                        if (+input.val() === +min) {
+                            input.prev('.' + options.minus).addClass('disabled');
+                        }
+                        if (input.next('.' + options.plus).hasClass('disabled')) {
+                            input.next('.' + options.plus).removeClass('disabled')
+                        }
+                    } else if (!min) {
+                        input.val(+value - step);
+                    }
+                });
+                plus.click(function () {
+                    var input = $(this).parent().find('input');
+                    var value = input.val();
+                    if (+value < +max) {
+                        input.val(+value + step);
+                        AddQualification();
+                        if (+input.val() === +max) {
+                            input.next('.' + options.plus).addClass('disabled');
+                        }
+                        if (input.prev('.' + options.minus).hasClass('disabled')) {
+                            input.prev('.' + options.minus).removeClass('disabled')
+                        }
+                    } else if (!max) {
+                        input.val(+value + step);
+                    }
+                });
+            };
+        })(jQuery);
+        $('input[type=number]').each(function () {
+            $(this).number();
+        });
+        function AddQualification() {
+            $.get(
+                {
+                    type: "POST",
+                    url: "/Administrator/AddQualificationEdit/" + @Model.Id,
+                    datatype: "json",
+                    traditional: true,
+                    data: {
+                        'Bachelor': $('#Bachelor').val(),
+                        'Master': $('#Master').val(),
+                        'LevelsNameB': $("input[id=LevelsNameB]").serialize(),
+                        'LevelsNameM': $("input[id=LevelsNameM]").serialize(),
+                    }
+                },
+                function (result) {
+                    $("#Qualifications").html(result);
+                });
+        }
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#Prew' + input.id).attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+}

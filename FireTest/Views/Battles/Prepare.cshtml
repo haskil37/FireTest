@@ -1,72 +1,19 @@
-﻿@model FireTest.Models.BattleViewModel
+﻿@model List<FireTest.Models.FacultyQualifications>
 @{
-    ViewBag.Title = "Выбор курса и уровня подготовки";
+    ViewBag.Title = "Выбор уровня подготовки";
 }
 @Styles.Render("~/Content/battle")
-@Styles.Render("~/Content/audio")
-<div class="music">
-    <span id="play-button" onclick="Audio_Stop()" class="pause"></span>
-    <span id="volume-button" class="volume" onclick="Volume_Off()"></span>
-    <input type="range" min="0" max="10" id="volume" oninput="Audio_Volume()" value="5" />
-    <audio id="audio" preload="auto" src="~/Content/select.mp3" loop="loop" autoplay="autoplay" />
+<div class="row center"><h3>Выберите уровень подготовки чтобы пригласить @ViewBag.SecondPlayer</h3></div>
+<div id="BattleQualification" class="row">
+    @{
+        for (int i = 0; i < Model.Count(); i++)
+        {
+            <div class="col-2 center facultyQualifications">
+                <a href="/Battles/Wait/?course=@(i+1)&IdBattle=@ViewBag.Id">
+                    <img class="" src="~/Images/Qualifications/@Model[i].Picture" />
+                    <p>@Model[i].Name</p>
+                </a>
+            </div>
+        }
+    }
 </div>
-@using (Html.BeginForm("Prepare", "Battles", new { id = @ViewBag.Id }, FormMethod.Post, new { role = "form" }))
-{
-    @Html.AntiForgeryToken()
-    <div class="row center"><h3>Выберите курс</h3></div>
-    @Html.ValidationMessageFor(m => m.Course, "", new { @class = "text-danger" })
-    <div id="BattleCourse" class="row">
-        <div class="col-offset-1 col-2">
-            <input type="radio" id="course-1" value="1" name="course" class="course"/>
-            <label for="course-1" class="course-1"></label>
-        </div>
-        <div class="col-2">
-            <input type="radio" id="course-2" value="2" name="course" class="course" />
-            <label for="course-2" class="course-2"></label>
-       </div>
-        <div class="col-2">
-            <input type="radio" id="course-3" value="3" name="course" class="course" />
-            <label for="course-3" class="course-3"></label>
-       </div>
-        <div class="col-2">
-            <input type="radio" id="course-4" value="4" name="course" class="course" />
-            <label for="course-4" class="course-4"></label>
-        </div>
-        <div class="col-2">
-            <input type="radio" id="course-5" value="5" name="course" class="course" />
-            <label for="course-5" class="course-5"></label>
-        </div>
-    </div>
-    <div class="row center"><h3>Выберите уровень подготовки</h3></div>
-    @Html.ValidationMessageFor(m => m.Qualification, "", new { @class = "text-danger" })
-    <div id="BattleQualification" class="row">
-        <div class="col-offset-1 col-2">
-            <input type="radio" id="qualification-1" value="1" name="qualification" class="qualification" />
-            <label for="qualification-1" class="qualification-1"></label>
-        </div>
-        <div class="col-2">
-            <input type="radio" id="qualification-2" value="2" name="qualification" class="qualification" />
-            <label for="qualification-2" class="qualification-2"></label>
-        </div>
-        <div class="col-2">
-            <input type="radio" id="qualification-3" value="3" name="qualification" class="qualification" />
-            <label for="qualification-3" class="qualification-3"></label>
-        </div>
-        <div class="col-2">
-            <input type="radio" id="qualification-4" value="4" name="qualification" class="qualification" />
-            <label for="qualification-4" class="qualification-4"></label>
-        </div>
-        <div class="col-2">
-            <input type="radio" id="qualification-5" value="5" name="qualification" class="qualification" />
-            <label for="qualification-5" class="qualification-5"></label>
-        </div>
-    </div>
-    <div class="row center">
-        <input type="submit" class="button" value="Пригласить @ViewBag.SecondPlayer" />
-    </div>
-}
-@section scripts
-{   
-    @Scripts.Render("~/bundles/jqueryval")
-    @Scripts.Render("~/bundles/audio")
-}

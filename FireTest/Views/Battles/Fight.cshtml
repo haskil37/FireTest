@@ -3,13 +3,13 @@
     ViewBag.Title = "Поединок";
 }
 @Styles.Render("~/Content/battle")
-@Styles.Render("~/Content/audio")
+@*@Styles.Render("~/Content/audio")
 <div class="music">
     <span id="play-button" onclick="Audio_Stop()" class="pause"></span>
     <span id="volume-button" class="volume" onclick="Volume_Off()"></span>
     <input type="range" min="0" max="10" id="volume" oninput="Audio_Volume()" value="5" />
     <audio id="audio" preload="auto" src="~/Content/battle.mp3" loop="loop" autoplay="autoplay" />
-</div>
+</div>*@
 <div class="row">
     <div class="col-5">
         <img class="avatar-mini" src="@ViewBag.FirstPlayerAvatar" />
@@ -171,7 +171,7 @@
 </div>
 @section scripts
 {
-    @Scripts.Render("~/bundles/audio")
+    @*@Scripts.Render("~/bundles/audio")*@
     <script type="text/javascript">
         MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'question']);
         $('.questionImage img').zoomify();

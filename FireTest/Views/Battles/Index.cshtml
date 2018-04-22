@@ -3,13 +3,13 @@
     ViewBag.Title = "Пользователи";
 }
 @Styles.Render("~/Content/battle")
-@Styles.Render("~/Content/audio")
-<div class="music">
+@*@Styles.Render("~/Content/audio")*@
+@*<div class="music">
     <span id="play-button" onclick="Audio_Stop()" class="pause"></span>
     <span id="volume-button" class="volume" onclick="Volume_Off()"></span>
     <input type="range" min="0" max="10" id="volume" oninput="Audio_Volume()" value="5" />
     <audio id="audio" preload="auto" src="~/Content/select.mp3" loop="loop" autoplay="autoplay" />
-</div>
+</div>*@
 <div class="row center">
     <img src="~/Content/battle.png" class="battleIndexPeople"/>
     <img src="~/Content/Fire.png" class="battleIndexFire"/>
@@ -24,7 +24,7 @@
 <div class="row"></div>
 @section scripts
 {
-    @Scripts.Render("~/bundles/audio")
+    @*@Scripts.Render("~/bundles/audio")*@
     <script>
         UserRefreshInterval = setInterval(function () { $('#users').load('/Battles/Users/'); }, 3000);
     </script>

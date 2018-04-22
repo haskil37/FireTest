@@ -7,76 +7,19 @@
     UpdateTargetId = "Questions",
 }))
 {
-    @Html.Hidden("page", (int)ViewBag.page)
-    <div class="row">
-        <div class="col-3"><h3>Название теста:</h3></div>
-        <div class="col-9 left">
-            <h3>@ViewBag.NameTest</h3>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-3"><h3>Уровень подготовки:</h3></div>
-        <div class="col-9 left">
-            <h3>"@ViewBag.NameQualification" и предыдущие</h3>
-        </div>
-    </div>
-    <div class="row">
-        <h3>Критерии оценки:</h3>
-    </div>
-    <div class="row">
-        <div class="col-2 right">
-            <h3>Для 5 -</h3>
-        </div>
-        <div class="col-8">
-            <h3>&nbsp;больше @ViewBag.Eval5%</h3>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-2 right">
-            <h3>Для 4 -</h3>
-        </div>
-        <div class="col-8">
-            <h3>&nbsp;больше @ViewBag.Eval4% и меньше @ViewBag.Eval5%</h3>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-2 right">
-            <h3>Для 3 -</h3>
-        </div>
-        <div class="col-8">
-            <h3>&nbsp;больше @ViewBag.Eval3% и меньше @ViewBag.Eval4%</h3>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-2 right">
-            <h3>Для 2 -</h3>
-        </div>
-        <div class="col-8">
-            <h3>&nbsp;меньше @ViewBag.Eval3%</h3>
-        </div>
-    </div>
     <div class="row">
         @Html.Raw(ViewBag.Count250)
     </div>
-    <div class="row">
-        <div class="col-1">
-            <h3>Поиск</h3>
-        </div>
-        <div class="col-3">
-            <span class="search"></span><input id="SearchString" name="SearchString" type="text" value="@ViewBag.CurrentFilter" />
-        </div>
-        <div class="col-8 right">
-            <button type="submit" value="true" name="submitButtonAll" class="button-Cancel">Выбрать все вопросы</button>
-        </div>
-    </div>
+    @Html.Hidden("page", (int)ViewBag.page)
+    @Html.Hidden("currentFilter", (string)ViewBag.CurrentFilter)
     <div>
         Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
 
         @Html.PagedListPager(Model, page => Url.Action("CreateTestFinishAjax",
-        new { page, currentFilter = ViewBag.CurrentFilter, Tags = Session["Tags"], Subjects = Session["Subjects"] }),
-        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "Questions" }))
+                            new { page, currentFilter = ViewBag.CurrentFilter, Tags = Session["Tags"], Subjects = Session["Subjects"] }),
+                            PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "Questions" }))
     </div>
-    <div class="row" id="question">
+    <div class="row" id="Questions">
         <table>
             <tr>
                 <th>
@@ -94,7 +37,7 @@
             </tr>
 
             @foreach (var item in Model)
-                {
+            {
                 <tr>
                     <td>
                         @item.Name
@@ -127,21 +70,10 @@
         Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
 
         @Html.PagedListPager(Model, page => Url.Action("CreateTestFinishAjax",
-        new { page, currentFilter = ViewBag.CurrentFilter, Tags = Session["Tags"], Subjects = Session["Subjects"] }),
-        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "Questions" }))
+                            new { page, currentFilter = ViewBag.CurrentFilter, Tags = Session["Tags"], Subjects = Session["Subjects"] }),
+                            PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "Questions" }))
     </div>
     <script>
         MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'question']);
-        (function ($) {
-            $.fn.setCursorToTextEnd = function () {
-                var $initialVal = this.val();
-                this.val($initialVal);
-            };
-        })(jQuery);
-        $('#SearchString').focus();
-        $('#SearchString').setCursorToTextEnd();
-        $('#SearchString').keyup(function () {
-            $(this.form).submit();
-        });
     </script>
 }

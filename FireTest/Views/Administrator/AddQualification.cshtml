@@ -1,0 +1,57 @@
+﻿@model FireTest.Models.FacultyViewQualifications
+<div class="col-6">
+    <div class="textback rating-left">
+        @for (int i = 0; i < Model.Bachelor; i++)
+        {
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        Название уровня подготовки
+                    </div>
+                    <div class="row">
+                        @Html.TextBoxFor(m => m.LevelsName[i], new { Name = "LevelsName", Id = "LevelsNameB" })
+                    </div>
+                    <div class="row">
+                        Загрузите изображение уровня подготовки. Оно появится в квадрате справа
+                    </div>
+                    <div class="row">
+                        <input type="file" name="LevelsPictures" accept="image/*" id="ImgInpB_@i" onchange="readURL(this)" />
+                    </div>
+                </div>
+                <div class="col-6">
+                    <p style="text-align: center;" class="PrewImgInp">
+                        <img id="PrewImgInpB_@i" alt="Пусто"/>
+                    </p>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<div class="col-6">
+    <div class="textback rating-right">
+        @for (int i = 0; i < Model.Master; i++)
+        {
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        Название уровня подготовки
+                    </div>
+                    <div class="row">
+                        @Html.TextBoxFor(m => m.LevelsName[i + Model.Bachelor], new { Name = "LevelsName", Id = "LevelsNameM" })
+                    </div>
+                    <div class="row">
+                        Загрузите изображение уровня подготовки. Оно появится в квадрате справа
+                    </div>
+                    <div class="row">
+                        <input type="file" name="LevelsPictures" accept="image/*" id="ImgInpM_@i" onchange="readURL(this)" />
+                    </div>
+                </div>
+                <div class="col-6">
+                    <p style="text-align: center;" class="PrewImgInp">
+                        <img id="PrewImgInpM_@i" alt="Пусто"/>
+                    </p>
+                </div>
+            </div>
+        }
+    </div>
+</div>

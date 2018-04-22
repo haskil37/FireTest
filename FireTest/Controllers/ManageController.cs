@@ -54,7 +54,7 @@ namespace FireTest.Controllers
                 _userManager = value;
             }
         }
-        public async Task<ActionResult> Index(ManageMessageId? message)
+        public async Task<ActionResult> Index(ManageMessageId? message, string NewFaculty)
         {
             ViewBag.StatusMessage =
                 message == ManageMessageId.ChangePasswordSuccess ? "Ваш пароль изменен."
@@ -62,6 +62,8 @@ namespace FireTest.Controllers
                 : message == ManageMessageId.ChangeSuccess ? "Ваши данные сохранены."
                 : "";
             ViewBag.Editable = true;
+            if (!string.IsNullOrEmpty(NewFaculty))
+                ViewBag.StatusMessage = NewFaculty;
 
             string UserId = User.Identity.GetUserId();
             var user = await UserManager.FindByIdAsync(UserId);
@@ -73,9 +75,9 @@ namespace FireTest.Controllers
                 Avatar = "/Images/Avatars/" + user.Avatar,
                 Year = user.Year != 0 ? user.Year.ToString() : "",
                 Group = user.Group,
-                Age = user.Age.ToString(),
+                Age = user.Age == 0 ? "" : user.Age.ToString(),
                 Sex = user.Sex,
-                SpecialityOptions = Speciality(user.Speciality),
+                //SpecialityOptions = Speciality(user.Speciality),
                 FacultyOptions = Faculty(user.Faculty),
                 RegionOptions = Region(user.Region)
             };
@@ -103,7 +105,7 @@ namespace FireTest.Controllers
             {
                 var user = await UserManager.FindByIdAsync(UserId);
                 model.Avatar = "/Images/Avatars/" + user.Avatar;
-                model.SpecialityOptions = Speciality(user.Speciality);
+                //model.SpecialityOptions = Speciality(user.Speciality);
                 model.FacultyOptions = Faculty(user.Faculty);
                 model.RegionOptions = Region(user.Region);
 
@@ -142,8 +144,7 @@ namespace FireTest.Controllers
             try
             {
                 ApplicationUser user = dbContext.Users.Find(userID);
-                DateTime entrance = DateTime.Parse("1 Sep " + user.Year);
-                TimeSpan diff = DateTime.Now.Subtract(entrance);
+                TimeSpan diff = DateTime.Now - DateTime.Parse("1 Sep " + user.Year);
                 DateTime zeroTime = new DateTime(1, 1, 1);
                 if (diff.Days > 0)
                 {
@@ -152,16 +153,22 @@ namespace FireTest.Controllers
                     //Итого получается, что мы не вычитаем и не прибавляем
                     int course = (zeroTime + diff).Year;
                     user.Course = course;
-                    if (user.Group.Length > 1)
-                    {
-                        var vipusk = user.Group[1];
-                        if (vipusk == '1' && course >= 6)
-                            user.Course = 100;
-                        if (vipusk == '2' && course >= 5)
-                            user.Course = 100;
-                    }
-                    if (course > 6)
+                    //if (user.Group.Length > 1)
+                    //{
+                    //var vipusk = user.Group[1];
+                    //if (vipusk == '1' && course >= 6)
+                    //    user.Course = 100;
+                    //if (vipusk == '2' && course >= 5)
+                    //    user.Course = 100;
+                    var vipusk = dbContext.Faculties.Find(Convert.ToInt32(user.Faculty)).Bachelor;
+                    if (user.Master) //если пошел на магистра, то к выпуску добавляем срок для магистра
+                        vipusk += dbContext.Faculties.Find(user.Faculty).Master;
+                    if (course >= vipusk + 1)
                         user.Course = 100;
+
+                    //}
+                    //if (course > 6)
+                    //    user.Course = 100;
 
                     if (user.Course != 100)
                         user.Group = user.Course + user.Group.Remove(0, 1);
@@ -184,7 +191,7 @@ namespace FireTest.Controllers
                 user.SubName = model.SubName.Trim();
                 user.Family = model.Family.Trim();
                 user.Faculty = model.Faculty.Trim();
-                user.Speciality = model.Speciality.Trim();
+                //user.Speciality = model.Speciality.Trim();
                 user.Group = model.Group.Trim();
                 user.Year = Convert.ToInt32(model.Year.Trim());
                 model.Age = model.Age.Trim();
@@ -505,21 +512,17 @@ namespace FireTest.Controllers
         }
         private List<SelectListItem> Faculty(string userFaculty)
         {
-            Dictionary<string, string> FacultyDataBase = new Dictionary<string, string>
-            {
-                {"1","Факультет пожарной безопасности" },
-                {"2","Факультет техносферной безопасности"},
-                {"0","Факультет платных образовательных услуг"},
-            };
             List<SelectListItem> facultyList = new List<SelectListItem>();
-            foreach (var item in FacultyDataBase)
+            var allFaculties = dbContext.Faculties.ToList();
+            foreach (var item in allFaculties)
             {
-                if (item.Key == userFaculty)
-                    facultyList.Add(new SelectListItem { Value = item.Key, Text = item.Value, Selected = true });
+                if (item.Id.ToString() == userFaculty)
+                    facultyList.Add(new SelectListItem { Value = item.Id.ToString(), Text = item.Name, Selected = true });
                 else
-                    facultyList.Add(new SelectListItem { Value = item.Key, Text = item.Value });
+                    facultyList.Add(new SelectListItem { Value = item.Id.ToString(), Text = item.Name });
             }
             return facultyList;
+
         }
         private List<SelectListItem> Speciality(string userSpeciality)
         {

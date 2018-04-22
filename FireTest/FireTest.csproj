@@ -184,11 +184,13 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\QualificationController.cs" />
+    <Compile Include="Controllers\SkillController.cs" />
     <Compile Include="Controllers\StatisticsController.cs" />
     <Compile Include="Controllers\TeacherController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Migrations\201611151855078_update.cs" />
     <Compile Include="Migrations\201611151855078_update.Designer.cs">
       <DependentUpon>201611151855078_update.cs</DependentUpon>
@@ -281,6 +283,22 @@
     <Compile Include="Migrations\201711251556550_MOTD.Designer.cs">
       <DependentUpon>201711251556550_MOTD.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201803100928018_addFaculties.cs" />
+    <Compile Include="Migrations\201803100928018_addFaculties.Designer.cs">
+      <DependentUpon>201803100928018_addFaculties.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803110946376_addMaster.cs" />
+    <Compile Include="Migrations\201803110946376_addMaster.Designer.cs">
+      <DependentUpon>201803110946376_addMaster.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804081054463_addBoolQualification.cs" />
+    <Compile Include="Migrations\201804081054463_addBoolQualification.Designer.cs">
+      <DependentUpon>201804081054463_addBoolQualification.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804151343552_addFacultyToTest.cs" />
+    <Compile Include="Migrations\201804151343552_addFacultyToTest.Designer.cs">
+      <DependentUpon>201804151343552_addFacultyToTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Decliner.cs" />
@@ -288,6 +306,7 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\QuestionsModel.cs" />
     <Compile Include="Models\SIC.cs" />
+    <Compile Include="Models\Worker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -446,6 +465,11 @@
       <SubType>Designer</SubType>
     </None>
     <Content Include="Images\Avatars\NoAvatar.png" />
+    <Content Include="Images\Qualifications\Commander.png" />
+    <Content Include="Images\Qualifications\Engineer.png" />
+    <Content Include="Images\Qualifications\Firefighter.png" />
+    <Content Include="Images\Qualifications\Guard.png" />
+    <Content Include="Images\Qualifications\Inspector.png" />
     <Content Include="Images\Questions\01.JPG" />
     <Content Include="Images\Questions\02.JPG" />
     <Content Include="Images\Questions\03.JPG" />
@@ -2601,6 +2625,14 @@
     <Content Include="Views\Teacher\IssueComplete.cshtml" />
     <Content Include="Views\Teacher\IndexIssues.cshtml" />
     <Content Include="Views\Administrator\MessageOfTheDay.cshtml" />
+    <Content Include="Views\Skill\Index.cshtml" />
+    <Content Include="Views\Teacher\CreateTestFinishPrepareAjax.cshtml" />
+    <Content Include="Views\Administrator\Faculties.cshtml" />
+    <Content Include="Views\Administrator\CreateFaculty.cshtml" />
+    <Content Include="Views\Administrator\AddQualification.cshtml" />
+    <Content Include="Views\Administrator\DeleteFaculty.cshtml" />
+    <Content Include="Views\Administrator\EditFaculty.cshtml" />
+    <Content Include="Views\Administrator\AddQualificationEdit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -2680,6 +2712,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201711251556550_MOTD.resx">
       <DependentUpon>201711251556550_MOTD.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803100928018_addFaculties.resx">
+      <DependentUpon>201803100928018_addFaculties.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803110946376_addMaster.resx">
+      <DependentUpon>201803110946376_addMaster.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804081054463_addBoolQualification.resx">
+      <DependentUpon>201804081054463_addBoolQualification.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804151343552_addFacultyToTest.resx">
+      <DependentUpon>201804151343552_addFacultyToTest.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

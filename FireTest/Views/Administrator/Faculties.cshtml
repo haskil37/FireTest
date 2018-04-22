@@ -1,0 +1,30 @@
+﻿@model IEnumerable<FireTest.Models.FacultyView>
+@{
+    ViewBag.Title = "Факультеты";
+}
+@Styles.Render("~/Content/administrator")
+<div class="substrate">
+    <div class="row"><h3>Факультеты</h3></div>
+    <div class="row">Данный раздел позволяет создавать, удалять и редактировать факультеты</div>
+    <div class="row" id="Tests">
+        <table>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @*@Html.ActionLink("Редактировать", "EditFaculty", "Administrator", new { id = item.Id }, null) |*@
+                        @Html.ActionLink("Удалить", "DeleteFaculty", "Administrator", new { id = item.Id }, null)
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <a href="../Administrator/CreateFaculty"><button class="button" style="width: 90%;">Создать факультет</button></a>
+        </div>
+    </div>
+</div>

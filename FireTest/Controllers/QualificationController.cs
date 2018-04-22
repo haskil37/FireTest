@@ -12,46 +12,49 @@ namespace FireTest.Controllers
     {
         ApplicationDbContext dbContext = new ApplicationDbContext();
         private static Random random = new Random();
-        private static int[,] relation = new int[5, 5]{
-            {100, 0, 0, 0, 0},
-            {40, 60, 0, 0, 0},
-            {20, 20, 60, 0, 0},
-            {10, 10, 20, 60, 0},
-            {10, 10, 10, 20, 50}};
+        private static int[,] relation = new int[6, 6]{
+            {100, 0, 0, 0, 0, 0},
+            {40, 60, 0, 0, 0, 0},
+            {20, 20, 60, 0, 0, 0},
+            {10, 10, 20, 60, 0, 0},
+            {10, 10, 10, 20, 50, 0},
+            {5, 5, 10, 10, 20, 50 }};
 
-        public ActionResult Index(int id = 5, int course = 5)
+        public ActionResult Index(int id = 1)
         {
-            if (!ModelState.IsValid || id < 1 || id > 5 || course < 1 || course > 5)
+            string userID = User.Identity.GetUserId();
+            var user = dbContext.Users.Find(userID);
+            if (user == null)
+                return RedirectToAction("Index", "Home");
+            var faculty = dbContext.Faculties.Find(Convert.ToInt32(user.Faculty));
+            if (faculty == null)
+                return RedirectToAction("Index", "Home");
+            if (!ModelState.IsValid || id < 1 || id > (faculty.Bachelor + faculty.Master))
                 return RedirectToAction("Index", "Home");
 
-            if (id < course) //Чтоб курс был равен квалификации
-                course = id;
             ViewBag.Course = "";
-            for (int i = 1; i <= course;)
+            for (int i = 1; i <= id;)
             {
                 ViewBag.Course += i;
                 i++;
-                if (i > course)
+                if (i > id)
                     break;
-                //if (i < course)
-                //    ViewBag.Course += ", ";
-                //else
-                //    ViewBag.Course += " и ";
-                //Медленнее, но выглядит приятнее
-                ViewBag.Course += i < course ? ", " : " и ";
+
+                ViewBag.Course += i < id ? ", " : " и ";
             }
+            //id и course теперь одно и тоже.
+            var levelsNameIds = dbContext.Faculties.Where(u => u.Id.ToString() == user.Faculty).Select(u => u.LevelsName).FirstOrDefault().Split('|');
+            ViewBag.QualificationName = levelsNameIds[id - 1];
 
-            ViewBag.QualificationName = dbContext.Qualifications.Find(id).Name;
-
-            string user = User.Identity.GetUserId();
 
             var end = dbContext.SelfyTestQualifications //Есть ли незаконченный или пустой тест
-                .Where(u => u.IdUser == user)
+                .Where(u => u.IdUser == userID)
                 .Where(u => u.End == false)
                 .Select(u => new {
                     id = u.Id,
                     questions = u.Questions,
-                    idQualification = u.IdQualification,
+                    u.Course,
+                    //idQualification = u.IdQualification,
                 }).FirstOrDefault();
             ViewBag.Сompleted = true;
 
@@ -59,17 +62,17 @@ namespace FireTest.Controllers
             {
                 if (!string.IsNullOrEmpty(end.questions)) //Если незаконченный тест, то предлагаем закончить
                 {
-                    ViewBag.QualificationName = dbContext.Qualifications.Find(end.idQualification).Name;
+                    //ViewBag.QualificationName = dbContext.Qualifications.Find(end.idQualification).Name;
                     ViewBag.Id = end.id;
                     ViewBag.EndId = id;
-                    ViewBag.EndCourse = course;
                     ViewBag.Сompleted = false;
+                    return View();
                 }
                 else  //Если пустой тест, то меняем значения курса и квалификации
                 {
                     SelfyTestQualification continueTest = dbContext.SelfyTestQualifications.Find(end.id);
-                    continueTest.IdQualification = id;
-                    continueTest.Course = course;
+                    //continueTest.IdQualification = id;
+                    continueTest.Course = id;
                     dbContext.SaveChanges();
                     ViewBag.Id = end.id;
                 }
@@ -78,9 +81,9 @@ namespace FireTest.Controllers
             {
                 SelfyTestQualification newTest = new SelfyTestQualification()
                 {
-                    IdUser = user,
-                    IdQualification = id,
-                    Course = course,
+                    IdUser = userID,
+                    //IdQualification = id,
+                    Course = id,
                     TimeStart = DateTime.Now,
                     TimeEnd = DateTime.Now
                 };
@@ -93,7 +96,12 @@ namespace FireTest.Controllers
             int value = 0;
             for (int i = 1; i <= id; i++)
             {
-                var countQuestions = dbContext.Questions.Where(u => u.IdQualification == i).Count();
+                //var countQuestions = dbContext.Questions.Where(u => u.IdQualification == i).Where(u => u.Faculties.Contains("[" + user.Faculty + "]")).Count();
+                var countQuestions = dbContext.Questions
+                    .Where(u => u.IdCourse == i)
+                    .Where(u => u.Qualification)
+                    .Where(u => u.Faculties.Contains("[" + user.Faculty + "]")).Count();
+
                 ViewBag.CountCurrent = countQuestions;
                 if (value != 0)
                     value = Math.Min(value, countQuestions * 100 / relation[id - 1, i - 1]);
@@ -106,7 +114,7 @@ namespace FireTest.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Index(int? EndId, int? EndCourse, int id = 0, string submitButton = "Exit", int count = 1)
+        public ActionResult Index(int? EndId, int id = 0, string submitButton = "Exit", int count = 1)
         {
             if (!ModelState.IsValid || id == 0 || submitButton == "Exit")
                 return RedirectToAction("Index", "Home");
@@ -118,7 +126,7 @@ namespace FireTest.Controllers
                             .Where(u => u.Id == id)
                             .Select(u => new {
                                 questions = u.Questions,
-                                idQualification = u.IdQualification,
+                                //idQualification = u.IdQualification,
                                 course = u.Course,
                             }).FirstOrDefault();
 
@@ -132,7 +140,7 @@ namespace FireTest.Controllers
                     return RedirectToAction("Index", "Home");
                 dbContext.SelfyTestQualifications.Remove(deleteTest);
                 dbContext.SaveChanges();
-                return RedirectToAction("Index", new { id = EndId, course = EndCourse });
+                return RedirectToAction("Index", new { id = EndId });
             }
 
             if (submitButton != "Accept") //Т.к. Cancel мы обработали, то если будет любой текст кроме согласия, то это фигня и мы выкидываем пользователя на главную
@@ -140,13 +148,18 @@ namespace FireTest.Controllers
 
 
             int value = 0;//Проверяем что count не больше чем можно
-            for (int i = 1; i <= test.idQualification; i++)
+            string faculty = dbContext.Users.Find(user).Faculty;
+            for (int i = 1; i <= test.course; i++)
             {
-                var countQuestions2 = dbContext.Questions.Where(u => u.IdQualification == i).Count();
+                //var countQuestions2 = dbContext.Questions.Where(u => u.IdQualification == i).Count();
+                var countQuestions2 = dbContext.Questions
+                    .Where(u => u.IdCourse == i)
+                    .Where(u => u.Qualification)
+                    .Where(u => u.Faculties.Contains("[" + faculty + "]")).Count();
                 if (value != 0)
-                    value = Math.Min(value, countQuestions2 * 100 / relation[test.idQualification - 1, i - 1]);
+                    value = Math.Min(value, countQuestions2 * 100 / relation[test.course - 1, i - 1]);
                 else
-                    value = countQuestions2 * 100 / relation[test.idQualification - 1, i - 1];
+                    value = countQuestions2 * 100 / relation[test.course - 1, i - 1];
             }
             if (count > Math.Truncate(value / 10.0))
                 count = Convert.ToInt32(Math.Truncate(value / 10.0));
@@ -154,7 +167,7 @@ namespace FireTest.Controllers
             if (string.IsNullOrEmpty(test.questions)) //Создаем новый тест
             {
                 count = count * 10;
-                if (!AutoSelectQuestion(id, test.idQualification, test.course, count))
+                if (!AutoSelectQuestion(id, test.course, count, faculty))
                     return RedirectToAction("Index", "Home"); //Если что-то пошло не так, то на главную
             }
             else //Продолжаем старый тест
@@ -177,9 +190,10 @@ namespace FireTest.Controllers
                 .Where(u => u.End == false)
                 .Select(u => new {
                     id = u.Id,
-                    idQualification = u.IdQualification,
+                    //idQualification = u.IdQualification,
                     questions = u.Questions,
-                    answers = u.Answers
+                    answers = u.Answers,
+                    u.Course
                 }).FirstOrDefault();
             if (qualificationTest == null) //Если нет теста, то на главную
                 return RedirectToAction("Index", "Home");
@@ -192,7 +206,11 @@ namespace FireTest.Controllers
             if (count == number) //Если ответов столько же сколько и вопросов то идем на страницу статистики.
                 return RedirectToAction("QualificationTestEnd");
 
-            ViewBag.QualificationName = dbContext.Qualifications.Find(qualificationTest.idQualification).Name;
+            //ViewBag.QualificationName = dbContext.Qualifications.Find(qualificationTest.idQualification).Name;
+            var faculty = dbContext.Users.Find(user).Faculty;
+            var levelsNameIds = dbContext.Faculties.Where(u => u.Id.ToString() == faculty).Select(u => u.LevelsName).FirstOrDefault().Split('|');
+            ViewBag.QualificationName = levelsNameIds[qualificationTest.Course - 1];
+
             Questions model = new Questions();
             model = SelectQuestion(qualificationTest.id);
             if (model == null)
@@ -226,9 +244,10 @@ namespace FireTest.Controllers
                 .Where(u => u.End == false)
                 .Select(u => new {
                     id = u.Id,
-                    idQualification = u.IdQualification,
+                    //idQualification = u.IdQualification,
                     questions = u.Questions,
-                    answers = u.Answers
+                    answers = u.Answers,
+                    u.Course
                 }).SingleOrDefault();
 
             List<int> AnswersIDsINT = new List<int>();
@@ -259,7 +278,11 @@ namespace FireTest.Controllers
             {
                 ViewBag.Count = count;
                 ViewBag.Number = number + 1;
-                ViewBag.QualificationName = dbContext.Qualifications.Find(qualificationTest.idQualification).Name;
+                var faculty = dbContext.Users.Find(user).Faculty;
+                var levelsNameIds = dbContext.Faculties.Where(u => u.Id.ToString() == faculty).Select(u => u.LevelsName).FirstOrDefault().Split('|');
+                ViewBag.QualificationName = levelsNameIds[qualificationTest.Course - 1];
+
+                //ViewBag.QualificationName = dbContext.Qualifications.Find(qualificationTest.idQualification).Name;
                 ViewBag.QualificationTestEnd = false;
 
                 Questions model = new Questions();
@@ -281,9 +304,10 @@ namespace FireTest.Controllers
                 .Where(u => u.End == false)
                 .Select(u => new {
                     id = u.Id,
-                    idQualification = u.IdQualification,
+                    //idQualification = u.IdQualification,
                     questions = u.Questions,
-                    answers = u.Answers
+                    answers = u.Answers,
+                    u.Course
                 }).SingleOrDefault();
             if (qualificationTest == null) //Если нет теста, то на главную
                 return RedirectToAction("Index", "Home");
@@ -300,7 +324,11 @@ namespace FireTest.Controllers
             ViewBag.Hours = (test.TimeEnd - test.TimeStart).Hours;
             ViewBag.Min = (test.TimeEnd - test.TimeStart).Minutes;
             ViewBag.Sec = (test.TimeEnd - test.TimeStart).Seconds;
-            ViewBag.QualificationName = dbContext.Qualifications.Find(qualificationTest.idQualification).Name;
+
+            var faculty = dbContext.Users.Find(user).Faculty;
+            var levelsNameIds = dbContext.Faculties.Where(u => u.Id.ToString() == faculty).Select(u => u.LevelsName).FirstOrDefault().Split('|');
+            ViewBag.QualificationName = levelsNameIds[qualificationTest.Course - 1];
+
             dbContext.SaveChanges();
 
             List<string> right = new List<string>(); //Берем правильные и неправильные ответы и из каких они дисциплин
@@ -473,19 +501,21 @@ namespace FireTest.Controllers
             }
             base.Dispose(disposing);
         }
-        private bool AutoSelectQuestion(int id, int idQualification, int course, int count)
+        private bool AutoSelectQuestion(int id, int course, int count, string faculty)
         {
             try
             {
                 List<int> idQuestions = new List<int>();
                 string questions = ""; //Сохраняем вопросы в тест
 
-                for (int i = 1; i <= idQualification; i++)
+                for (int i = 1; i <= course; i++)
                 {
-                    var value = relation[idQualification - 1, i - 1] * count / 100;
-                    idQuestions = dbContext.Questions.
-                        Where(u => u.IdQualification == i).
-                        OrderBy(u => Guid.NewGuid()).
+                    var value = relation[course - 1, i - 1] * count / 100;
+                    idQuestions = dbContext.Questions
+                        .Where(u => u.Qualification)
+                       // Where(u => u.IdQualification == i).
+                        .Where(u => u.Faculties.Contains("[" + faculty + "]"))
+                        .OrderBy(u => Guid.NewGuid()).
                         Take(value).
                         Select(u => u.Id).ToList();
                     foreach (int item in idQuestions)
@@ -600,8 +630,8 @@ namespace FireTest.Controllers
                 for (int i = 0; i < allAnswers.Count(); i++)
                 {
                     Answers.Add(new Answers { AnswerText = TranslitText(allAnswers[i].text), AnswerId = CodeDecode(allAnswers[i].id) });
-                    Shuffle(Answers);
                 }
+                Shuffle(Answers);
             }
 
             questionDB.CountAll += 1; //Прибавляем +1 к тому что вопрос был задан (для статистики)

@@ -2,13 +2,13 @@
     ViewBag.Title = "Ожидание второго игрока";
 }
 @Styles.Render("~/Content/battle")
-@Styles.Render("~/Content/audio")
+@*@Styles.Render("~/Content/audio")
 <div class="music">
     <span id="play-button" onclick="Audio_Stop()" class="pause"></span>
     <span id="volume-button" class="volume" onclick="Volume_Off()"></span>
     <input type="range" min="0" max="10" id="volume" oninput="Audio_Volume()" value="5" />
     <audio id="audio" preload="auto" src="~/Content/select.mp3" loop="loop" autoplay="autoplay" />
-</div>
+</div>*@
 @using (Html.BeginForm("Wait", "Battles", new { id = ViewBag.Id }, FormMethod.Post, new { role = "form" }))
 {
     @Html.AntiForgeryToken()
@@ -43,7 +43,7 @@
 }
 @section scripts
 {
-    @Scripts.Render("~/bundles/audio")
+    @*@Scripts.Render("~/bundles/audio")*@
     <script>
         setInterval(function () { $('#invite-accept').load('/Battles/WaitConfirm/' + @ViewBag.Id, { type: 'POST' }); }, 3000);
 

@@ -2,14 +2,70 @@
     ViewBag.Title = "Создание теста";
 }
 @Styles.Render("~/Content/administrator")
+@using (Ajax.BeginForm("CreateTestFinishAjax", new AjaxOptions
+{
+    HttpMethod = "Get",
+    InsertionMode = InsertionMode.Replace,
+    UpdateTargetId = "Questions",
+}))
+{
+    <div class="row">
+        <div class="col-3"><h3>Название теста:</h3></div>
+        <div class="col-9 left">
+            <h3>@ViewBag.NameTest</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3"><h3>Уровень подготовки:</h3></div>
+        <div class="col-9 left">
+            <h3>"@ViewBag.NameQualification" и предыдущие - <span style="color:rgb(255, 115, 0);">@ViewBag.FacultyName</span></h3>
+        </div>
+    </div>
+    <div class="row">
+        <h3>Критерии оценки:</h3>
+    </div>
+    <div class="row">
+        <div class="col-2 right">
+            <h3>Для 5 -</h3>
+        </div>
+        <div class="col-8">
+            <h3>&nbsp;больше @ViewBag.Eval5%</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2 right">
+            <h3>Для 4 -</h3>
+        </div>
+        <div class="col-8">
+            <h3>&nbsp;больше @ViewBag.Eval4% и меньше @ViewBag.Eval5%</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2 right">
+            <h3>Для 3 -</h3>
+        </div>
+        <div class="col-8">
+            <h3>&nbsp;больше @ViewBag.Eval3% и меньше @ViewBag.Eval4%</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2 right">
+            <h3>Для 2 -</h3>
+        </div>
+        <div class="col-8">
+            <h3>&nbsp;меньше @ViewBag.Eval3%</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-1">Поиск</div>
+        <div class="col-6">
+            <input name="SearchString" type="text" oninput="$(this.form).submit();">
+        </div>
+        <div class="col-5 right">
+            <button type="submit" value="true" name="submitButtonAll" class="button-Cancel">Выбрать все вопросы</button>
+        </div>
+    </div>
+}
 <div id="Questions">
     @{ Html.RenderAction("CreateTestFinishAjax", new { Page = 1 }); }
 </div>
-@section scripts
-{
-    <script>
-    $('#SearchString').keyup(function () {
-        $(this.form).submit();
-    });
-    </script>
-}

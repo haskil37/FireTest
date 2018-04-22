@@ -8,11 +8,12 @@
 }))
 {
     @Html.Hidden("currentFilter", (string)ViewBag.CurrentFilter)
+    @Html.Hidden("Page", (int)ViewBag.Page)
     <div>
         Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
         @Html.PagedListPager(Model, page => Url.Action("EditQuestionSelectAjax",
-            new { page, currentFilter = ViewBag.CurrentFilter, Tags = Session["Tags"], Subjects = Session["Subjects"] }),
-            PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "Questions" }))
+                 new { page, currentFilter = ViewBag.CurrentFilter, Tags = Session["Tags"], Subjects = Session["Subjects"] }),
+                 PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "Questions" }))
     </div>
     <div class="row" id="question">
         <table>
@@ -21,12 +22,15 @@
                     Вопросы
                 </th>
                 <th>
+                    Статистика
                 </th>
+                    Редактировать
                 <th>
                 </th>
                 @if (ViewBag.Access == true)
                 {
                     <th>
+                        Входит в уровень подготовки?
                     </th>
                 }
             </tr>
@@ -44,22 +48,36 @@
                     </td>
                     @if (ViewBag.Access == true)
                     {
-                        if (item.Qualification != 0)
-                        {
-                            <td class="center" width="15%">
-                                Уровень подготовки: <span class="qualification-color">@item.QualificationName</span>
-                                <hr />
-                                <a href="QuestionQualification/@item.Id">Убрать</a>
-                            </td>
-                        }
-                        else
-                        {
-                            <td class="center" width="15%">
-                                Уровень подготовки: <span class="qualification-color">нет</span>
-                                <hr />
-                                <a href="QuestionQualification/@item.Id">Добавить</a>
-                            </td>
-                        }
+                        <td class="center" width="15%">
+                            @if (item.Qualification == true)
+                            {
+                                <div class="Yes">
+                                    <button type="submit" value="@item.Id" name="submitButton"></button>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="No">
+                                    <button type="submit" value="@item.Id" name="submitButton"></button>
+                                </div>
+                            }
+                        </td>
+                        @*if (item.Qualification == true)
+                            {
+                                <td class="center" width="15%">
+                                    Входит в уровень подготовки: <span class="qualification-color">Да</span>
+                                    <hr />
+                                    <a href="QuestionQualification/@item.Id">Убрать</a>
+                                </td>
+                            }
+                            else
+                            {
+                                <td class="center" width="15%">
+                                    Входит в уровень подготовки: <span class="qualification-color">Нет</span>
+                                    <hr />
+                                    <a href="QuestionQualification/@item.Id">Добавить</a>
+                                </td>
+                            }*@
                     }
                 </tr>
             }
@@ -68,8 +86,8 @@
     <div>
         Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
         @Html.PagedListPager(Model, page => Url.Action("EditQuestionSelectAjax",
-            new { page, currentFilter = ViewBag.CurrentFilter, Tags = Session["Tags"], Subjects = Session["Subjects"] }),
-            PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "Questions" }))
+                 new { page, currentFilter = ViewBag.CurrentFilter, Tags = Session["Tags"], Subjects = Session["Subjects"] }),
+                 PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "Questions" }))
     </div>
     <script>
         MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'question']);

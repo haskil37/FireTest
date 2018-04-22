@@ -139,19 +139,19 @@
                             @Html.DropDownListFor(m => m.Region, Model.RegionOptions)
                         </div>
                     </div>
-                    <div class="row">
+                    @*<div class="row">
                         @Html.LabelFor(m => m.Speciality, new { @class = "col-4" })
                         <div class="col-8">
                             @Html.DropDownListFor(m => m.Speciality, Model.SpecialityOptions)
                         </div>
-                    </div>
+                    </div>*@
                 }
                 else
                 {   
                     @Html.Hidden("Group", "-1")
                     @Html.Hidden("Region", "0")
                     @Html.Hidden("Faculty", "0")
-                    @Html.Hidden("Speciality", "0")
+                    @*@Html.Hidden("Speciality", "0")*@
                     <div class="row">
                         @Html.LabelFor(m => m.Group, new { @class = "col-4" })
                         <div class="col-8">

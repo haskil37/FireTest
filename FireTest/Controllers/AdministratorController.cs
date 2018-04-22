@@ -4,8 +4,13 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using PagedList;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Web;
+using System.Web.Helpers;
 using System.Web.Mvc;
+using EntityFramework.Extensions;
 
 namespace FireTest.Controllers
 {
@@ -573,6 +578,170 @@ namespace FireTest.Controllers
             string[] declineText = decliner.Decline(userValue.Family, userValue.Name, userValue.SubName, 2);//Меняем падеж
             ViewBag.Name = declineText[0] + " " + declineText[1] + " " + declineText[2];
             return View(model);
+        }
+        public ActionResult Faculties()
+        {
+            return View(dbContext.Faculties.Select(u => new FacultyView { Id = u.Id, Name = u.Name }));
+        }
+        public ActionResult CreateFaculty()
+        {
+            var model = new FacultyViewQualifications() { Bachelor = 4, Master = 2 };
+            return View(model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateFaculty(FacultyViewQualifications model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var faculty = new Faculty
+            {
+                Name = model.Name,
+                Bachelor = model.Bachelor,
+                Master = model.Master
+            };
+            foreach (var item in model.LevelsName)
+                    faculty.LevelsName += item + "|";
+            faculty.LevelsName = faculty.LevelsName.Substring(0, faculty.LevelsName.Length - 1);
+
+            foreach (var item in model.LevelsPictures)
+                faculty.LevelsPictures += SaveFacultyPictures(item) + "|";
+            faculty.LevelsPictures = faculty.LevelsPictures.Substring(0, faculty.LevelsPictures.Length - 1);
+            dbContext.Faculties.Add(faculty);
+            dbContext.SaveChanges();
+
+            //Используется EntityFramework.Extensions для быстрого обновления БД
+            var update = dbContext.Questions
+                                .Update(u => new Question { Faculties = u.Faculties + "[" + faculty.Id + "]" });
+
+            return RedirectToAction("Faculties");
+        }
+        string SaveFacultyPictures (HttpPostedFileBase LevelPicture)
+        {
+            string extension = Path.GetExtension(LevelPicture.FileName).ToLower();
+            MD5 md5 = MD5.Create();
+            byte[] avatar = new byte[LevelPicture.ContentLength];
+            string ImageName = BitConverter.ToString(md5.ComputeHash(avatar)).Replace("-", "").ToLower();
+            LevelPicture.SaveAs(Server.MapPath("~/Images/Qualifications/" + ImageName + extension));
+            var img = new WebImage(Server.MapPath("~/Images/Qualifications/" + ImageName + extension));
+            img.Resize(200, 2000);
+            img.Save();
+            return ImageName + extension;
+        }
+        public PartialViewResult AddQualification(FacultyViewQualifications model, string LevelsNameB, string LevelsNameM)
+        {
+            if (model.Bachelor == 0 && model.Master == 0)
+                return PartialView(new FacultyViewQualifications() { Bachelor = 4, Master = 2 });
+            if (model.LevelsName != null || model.LevelsPictures != null)
+                return PartialView(model);
+
+            var levelsNameB = LevelsNameB.Replace("LevelsName=","").Split('&');
+            var levelsNameM = LevelsNameM.Replace("LevelsName=", "").Split('&');
+
+            model.LevelsName = new List<string>();
+            for (int i = 0; i < model.Bachelor; i++)
+            {
+                if (levelsNameB.Count() >= i + 1)
+                    model.LevelsName.Add(levelsNameB[i]);
+                else
+                    model.LevelsName.Add(string.Empty);
+            }
+            for (int i = 0; i < model.Master; i++)
+            {
+                if (levelsNameM.Count() >= i + 1)
+                    model.LevelsName.Add(levelsNameM[i]);
+                else
+                    model.LevelsName.Add(string.Empty);
+            }
+            return PartialView(model);
+        }
+        public ActionResult DeleteFaculty(int id)
+        {
+            return View(dbContext.Faculties.Where(u => u.Id == id).Select(u => new FacultyView { Id = u.Id, Name = u.Name }).Single());
+        }
+        [HttpPost, ActionName("DeleteFaculty")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteFacultyConfirmed(int id)
+        {
+            var faculty = dbContext.Faculties.Find(id);
+            List<string> levelsPictures = faculty.LevelsPictures.Split('|').ToList();
+            try
+            {
+                foreach (var item in levelsPictures)
+                {
+                    var Path = HttpContext.Server.MapPath("~/Images/Qualifications/" + item);
+                    if (System.IO.File.Exists(Path))
+                        System.IO.File.Delete(Path);
+                }
+            }
+            catch
+            {
+                // Deliberately empty.
+            }
+
+            //Используется EntityFramework.Extensions для быстрого обновления БД
+            var update = dbContext.Questions
+                                .Where(u => u.Faculties.Contains("[" + id + "]"))
+                                .Update(u => new Question { Faculties = u.Faculties.Replace("[" + id + "]", "") });
+
+            dbContext.Faculties.Remove(faculty);
+            dbContext.SaveChanges();
+            return RedirectToAction("Faculties");
+        }
+        public ActionResult EditFaculty(int id)
+        {
+            var faculty = dbContext.Faculties.Find(id);
+            return View(new FacultyEditQualifications()
+            {
+                Id = id,
+                Name = faculty.Name,
+                LevelsName = faculty.LevelsName.Split('|').ToList(),
+                LevelsPicturesString = faculty.LevelsPictures.Split('|').ToList(),
+                Bachelor = faculty.Bachelor,
+                Master = faculty.Master
+            });
+        }
+        [HttpPost]
+        public ActionResult EditFaculty(FacultyEditQualifications model)
+        {
+            return View(model);
+        }
+        public PartialViewResult AddQualificationEdit(int id, FacultyEditQualifications model, string LevelsNameB, string LevelsNameM)
+        {
+            if (model.Bachelor == 0 || model.LevelsName != null || model.LevelsPictures != null)
+            {
+                var faculty = dbContext.Faculties.Find(id);
+                return PartialView(new FacultyEditQualifications()
+                {
+                    Id = id,
+                    Name = faculty.Name,
+                    LevelsName = faculty.LevelsName.Split('|').ToList(),
+                    LevelsPicturesString = faculty.LevelsPictures.Split('|').ToList(),
+                    Bachelor = faculty.Bachelor,
+                    Master = faculty.Master
+                });
+            }
+
+            var levelsNameB = LevelsNameB.Replace("LevelsName=", "").Split('&');
+            var levelsNameM = LevelsNameM.Replace("LevelsName=", "").Split('&');
+
+            model.LevelsName = new List<string>();
+            for (int i = 0; i < model.Bachelor; i++)
+            {
+                if (levelsNameB.Count() >= i + 1)
+                    model.LevelsName.Add(levelsNameB[i]);
+                else
+                    model.LevelsName.Add(string.Empty);
+            }
+            for (int i = 0; i < model.Master; i++)
+            {
+                if (levelsNameM.Count() >= i + 1)
+                    model.LevelsName.Add(levelsNameM[i]);
+                else
+                    model.LevelsName.Add(string.Empty);
+            }
+            return PartialView(model);
         }
     }
 }

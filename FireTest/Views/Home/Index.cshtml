@@ -1,4 +1,5 @@
-﻿@Styles.Render("~/Content/audio")
+﻿@model List<FireTest.Models.FacultyQualifications>
+@Styles.Render("~/Content/audio")
 @{
     ViewBag.Title = "Главная";
 }
@@ -31,16 +32,22 @@
     <span class="headline">Тестирование по уровню подготовки</span>
 </div>
 <div class="-opened">
-    <div class="spoiler">
+    @*<div class="spoiler">*@
         <div class="row">
-            <div class="col-2 center"><div class="U-Firefighter"></div>Пожарный</div>
-            <div class="col-2 center"><div class="U-Commander"></div>Командир<br>отделения</div>
-            <div class="col-2 center"><div class="U-Guard"></div>Начальник<br>караула</div>
-            <div class="col-2 center"><div class="U-Inspector"></div>Инспектор</div>
-            <div class="col-2 center"><div class="U-Engineer"></div>Инженер ПБ</div>
+            @{
+                for (int i = 0; i < Model.Count(); i++)
+                {
+                    <div class="col-2 center facultyQualifications">
+                        <a href="/Qualification/Index/@(i+1)">
+                            <img class="" src="~/Images/Qualifications/@Model[i].Picture" />
+                            <p>@Model[i].Name</p>
+                        </a>
+                    </div>
+                }
+            }
         </div>
-    </div>
-    <div class="-closed Q-select">
+    @*</div>*@
+    @*<div class="-closed Q-select">
         <div class="row">
             <div class="col-2"><a href="/Qualification/Index/1?course=1"><div class="FirefighterQ"></div></a></div>
             <div class="col-2 col-offset-8"><div class="U-course-1"></div></div>
@@ -71,7 +78,7 @@
             <div class="col-2"><a href="/Qualification/Index/5?course=5"><div class="EngineerQ"></div></a></div>
             <div class="col-2"><div class="U-course-5"></div></div>
         </div>
-    </div>
+    </div>*@
 </div>
 
 <div class="spoiler">
@@ -81,4 +88,4 @@
     @{ Html.RenderAction("Departments", "Home"); }
 </div>
 <div class="row"></div>
-<div style="width:0px;height:0px;visibility:collapse;overflow:hidden;">@Html.Raw(ViewBag.Images)</div>
+@*<div style="width:0px;height:0px;visibility:collapse;overflow:hidden;">@Html.Raw(ViewBag.Images)</div>*@

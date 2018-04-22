@@ -6,6 +6,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Collections;
+using System.Web;
 
 namespace FireTest.Models
 {
@@ -36,6 +37,7 @@ namespace FireTest.Models
         public int Age { get; set; }
         public bool Sex { get; set; }
         public string Region { get; set; }
+        public bool Master { get; set; }
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
             // Обратите внимание, что authenticationType должен совпадать с типом, определенным в CookieAuthenticationOptions.AuthenticationType
@@ -98,13 +100,12 @@ namespace FireTest.Models
         public int Course { get; set; }
         public bool Access { get; set; }
     }
-
     public class SubjectsAndQualification
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int Qualification { get; set; }
-        public string QualificationName { get; set; }
+        public bool Qualification { get; set; }
+        //public string QualificationName { get; set; }
         public int Count { get; set; }
         public int CountCorrect { get; set; }
     }
@@ -128,6 +129,76 @@ namespace FireTest.Models
         public int Id { get; set; }
         public string Name { get; set; }
     }
+    public class Faculty
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string LevelsName { get; set; }
+        public string LevelsPictures { get; set; }
+        public int Bachelor { get; set; }
+        public int Master { get; set; }
+}
+    public class FacultyQualifications
+    {
+        public string Name { get; set; }
+        public string Picture { get; set; }
+    }
+    public class FacultyView
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+    public class ValidateNewFaculty : ValidationAttribute
+    {
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        {
+            if (value != null)
+            {
+                if (value is List<string>)
+                    foreach (var item in value as List<string>)
+                    {
+                        if (string.IsNullOrEmpty(item))
+                            return new ValidationResult("Нужно заполнить все названия уровней подготовки");
+                    }
+                else
+                    foreach (var item in value as List<HttpPostedFileBase>)
+                    {
+                        if (item == null)
+                            return new ValidationResult("Нужно загрузить изображения для всех уровней подготовки");
+                    }
+            }
+            return ValidationResult.Success;
+        }
+    }
+
+    public class FacultyViewQualifications
+    {
+        [Required(ErrorMessage = "Нужно название факультета")]
+        public string Name { get; set; }
+        [Required]
+        [ValidateNewFaculty]
+        public List<string> LevelsName { get; set; }
+        [Required]
+        [ValidateNewFaculty]
+        public List<HttpPostedFileBase> LevelsPictures { get; set; }
+        public int Bachelor { get; set; }
+        public int Master { get; set; }
+    }
+    public class FacultyEditQualifications
+    {
+        public int Id { get; set; }
+        [Required(ErrorMessage = "Нужно название факультета")]
+        public string Name { get; set; }
+        [Required]
+        [ValidateNewFaculty]
+        public List<string> LevelsName { get; set; }
+        [Required]
+        [ValidateNewFaculty]
+        public List<HttpPostedFileBase> LevelsPictures { get; set; }
+        public List<string> LevelsPicturesString { get; set; }
+        public int Bachelor { get; set; }
+        public int Master { get; set; }
+    }
     #endregion
     #region Вопросы и ответы
     public class Question
@@ -145,12 +216,21 @@ namespace FireTest.Models
         public int CountCorrect { get; set; }
         public string Tag { get; set; }
         public int CountTest { get; set; }
+        public string Faculties { get; set; }
+        public bool Qualification { get; set; }
     }
     public class Answer
     {
         public int Id { get; set; }
         public int IdQuestion { get; set; }
         public string AnswerText { get; set; }
+    }
+    public class FacultySelect
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public bool Check { get; set; }
+
     }
     public class ViewCreateQuestion
     {
@@ -161,6 +241,7 @@ namespace FireTest.Models
         public List<string> Answers { get; set; }
         [Required(ErrorMessage = "Должен быть указан хотя бы один правильный ответ")]
         public List<int> AnswersCorrects { get; set; }
+        public List<FacultySelect> Faculties { get; set; } 
     }
     public class ViewEditQuestion
     {
@@ -169,6 +250,7 @@ namespace FireTest.Models
         public string Tag { get; set; }
         public List<Answer> Answers { get; set; }
         public List<int> AnswersCorrects { get; set; }
+        public List<FacultySelect> Faculties { get; set; }
     }
     public class AnswersValidate : ValidationAttribute
     {
@@ -244,12 +326,12 @@ namespace FireTest.Models
                 return new ValidationResult("Произошла ошибка. Попробуйте выбрать еще раз.");
 
             if (validationContext.MemberName == "Qualification")
-                if ((int)value < 1 || (int)value > 5)
+                if ((int)value < 1 || (int)value > 6)
                     return new ValidationResult("Не выбран уровень подготовки");
 
-            if (validationContext.MemberName == "Course")
-                if ((int)value < 1 || (int)value > 5)
-                    return new ValidationResult("Не выбран курс");
+            //if (validationContext.MemberName == "Course")
+            //    if ((int)value < 1 || (int)value > 5)
+            //        return new ValidationResult("Не выбран курс");
 
             return ValidationResult.Success;
         }
@@ -260,9 +342,9 @@ namespace FireTest.Models
         [ValidateBattle]
         public int Id { get; set; }
 
-        [Required]
-        [ValidateBattle]
-        public int Course { get; set; }
+        //[Required]
+        //[ValidateBattle]
+        //public int Course { get; set; }
 
         [Required]
         [ValidateBattle]
@@ -292,6 +374,7 @@ namespace FireTest.Models
         public int Id { get; set; }
         public string TeacherId { get; set; }
         public int IdQualification { get; set; }
+        public int IdFaculty { get; set; }
         public string NameTest { get; set; }
         public string Questions { get; set; }
         public int Eval5 { get; set; }
@@ -302,6 +385,7 @@ namespace FireTest.Models
     {
         [Required(ErrorMessage = "Вы должны указать название итогового тестирования")]
         public string NameTest { get; set; }
+        public int Faculties { get; set; }
         public int Qualifications { get; set; }
         [Required(ErrorMessage = "Вы должны указать критерий оценки для 5")]
         public int Eval5 { get; set; }
@@ -315,6 +399,7 @@ namespace FireTest.Models
         public int Id { get; set; }
         [Required]
         public string NameTest { get; set; }
+        public string Faculty { get; set; }
         public string Qualification { get; set; }
         public int Eval5 { get; set; }
         public int Eval4 { get; set; }
@@ -428,6 +513,17 @@ namespace FireTest.Models
         public int Time { get; set; }
     }
     #endregion
+    #region НОВОЕ
+    public class SkillIndexViewModel
+    {
+        public int Skill { get; set; }
+        public string SkillName { get; set; }
+        public string SkillCourse { get; set; }
+        public int CountCurrent { get; set; }
+        public double CountMax { get; set; }
+    }
+
+    #endregion  
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<Qualification> Qualifications { get; set; }
@@ -444,6 +540,7 @@ namespace FireTest.Models
         public DbSet<TeacherTest> TeacherTests { get; set; }
         public DbSet<TeacherFinishTest> TeacherFinishTests { get; set; }
         public DbSet<Examination> Examinations { get; set; }
+        public DbSet<Faculty> Faculties { get; set; }
         public DbSet<TestQualification> TestQualification { get; set; }
         public DbSet<TestQualificationAccess> TestQualificationAccess { get; set; }
         public DbSet<Issue> Issues { get; set; }

@@ -1,0 +1,31 @@
+﻿@model FireTest.Models.SkillIndexViewModel
+@{
+    ViewBag.Title = "Тест по уровню подготовки - \"" + Model.SkillName + "\"";
+}
+@using (Html.BeginForm("Index", "Skill", new { id = Model.Skill }, FormMethod.Post, new { role = "form" }))
+{
+    
+    @Html.AntiForgeryToken()
+    <div class="row center"><h3>По данному уровню подготовки в базе @Model.CountCurrent вопросов</h3></div>
+    <div class="row center"><h3>База выбираемых вопросов включает вопросы @Model.SkillCourse года обучения</h3></div>
+    <br />
+    <div class="row center"><h3>Выберите количество вопросов</h3></div>
+    <div class="row center">
+        <input type="range" min="1" max="@Model.CountMax" id="count" name="count" oninput="countQ()" value="1">
+    </div>
+    <div class="row center">
+        <h4 id="countText">10</h4>
+    </div>
+    <div class="row center"><h3>Вы хотите начать тестирование?</h3></div>
+    <div class="row center">
+        <button type="submit" value="Accept" name="submitButton" class="button">Да</button>
+    </div>
+    <div class="row center">
+        <button type="submit" value="Cancel" name="submitButton" class="button-Cancel">Нет</button>
+    </div>
+}
+<script>
+    function countQ() {
+        document.getElementById('countText').innerHTML = 10 * document.getElementById("count").value;
+    }
+</script>

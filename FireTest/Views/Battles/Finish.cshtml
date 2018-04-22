@@ -2,8 +2,8 @@
     ViewBag.Title = "Поединок | Победитель";
 }
 @Styles.Render("~/Content/battle")
-@Styles.Render("~/Content/audio")
-@if (ViewBag.You == 1)
+@*@Styles.Render("~/Content/audio")*@
+@*@if (ViewBag.You == 1)
 {
     <div class="music">
         <span id="play-button" onclick="Audio_Stop()" class="pause"></span>
@@ -11,7 +11,7 @@
         <input type="range" min="0" max="10" id="volume" oninput="Audio_Volume()" value="5" />
         <audio id="audio" preload="auto" src="~/Content/winner.mp3" loop="loop" autoplay="autoplay" />
     </div>
-}
+}*@
 <div class="row center">
     <h3>Поединок окончен!</h3>
     <h3>В схватке победил @ViewBag.NameWinner, поздравляем!</h3>
@@ -58,7 +58,7 @@
         </div>
     </div>
 </div>
-@section scripts
+@*@section scripts
 {
     @Scripts.Render("~/bundles/audio")
-}
+}*@

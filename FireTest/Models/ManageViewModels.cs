@@ -33,10 +33,10 @@ namespace FireTest.Models
         [Display(Name = "Регион поступления")]
         public string Region { get; set; }
         public List<System.Web.Mvc.SelectListItem> RegionOptions { get; set; }
-        [Required]
-        [Display(Name = "Специальность")]
-        public string Speciality { get; set; }
-        public List<System.Web.Mvc.SelectListItem> SpecialityOptions { get; set; }
+        //[Required]
+        //[Display(Name = "Специальность")]
+        //public string Speciality { get; set; }
+        //public List<System.Web.Mvc.SelectListItem> SpecialityOptions { get; set; }
         [Required]
         [Display(Name = "Факультет")]
         public string Faculty { get; set; }

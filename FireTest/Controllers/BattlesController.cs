@@ -137,12 +137,22 @@ namespace FireTest.Controllers
         public PartialViewResult Users()
         {
             string user = User.Identity.GetUserId();
+            var faculty = dbContext.Users.Find(user).Faculty;
+
             DateTime activity = DateTime.Now.AddSeconds(-30); //30 секунд небыло активности - значит оффлайн
-            var otherUsers = dbContext.Users
+
+            var role = dbContext.Users.Find(user).Roles.SingleOrDefault();
+            var users = dbContext.Users
                  .Where(u => u.Id != user)
                  .Where(u => string.IsNullOrEmpty(u.Name) != true)
                  .Where(u => u.Busy != true)
-                 .Where(u => u.LastActivity >= activity)
+                 .Where(u => u.LastActivity >= activity).ToList();
+
+            if (dbContext.Roles.Find(role.RoleId).Name == "USER") //если юзер то выкидывает всех не однофакультетников, кроме преподов.
+                users = users
+                 .Where(u => u.Faculty == faculty || (u.Group == "-1" && u.Course == 100)).ToList();
+
+            var otherUsers = users
                  .Select(u => new {
                      Id = u.Id,
                      Avatar = u.Avatar,
@@ -237,10 +247,13 @@ namespace FireTest.Controllers
 
             Battle battle = dbContext.Battles.Find(user.IdBattleInvite);
 
-            ViewBag.Course = battle.Course;
-            ViewBag.Qualification = dbContext.Qualifications
-                    .Where(u => u.Id == battle.Qualification)
-                    .Select(u => u.Name).Single();
+            //ViewBag.Course = battle.Course;
+            //ViewBag.Qualification = dbContext.Qualifications
+            //        .Where(u => u.Id == battle.Qualification)
+            //        .Select(u => u.Name).Single();
+            var levelsNameIds = dbContext.Faculties.Where(u => u.Id.ToString() == user.Faculty).Select(u => u.LevelsName).FirstOrDefault().Split('|');
+            ViewBag.Qualification = levelsNameIds[battle.Course - 1];
+
 
             ApplicationUser otheruser = dbContext.Users.Find(battle.FirstPlayer.ToString());
             List<UsersData> invite = new List<UsersData>();
@@ -448,8 +461,11 @@ namespace FireTest.Controllers
             Decliner decliner = new Decliner();
             string[] declineText = decliner.Decline(otherUser.Family, otherUser.Name, "", 4);//Меняем падеж
             ViewBag.SecondPlayer = declineText[1] + " " + declineText[0];
-            
-            return View();
+
+
+            GetFacultyQualificationsName(ref user, out List<FacultyQualifications> FacultyQualificationsName);
+
+            return View(FacultyQualificationsName);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -475,19 +491,20 @@ namespace FireTest.Controllers
             if (battle == null)
                 return RedirectToAction("Index", "Home");
 
-            if (model.Qualification > model.Course) //Чтоб курс был не меньше квалификации
-                model.Course = model.Qualification;
+            //if (model.Qualification > model.Course) //Чтоб курс был не меньше квалификации
+            //    model.Course = model.Qualification;
 
-            battle.Course = model.Course;
+            //battle.Course = model.Course;
             battle.Qualification = model.Qualification;
+            //battle.Course = model.Qualification;
             battle.TimeStartFirstPlayer = DateTime.Now;
             battle.TimeStartSecondPlayer = DateTime.Now;
             battle.TimeEndFirstPlayer = DateTime.Now;
             battle.TimeEndSecondPlayer = DateTime.Now;
             dbContext.SaveChanges();
 
-            if (!AutoSelectQuestion(model.Id)) //подготовим за людей вопросы. 
-                return RedirectToAction("Index", "Home");
+            //if (!AutoSelectQuestion(model.Id)) //подготовим за людей вопросы. 
+            //    return RedirectToAction("Index", "Home");
 
             var secondPlayer = dbContext.Users.Find(battle.SecondPlayer); //Приглашаем второго юзера
             secondPlayer.Invited = true;
@@ -522,13 +539,33 @@ namespace FireTest.Controllers
                     dbContext.SaveChanges();
                     return RedirectToAction("Index", "Home");
             }
-            return RedirectToAction("Wait", new { id });
+            return RedirectToAction("Wait", new { course = result.Course, IdBattle = id });
         }
-        public ActionResult Wait(int id)
+        public ActionResult Wait(int course, int IdBattle)
         {
-            var result = dbContext.Battles.Find(id);
+            var result = dbContext.Battles.Find(IdBattle);
             if (result == null)
                 return RedirectToAction("Index", "Home");
+            var userID = User.Identity.GetUserId();
+            if (result.SecondPlayer != userID)
+            {
+                result.Course = course;
+                //battle.Qualification = model.Qualification;
+                //battle.Course = model.Qualification;
+                result.TimeStartFirstPlayer = DateTime.Now;
+                result.TimeStartSecondPlayer = DateTime.Now;
+                result.TimeEndFirstPlayer = DateTime.Now;
+                result.TimeEndSecondPlayer = DateTime.Now;
+
+                var user = dbContext.Users.Find(userID);
+                if (!AutoSelectQuestion(result.Id, user.Faculty)) //подготовим за людей вопросы. 
+                    return RedirectToAction("Index", "Home");
+
+                var secondPlayer = dbContext.Users.Find(result.SecondPlayer); //Приглашаем второго юзера
+                secondPlayer.Invited = true;
+                secondPlayer.IdBattleInvite = result.Id;
+                dbContext.SaveChanges();
+            }
 
             var player = dbContext.Users.Find(result.FirstPlayer);
             ViewBag.FirstPlayer = player.Name + " " + player.Family;
@@ -539,7 +576,7 @@ namespace FireTest.Controllers
             ViewBag.SecondPlayer = player.Name + " " + player.Family;
             ViewBag.SecondPlayerAvatar = "/Images/Avatars/" + player.Avatar;
 
-            ViewBag.Id = id;
+            ViewBag.Id = IdBattle;
             ViewBag.Time = 60 - (DateTime.Now - result.TimeStartFirstPlayer).Seconds; //Ожидаем боя 1 минуту
             return View();
         }
@@ -842,10 +879,13 @@ namespace FireTest.Controllers
             dbContext.SaveChanges();
 
             List<string> right = new List<string>();
-            foreach (string item in answers.Split('|').ToList())
+            if (!string.IsNullOrEmpty(answers))
             {
-                if (item != "0")
-                    right.Add(item);
+                foreach (string item in answers.Split('|').ToList())
+                {
+                    if (item != "0")
+                        right.Add(item);
+                }
             }
             ViewBag.Right = right.Count();
             ViewBag.TimeSec = (end - start).Seconds;
@@ -995,11 +1035,16 @@ namespace FireTest.Controllers
             //Берем данные второго игрока
             double time2 = (battle.TimeEndSecondPlayer - battle.TimeStartSecondPlayer).TotalSeconds;
             List<string> rightSecond = new List<string>();
-            foreach (string item in battle.RightOrWrongSecondPlayer.Split('|').ToList())
+            var RoWSecond = battle.RightOrWrongSecondPlayer;
+            if (!string.IsNullOrEmpty(RoWSecond))
             {
-                if (item != "0")
-                    rightSecond.Add(item);
+                foreach (string item in RoWSecond.Split('|').ToList())
+                {
+                    if (item != "0")
+                        rightSecond.Add(item);
+                }
             }
+
             //Сравниванием
             double points1 = rightFirst.Count() * 10;
             ViewBag.RightFirst = rightFirst.Count();
@@ -1087,7 +1132,7 @@ namespace FireTest.Controllers
             }
             base.Dispose(disposing);
         }
-        private bool AutoSelectQuestion(int id)
+        private bool AutoSelectQuestion(int id, string faculty)
         {
             try
             {
@@ -1095,9 +1140,12 @@ namespace FireTest.Controllers
 
                 List<int> idQuestions = new List<int>();
                 var questionsId = dbContext.Questions
-                     .Where(u => u.IdQualification == battle.Qualification) //Только эта квалификация, но курсы все, ибо они только по одному на квалификацию
-                     .Where(u => u.IdCourse <= battle.Course)
-                     .Select(u => new
+                    //.Where(u => u.IdQualification == battle.Qualification) //Только эта квалификация, но курсы все, ибо они только по одному на квалификацию
+                    //.Where(u => u.IdCourse <= battle.Course)
+                    .Where(u => u.Faculties.Contains("[" + faculty + "]"))
+                    .Where(u => u.IdCourse == battle.Course)
+                    .Where(u => u.Qualification)
+                    .Select(u => new
                      {
                          id = u.Id
                      }).ToList();
@@ -1547,6 +1595,25 @@ namespace FireTest.Controllers
             }
             return result;
         }
+        void GetFacultyQualificationsName(ref ApplicationUser user, out List<FacultyQualifications> QualificationsName)
+        {
+            var faculty = dbContext.Faculties.Find(Convert.ToInt32(user.Faculty));
+            QualificationsName = new List<FacultyQualifications>();
+            if (faculty != null)
+            {
+                var facultyPictures = faculty.LevelsPictures.Split('|');
+                var facultyNames = faculty.LevelsName.Split('|');
+                for (int i = 0; i < facultyNames.Count(); i++)
+                {
+                    QualificationsName.Add(new FacultyQualifications
+                    {
+                        Name = facultyNames[i],
+                        Picture = facultyPictures[i]
+                    });
+                }
+            }
+        }
+
         #endregion
     }
 }

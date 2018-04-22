@@ -27,16 +27,16 @@
                         }
                     </td>
                     <td>
-                        @Html.ActionLink("Редактировать", "CreateTestFinish", new { idTest = item.Id }) |
-                        @Html.ActionLink("Подробности", "DetailsFinish", new { id = item.Id }) |
-                        @Html.ActionLink("Удалить", "DeleteFinish", new { id = item.Id })
+                        @Html.ActionLink("Редактировать", "CreateTestFinish", "Teacher", new { idTest = item.Id }, null) |
+                        @Html.ActionLink("Подробности", "DetailsFinish", "Teacher", new { id = item.Id }, null) |
+                        @Html.ActionLink("Удалить", "DeleteFinish", "Teacher", new { id = item.Id }, null)
                     </td>
                 </tr>
             }
         </table>
         <div class="row">
             <div class="col-4">
-                <a href="CreateTestFinishPrepare"><button class="button" style="width: 90%;">Создать итоговый тест</button></a>
+                <a href="../Teacher/CreateTestFinishPrepare"><button class="button" style="width: 90%;">Создать итоговый тест</button></a>
             </div>
         </div>
     </div>

@@ -1,6 +1,6 @@
 ﻿@model FireTest.Models.TeacherTestDetails
 @{
-    ViewBag.Title = "Подробности итогового тестрования";
+    ViewBag.Title = "Подробности итогового тестирования";
 }
 @Styles.Render("~/Content/administrator")
 <div class="row" id="Tests">
@@ -10,7 +10,7 @@
     </div>
     <div class="row">
         <div class="col-2"><b>Итоговое тестирование по уровню подготовки:</b></div>
-        <div class="col-8">@Model.Qualification</div>
+        <div class="col-8">@Model.Qualification<br>@Model.Faculty</div>
     </div>
     <div class="row">
         <b>Критерии оценки:</b>

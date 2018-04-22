@@ -36,6 +36,27 @@
             <div class="col-10">
                 @Html.DropDownList("Courses", ViewBag.Courses as SelectList)
             </div>
+            <p class="text-success">@ViewBag.ErrorFaculty</p>
+            <div class="row">
+                <div class="col-2">
+                    Факультет
+                </div>
+                <div class="col-10 answers left">
+                    @{
+                        foreach (var item in Model.Faculties)
+                        {
+                            <fieldset class="standart">
+                                <input id="[@item.Id]" type="checkbox" name="Faculties" value="[@item.Id]" @(item.Check ? "checked" : "") />
+                                <label for="[@item.Id]">
+                                    <span>
+                                        @Html.DisplayFor(modelItem => item.Name)
+                                    </span>
+                                </label>
+                            </fieldset>
+                        }
+                    }
+                </div>
+            </div>    
         </div>
         @Html.ValidationMessageFor(model => model.QuestionText, "", new { @class = "text-danger" })
         <div class="row">

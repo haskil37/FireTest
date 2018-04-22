@@ -1,4 +1,4 @@
-﻿@model IEnumerable < FireTest.Models.TeacherTest >
+﻿@model IEnumerable <FireTest.Models.TeacherTest>
 @{
     ViewBag.Title = "Преподавательская";
 }
@@ -40,16 +40,16 @@
                         }
                     </td>
                     <td>
-                        @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }) |
-                        @Html.ActionLink("Подробности", "Details", new { id = item.Id }) |
-                        @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
+                        @Html.ActionLink("Редактировать", "Edit", "Teacher", new { id = item.Id }, null) |
+                        @Html.ActionLink("Подробности", "Details", "Teacher", new { id = item.Id }, null) |
+                        @Html.ActionLink("Удалить", "Delete", "Teacher", new { id = item.Id }, null)
                     </td>
                 </tr>
             }
         </table>
         <div class="row">
             <div class="col-4">
-                <a href="CreateTest"><button class="button" style="width: 90%;">Создать тест</button></a>
+                <a href="../Teacher/CreateTest"><button class="button" style="width: 90%;">Создать тест</button></a>
             </div>
         </div>
     </div>
@@ -64,13 +64,13 @@
     <div class="row">Добавляйте, удаляйте, редактируйте вопросы по дисциплинам</div>
     <div class="row">
         <div class="col-4">
-            <a href="NewQuestion"><button class="button" style="width: 90%;">Создать новый вопрос</button></a>
+            <a href="../Teacher/NewQuestion"><button class="button" style="width: 90%;">Создать новый вопрос</button></a>
         </div>
         <div class="col-4">
-            <a href="EditQuestionSelect"><button class="button" style="width: 90%;">Отредактировать вопрос</button></a>
+            <a href="../Teacher/EditQuestionSelect"><button class="button" style="width: 90%;">Отредактировать вопрос</button></a>
         </div>
         <div class="col-4">
-            <a href="DeleteQuestionSelect"><button class="button" style="width: 90%;">Удалить вопрос</button></a>
+            <a href="../Teacher/DeleteQuestionSelect"><button class="button" style="width: 90%;">Удалить вопрос</button></a>
         </div>
         <br />
         <br />

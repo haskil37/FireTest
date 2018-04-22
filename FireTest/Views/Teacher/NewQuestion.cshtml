@@ -35,6 +35,27 @@
                 @Html.DropDownList("Courses", ViewBag.Courses as SelectList)
             </div>
         </div>
+        <p class="text-success">@ViewBag.ErrorFaculty</p>
+        <div class="row">
+            <div class="col-2">
+                Факультет
+            </div>
+            <div class="col-10 answers left">
+                @{
+                    foreach (var item in Model.Faculties)
+                    {
+                        <fieldset class="standart">
+                            <input id="[@item.Id]" type="checkbox" name="Faculties" value="[@item.Id]" @(item.Check ? "checked" : "") />
+                            <label for="[@item.Id]">
+                                <span>
+                                    @Html.DisplayFor(modelItem => item.Name)
+                                </span>
+                            </label>
+                        </fieldset>
+                    }
+                }
+            </div>
+        </div>
         @Html.ValidationMessageFor(model => model.QuestionText, "", new { @class = "text-danger" })
         <div class="row">
             <div class="col-2">
@@ -92,7 +113,7 @@
                 }
                 @if (ViewBag.Type == 3)
                 {
-                    <label for="type-tab-3" class="type-tab active">Вопрос на соответствие</label>
+                <label for="type-tab-3" class="type-tab active">Вопрос на соответствие</label>
                 }
                 else
                 {
@@ -125,36 +146,36 @@
                 </div>
                 @for (int i = 0; i < 8; i++)
                 {
-                    <div class="row">
-                        <div class="col-2">
-                            <b>@(i + 1)</b>
-                        </div>
-                        <div class="col-8">
-                            @Html.TextAreaFor(model => model.Answers[i])
-                        </div>
-                        <div class="col-2 correct">
-                            @if (Model != null && Model.AnswersCorrects != null && Model.AnswersCorrects.Contains(i))
-                            {
-                                <input id="@i" type="checkbox" name="AnswersCorrects" value="@i" checked="checked" />
-                            }
-                            else
-                            {
-                                <input id="@i" type="checkbox" name="AnswersCorrects" value="@i" />
-                            }
-                            <label for="@i"></label>
-                        </div>
+                <div class="row">
+                    <div class="col-2">
+                        <b>@(i + 1)</b>
                     </div>
-                }
+                    <div class="col-8">
+                        @Html.TextAreaFor(model => model.Answers[i])
+                    </div>
+                    <div class="col-2 correct">
+                        @if (Model != null && Model.AnswersCorrects != null && Model.AnswersCorrects.Contains(i))
+                        {
+                            <input id="@i" type="checkbox" name="AnswersCorrects" value="@i" checked="checked" />
+                        }
+                        else
+                        {
+                            <input id="@i" type="checkbox" name="AnswersCorrects" value="@i" />
+                        }
+                        <label for="@i"></label>
+                    </div>
+                </div>
+        }
             </div>
         </div>
         @if (ViewBag.Type == 2)
-        {
-            <input id="type-tab-2" name="Type" type="radio" checked="checked" class="type-radio" value="2" />
-        }
-        else
-        {
-            <input id="type-tab-2" name="Type" type="radio" class="type-radio" value="2" />
-        }
+    {
+        <input id="type-tab-2" name="Type" type="radio" checked="checked" class="type-radio" value="2" />
+}
+else
+{
+    <input id="type-tab-2" name="Type" type="radio" class="type-radio" value="2" />
+}
         <div class="type-content">
             <p class="text-success">@ViewBag.Error</p>
             <div class="row">
@@ -162,28 +183,28 @@
                     Расположите ответы в правильном порядке
                 </div>
                 @for (int i = 0; i < 8; i++)
+            {
+                <div class="row">
+                    @if (ViewBag.Answers != null && ViewBag.Answers[i] != null)
                 {
-                    <div class="row">
-                        @if (ViewBag.Answers != null && ViewBag.Answers[i] != null)
-                        {
-                            <textarea cols="20" id="AnswersSequence[@i]" name="AnswersSequence[@i]" rows="2">@ViewBag.Answers[i]</textarea>                            
-                        }
-                        else
-                        {
-                            <textarea cols="20" id="AnswersSequence[@i]" name="AnswersSequence[@i]" rows="2"></textarea>
-                        }
-                    </div>
-                }
+                    <textarea cols="20" id="AnswersSequence[@i]" name="AnswersSequence[@i]" rows="2">@ViewBag.Answers[i]</textarea>
+            }
+            else
+            {
+                <textarea cols="20" id="AnswersSequence[@i]" name="AnswersSequence[@i]" rows="2"></textarea>
+        }
+                </div>
+        }
             </div>
         </div>
         @if (ViewBag.Type == 3)
-        {
-            <input id="type-tab-3" name="Type" type="radio" checked="checked" class="type-radio" value="3" />
-        }
-        else
-        {
-            <input id="type-tab-3" name="Type" type="radio" class="type-radio" value="3" />
-        }
+    {
+        <input id="type-tab-3" name="Type" type="radio" checked="checked" class="type-radio" value="3" />
+}
+else
+{
+    <input id="type-tab-3" name="Type" type="radio" class="type-radio" value="3" />
+}
         <div class="type-content">
             <div class="row">
                 <p class="text-success">@ViewBag.Error</p>
@@ -192,33 +213,33 @@
                 </div>
                 <div class="row">
                     @for (int i = 0; i < 4; i++)
-                    {
-                        <div class="col-5">
-                            <div class="row">
-                                @if (ViewBag.Answers != null && ViewBag.Answers[i] != null)
-                                {
-                                    <textarea cols="20" id="AnswersConformity[@i]" name="AnswersConformity[@i]" rows="2">@ViewBag.Answers[i]</textarea>
-                                }
-                                else
-                                {
-                                    <textarea cols="20" id="AnswersConformity[@i]" name="AnswersConformity[@i]" rows="2"></textarea>
-                                }
-                            </div>
-                        </div>
-                        <div class="col-2"><span class="equals">=</span></div>
-                        <div class="col-5">
-                            <div class="row">
-                                @if (ViewBag.Answers != null && ViewBag.Answers[i + 4] != null)
-                                {
-                                    <textarea cols="20" id="AnswersConformity[@(i+4)]" name="AnswersConformity[@(i+4)]" rows="2">@ViewBag.Answers[i + 4]</textarea>
-                                }
-                                else
-                                {
-                                    <textarea cols="20" id="AnswersConformity[@(i+4)]" name="AnswersConformity[@(i+4)]" rows="2"></textarea>
-                                }
-                            </div>
-                        </div>
+                {
+                    <div class="col-5">
+                        <div class="row">
+                            @if (ViewBag.Answers != null && ViewBag.Answers[i] != null)
+                        {
+                            <textarea cols="20" id="AnswersConformity[@i]" name="AnswersConformity[@i]" rows="2">@ViewBag.Answers[i]</textarea>
                     }
+                    else
+                    {
+                        <textarea cols="20" id="AnswersConformity[@i]" name="AnswersConformity[@i]" rows="2"></textarea>
+                }
+                        </div>
+                    </div>
+                    <div class="col-2"><span class="equals">=</span></div>
+                    <div class="col-5">
+                        <div class="row">
+                            @if (ViewBag.Answers != null && ViewBag.Answers[i + 4] != null)
+                        {
+                            <textarea cols="20" id="AnswersConformity[@(i+4)]" name="AnswersConformity[@(i+4)]" rows="2">@ViewBag.Answers[i + 4]</textarea>
+                    }
+                    else
+                    {
+                        <textarea cols="20" id="AnswersConformity[@(i+4)]" name="AnswersConformity[@(i+4)]" rows="2"></textarea>
+                }
+                        </div>
+                    </div>
+            }
                 </div>
             </div>
         </div>
@@ -226,7 +247,7 @@
             @Html.Partial("LaTex")
         </div>
         <div class="row">
-            <input type="submit" class="button"/>
+            <input type="submit" class="button" />
         </div>
     </div>
 }

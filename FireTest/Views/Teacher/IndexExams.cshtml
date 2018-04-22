@@ -20,7 +20,7 @@
                         @Html.DisplayFor(modelItem => item.Name)
                         @if (item.Date == DateTime.Today)
                         {
-                            @Html.ActionLink("Начать экзамен", "ExamAccess", new { id = item.Id }, new { @class = "mini-button" })
+                            @Html.ActionLink("Начать экзамен", "ExamAccess", "Teacher", new { id = item.Id }, new { @class = "mini-button" })
                         }
                     </td>
                     <td>
@@ -37,17 +37,17 @@
                         @String.Format("{0:dd.MM.yyyy}", item.Date)
                     </td>
                     <td>
-                        @Html.ActionLink("Итоги", "ResumeExams", new { id = item.Id }) |
-                        @Html.ActionLink("Редактировать", "EditExams", new { id = item.Id }) |
-                        @Html.ActionLink("Подробности", "DetailsExams", new { id = item.Id }) |
-                        @Html.ActionLink("Удалить", "DeleteExams", new { id = item.Id })
+                        @Html.ActionLink("Итоги", "ResumeExams", "Teacher", new { id = item.Id }, null) |
+                        @Html.ActionLink("Редактировать", "EditExams", "Teacher", new { id = item.Id }, null) |
+                        @Html.ActionLink("Подробности", "DetailsExams", "Teacher", new { id = item.Id }, null) |
+                        @Html.ActionLink("Удалить", "DeleteExams", "Teacher", new { id = item.Id }, null)
                     </td>
                 </tr>
             }
         </table>
         <div class="row">
             <div class="col-4">
-                <a href="CreateExam"><button class="button" style="width: 90%;">Запланировать тестирование</button></a>
+                <a href="../Teacher/CreateExam"><button class="button" style="width: 90%;">Запланировать тестирование</button></a>
             </div>
         </div>
     </div>
